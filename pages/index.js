@@ -11,13 +11,32 @@ export default function Index() {
   const mouseUpHandler = e => {
     e.stopPropagation();
     const domSelection = window.getSelection();
-    if (domSelection.focusNode.data) {
-      setSelection(domSelection.focusNode.data);
+    if (domSelection.type === "Range") {
+      const part = domSelection.focusNode.textContent.slice(
+        domSelection.anchorOffset,
+        domSelection.focusOffset
+      )
+      setSelection(part);
+    } else if (domSelection.type === "Caret" && domSelection.anchorNode.nodeName === "#text") {
+      const range = document.createRange();
+      range.selectNodeContents(domSelection.anchorNode); // todo only select the word that was clicked
+      domSelection.removeAllRanges();
+      domSelection.addRange(range);
+      setSelection(domSelection.focusNode.textContent);
+    } else {
+      setSelection("");
     }
     // setSelection(window.getSelection());
   }
 
+  const mouseDownHandler = e => {
+    e.stopPropagation();
+    const domSelection = window.getSelection();
+    domSelection.removeAllRanges();
+  }
+
   useEffect(() => {
+    window.onmousedown = mouseDownHandler;
     window.onmouseup = mouseUpHandler;
   })
 
