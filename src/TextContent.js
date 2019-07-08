@@ -1,9 +1,18 @@
 import React from 'react';
-import { Typography } from "@material-ui/core";
+import { Typography, makeStyles } from "@material-ui/core";
+const useStyles = makeStyles(theme => ({
+    text: {
+        '&::selection': {
+            background: theme.palette.primary.light,
+            color: 'white',
+        }
+    }
+}))
 
 export default function TextContent() {
+    const classes = useStyles();
     return (
-        <Typography>
+        <Typography classes={{root:classes.text}}>
             Two roads diverged in a yellow wood,<br/>
             And sorry I could not travel both<br/>
             And be one traveler, long I stood<br/>
