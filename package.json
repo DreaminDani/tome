@@ -1,6 +1,6 @@
 {
-  "name": "nextjs",
-  "version": "4.0.0",
+  "name": "tome",
+  "version": "0.0.1",
   "private": true,
   "dependencies": {
     "@material-ui/core": "latest",
@@ -11,9 +11,19 @@
     "react": "latest",
     "react-dom": "latest"
   },
+  "devDependencies": {
+    "@babel/core": "latest",
+    "babel-jest": "latest",
+    "enzyme": "latest",
+    "enzyme-adapter-react-16": "latest",
+    "jest": "latest",
+    "react-addons-test-utils": "latest",
+    "react-test-renderer": "latest"
+  },
   "scripts": {
     "dev": "next",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "test": "jest"
   }
 }

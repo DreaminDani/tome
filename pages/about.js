@@ -18,7 +18,7 @@ function MadeWithLove() {
   );
 }
 
-export default function About() {
+export default function AboutPage() {
   return (
     <Container maxWidth="sm">
       <Box my={4}>
