@@ -22,7 +22,6 @@ export default function Artifact() {
     } else {
       setSelection("");
     }
-    // setSelection(window.getSelection());
   }
 
   const mouseDownHandler = e => {
@@ -32,12 +31,16 @@ export default function Artifact() {
   }
 
   useEffect(() => {
-    window.onmousedown = mouseDownHandler;
-    window.onmouseup = mouseUpHandler;
-  })
+    window.addEventListener("mouseup", mouseUpHandler);
+    window.addEventListener("mousedown", mouseDownHandler);
+    return () => {
+      window.removeEventListener("mouseup", mouseUpHandler);
+      window.removeEventListener("mousedown", mouseDownHandler);
+    };
+  }, [mouseDownHandler, mouseUpHandler]);
 
   return (
-    <Container maxWidth="sm">
+    <Container id="artifact" maxWidth="sm">
       <Box my={4}>
           <Typography>
           Currently selected:<br/>
