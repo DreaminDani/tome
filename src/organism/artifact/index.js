@@ -31,17 +31,17 @@ export default function Artifact() {
     }
   }
 
-  useEffect(() => {
-    window.addEventListener("mouseup", mouseUpHandler);
-    window.addEventListener("mousedown", mouseDownHandler);
-    return () => {
-      window.removeEventListener("mouseup", mouseUpHandler);
-      window.removeEventListener("mousedown", mouseDownHandler);
-    };
-  }, [mouseDownHandler, mouseUpHandler]);
+  // useEffect(() => {
+  //   window.addEventListener("mouseup", mouseUpHandler);
+  //   window.addEventListener("mousedown", mouseDownHandler);
+  //   return () => {
+  //     window.removeEventListener("mouseup", mouseUpHandler);
+  //     window.removeEventListener("mousedown", mouseDownHandler);
+  //   };
+  // }, [mouseDownHandler, mouseUpHandler]);
 
   return (
-    <Container id="artifact" maxWidth="sm">
+    <Container id="artifact" maxWidth="sm" onMouseDown={mouseDownHandler} onMouseUp={mouseUpHandler}>
       <Box my={4}>
           <Typography>
           Currently selected:<br/>

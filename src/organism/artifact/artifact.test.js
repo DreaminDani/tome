@@ -1,8 +1,7 @@
 /* eslint-env jest */
 
 import React from 'react';
-import ReactDOM from 'react-dom';
-import { act } from 'react-dom/test-utils';
+import { shallow } from 'enzyme';
 import Artifact from './';
 
 describe('Artifact responds to mouse events', () => {
@@ -38,13 +37,8 @@ describe('Artifact responds to mouse events', () => {
 
   it('clears selection on mousedown, to prepare for next selection', () => {
     // Act
-    act(() => {
-      ReactDOM.render(<Artifact />, container);
-    });
-
-    act(() => {
-      map.mousedown(new Event('mousedown'));
-    });
+    const artifact = shallow(<Artifact />);
+    artifact.simulate('mousedown', new Event('mousedown'));
     
      // Assert
     expect(window.getSelection).toHaveBeenCalled();
@@ -55,13 +49,8 @@ describe('Artifact responds to mouse events', () => {
 
   it('does not update the selection, if nothing is clicked', () => {
     // Act
-    act(() => {
-      ReactDOM.render(<Artifact />, container);
-    });
-
-    act(() => {
-      map.mouseup(new Event('mouseup'));
-    });
+    const artifact = shallow(<Artifact />);
+    artifact.simulate('mouseup', new Event('mouseup'));
     
      // Assert
     expect(window.getSelection).toHaveBeenCalled();
@@ -89,21 +78,16 @@ describe('Artifact responds to mouse events', () => {
     });
 
     // Act
-    act(() => {
-      ReactDOM.render(<Artifact />, container);
-    });
+    const artifact = shallow(<Artifact />);
+    artifact.simulate('mouseup', new Event('mouseup'));
+  
+    // Assert
+    expect(window.getSelection).toHaveBeenCalled();
 
-    act(() => {
-      map.mouseup(new Event('mouseup'));
-    });
-    
-     // Assert
-     expect(window.getSelection).toHaveBeenCalled();
-
-     const domSelection = window.getSelection.mock.results[0].value;
-     expect(document.createRange).not.toHaveBeenCalled();
-     expect(domSelection.removeAllRanges).not.toHaveBeenCalled();
-     expect(domSelection.addRange).not.toHaveBeenCalled();
+    const domSelection = window.getSelection.mock.results[0].value;
+    expect(document.createRange).not.toHaveBeenCalled();
+    expect(domSelection.removeAllRanges).not.toHaveBeenCalled();
+    expect(domSelection.addRange).not.toHaveBeenCalled();
   });
 
   it('selects the whole line, if Caret is clicked', () => {
@@ -128,13 +112,8 @@ describe('Artifact responds to mouse events', () => {
     });
 
     // Act
-    act(() => {
-      ReactDOM.render(<Artifact />, container);
-    });
-
-    act(() => {
-      map.mouseup(new Event('mouseup'));
-    });
+    const artifact = shallow(<Artifact />);
+    artifact.simulate('mouseup', new Event('mouseup'));
 
     // Assert
     expect(document.createRange).toHaveBeenCalled();
