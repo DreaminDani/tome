@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Container, Box, Typography } from '@material-ui/core';
 import TextContent from '../../atom/TextContent';
 
@@ -30,15 +30,6 @@ export default function Artifact() {
       setSelection("");
     }
   }
-
-  // useEffect(() => {
-  //   window.addEventListener("mouseup", mouseUpHandler);
-  //   window.addEventListener("mousedown", mouseDownHandler);
-  //   return () => {
-  //     window.removeEventListener("mouseup", mouseUpHandler);
-  //     window.removeEventListener("mousedown", mouseDownHandler);
-  //   };
-  // }, [mouseDownHandler, mouseUpHandler]);
 
   return (
     <Container id="artifact" maxWidth="sm" onMouseDown={mouseDownHandler} onMouseUp={mouseUpHandler}>
