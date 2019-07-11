@@ -1,12 +1,14 @@
 /* eslint-env jest */
 
 import React from 'react';
-import { mount, simulate } from 'enzyme';
-import { act } from 'react-test-renderer';
+import ReactDOM from 'react-dom';
+import { act } from 'react-dom/test-utils';
 import Artifact from './';
 
 describe('Artifact responds to mouse events', () => {
   const map = {};
+  
+  let container;
   let currentSelection = "";
 
   beforeAll(() => {
@@ -16,6 +18,9 @@ describe('Artifact responds to mouse events', () => {
   })
 
   beforeEach(() => {
+    container = document.createElement('div');
+    document.body.appendChild(container);
+
     window.getSelection = jest.fn(() => {
       if (currentSelection) {
         return {
@@ -35,12 +40,20 @@ describe('Artifact responds to mouse events', () => {
     // });
   });
 
+
+  afterEach(() => {
+    document.body.removeChild(container);
+    container = null;
+  });
+
   it('does not update the selection, if nothing is clicked', () => {
-    const artifact = mount(<Artifact />);
+    act(() => {
+      ReactDOM.render(<Artifact />, container);
+    });
+
     map.mouseup(new Event('mouseup'));
     expect(window.getSelection).toHaveBeenCalled();
     expect(document.createRange).not.toHaveBeenCalled();
-    artifact.unmount();
   });
 
   it('selects the whole line, if Caret is clicked', () => {
@@ -68,15 +81,15 @@ describe('Artifact responds to mouse events', () => {
       }
     });
 
-    const artifact = mount(<Artifact />);
+    act(() => {
+      ReactDOM.render(<Artifact />, container);
+    });
+
     act(() => {
       map.mouseup(new Event('mouseup'));
     })
 
     // test
     expect(document.createRange).toHaveBeenCalled();
-
-    // cleanup
-    artifact.unmount();
   });
 });
