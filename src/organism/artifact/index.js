@@ -4,6 +4,13 @@ import TextContent from '../../atom/TextContent';
 
 export default function Artifact() {
   const [selection, setSelection] = useState("");
+
+  const mouseDownHandler = e => {
+    e.stopPropagation();
+    const domSelection = window.getSelection();
+    domSelection.removeAllRanges();
+  }
+  
   const mouseUpHandler = e => {
     e.stopPropagation();
     const domSelection = window.getSelection();
@@ -22,12 +29,6 @@ export default function Artifact() {
     } else {
       setSelection("");
     }
-  }
-
-  const mouseDownHandler = e => {
-    e.stopPropagation();
-    const domSelection = window.getSelection();
-    domSelection.removeAllRanges();
   }
 
   useEffect(() => {

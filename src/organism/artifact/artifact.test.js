@@ -7,9 +7,7 @@ import Artifact from './';
 
 describe('Artifact responds to mouse events', () => {
   const map = {};
-  
   let container;
-  let currentSelection = "";
 
   beforeAll(() => {
     window.addEventListener = jest.fn((event, cb) => {
@@ -22,22 +20,14 @@ describe('Artifact responds to mouse events', () => {
     document.body.appendChild(container);
 
     window.getSelection = jest.fn(() => {
-      if (currentSelection) {
-        return {
-          type: "Range",
-        }
-      } else {
-        return {
-          type: "None",
-        }
+      return {
+        type: "None",
+        removeAllRanges: jest.fn(),
+        addRange: jest.fn()
       }
     });
 
     document.createRange = jest.fn();
-    
-    // window.addRange = jest.fn((selection) => {
-    //   currentSelection = selection;
-    // });
   });
 
 
@@ -46,17 +36,74 @@ describe('Artifact responds to mouse events', () => {
     container = null;
   });
 
+  it('clears selection on mousedown, to prepare for next selection', () => {
+    // Act
+    act(() => {
+      ReactDOM.render(<Artifact />, container);
+    });
+
+    act(() => {
+      map.mousedown(new Event('mousedown'));
+    });
+    
+     // Assert
+    expect(window.getSelection).toHaveBeenCalled();
+
+    const domSelection = window.getSelection.mock.results[0].value;
+    expect(domSelection.removeAllRanges).toHaveBeenCalled();
+  })
+
   it('does not update the selection, if nothing is clicked', () => {
     // Act
     act(() => {
       ReactDOM.render(<Artifact />, container);
     });
 
-    map.mouseup(new Event('mouseup'));
+    act(() => {
+      map.mouseup(new Event('mouseup'));
+    });
     
      // Assert
     expect(window.getSelection).toHaveBeenCalled();
+
+    const domSelection = window.getSelection.mock.results[0].value;
     expect(document.createRange).not.toHaveBeenCalled();
+    expect(domSelection.removeAllRanges).not.toHaveBeenCalled();
+    expect(domSelection.addRange).not.toHaveBeenCalled();
+  });
+
+  it('does not update the selection, if a Range is selected', () => {
+    // Arrange
+    window.getSelection = jest.fn(() => {
+      return {
+        type: "Range",
+        anchorNode: {
+          nodeName: '#text'
+        },
+        focusNode: {
+          textContent: 'line'
+        },
+        removeAllRanges: jest.fn(),
+        addRange: jest.fn()
+      }
+    });
+
+    // Act
+    act(() => {
+      ReactDOM.render(<Artifact />, container);
+    });
+
+    act(() => {
+      map.mouseup(new Event('mouseup'));
+    });
+    
+     // Assert
+     expect(window.getSelection).toHaveBeenCalled();
+
+     const domSelection = window.getSelection.mock.results[0].value;
+     expect(document.createRange).not.toHaveBeenCalled();
+     expect(domSelection.removeAllRanges).not.toHaveBeenCalled();
+     expect(domSelection.addRange).not.toHaveBeenCalled();
   });
 
   it('selects the whole line, if Caret is clicked', () => {
@@ -71,11 +118,7 @@ describe('Artifact responds to mouse events', () => {
           textContent: 'line'
         },
         removeAllRanges: jest.fn(),
-        addRange: jest.fn((range) => {
-          if (range) {
-            currentSelection = "line";
-          }
-        })
+        addRange: jest.fn()
       }
     });
     document.createRange = jest.fn(() => {
@@ -91,7 +134,7 @@ describe('Artifact responds to mouse events', () => {
 
     act(() => {
       map.mouseup(new Event('mouseup'));
-    })
+    });
 
     // Assert
     expect(document.createRange).toHaveBeenCalled();
