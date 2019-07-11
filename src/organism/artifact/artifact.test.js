@@ -47,17 +47,20 @@ describe('Artifact responds to mouse events', () => {
   });
 
   it('does not update the selection, if nothing is clicked', () => {
+    // Act
     act(() => {
       ReactDOM.render(<Artifact />, container);
     });
 
     map.mouseup(new Event('mouseup'));
+    
+     // Assert
     expect(window.getSelection).toHaveBeenCalled();
     expect(document.createRange).not.toHaveBeenCalled();
   });
 
   it('selects the whole line, if Caret is clicked', () => {
-    // setup
+    // Arrange
     window.getSelection = jest.fn(() => {
       return {
         type: "Caret",
@@ -81,6 +84,7 @@ describe('Artifact responds to mouse events', () => {
       }
     });
 
+    // Act
     act(() => {
       ReactDOM.render(<Artifact />, container);
     });
@@ -89,7 +93,7 @@ describe('Artifact responds to mouse events', () => {
       map.mouseup(new Event('mouseup'));
     })
 
-    // test
+    // Assert
     expect(document.createRange).toHaveBeenCalled();
   });
 });
