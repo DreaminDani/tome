@@ -12,6 +12,7 @@ export default function Artifact() {
   }
   
   const mouseUpHandler = e => {
+    // todo respond to touch events
     e.stopPropagation();
     const domSelection = window.getSelection();
     if (domSelection.type === "Range") {
