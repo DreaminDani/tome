@@ -4,7 +4,7 @@ workflow "Deploy to PCF after build" {
 }
 
 action "Deploy to PCF" {
-  uses = "d3sandoval/cloud-foundry-action@1.1.0"
+  uses = "d3sandoval/cloud-foundry-action@1.1.1"
   secrets = ["CF_USERNAME", "CF_PASSWORD"]
   env = {
     CF_TARGET_ORG = "dsandoval-org"
