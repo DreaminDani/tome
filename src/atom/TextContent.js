@@ -2,6 +2,7 @@ import React from 'react';
 import { Typography, makeStyles } from "@material-ui/core";
 const useStyles = makeStyles(theme => ({
     text: {
+        fontFamily: `'Cormorant Garamond', serif`,
         '&::selection': {
             background: theme.palette.primary.light,
             color: 'white',
@@ -12,7 +13,7 @@ const useStyles = makeStyles(theme => ({
 export default function TextContent() {
     const classes = useStyles();
     return (
-        <Typography classes={{root:classes.text}}>
+        <p className={classes.text}>
             Two roads diverged in a yellow wood,<br/>
             And sorry I could not travel both<br/>
             And be one traveler, long I stood<br/>
@@ -36,6 +37,6 @@ export default function TextContent() {
             Two roads diverged in a wood, and I—<br/>
             I took the one less traveled by,<br/>
             And that has made all the difference.<br/>
-        </Typography>
+        </p>
     )
 }

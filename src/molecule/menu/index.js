@@ -1,14 +1,13 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import Drawer from '@material-ui/core/Drawer';
-import Button from '@material-ui/core/Button';
-import List from '@material-ui/core/List';
-import Divider from '@material-ui/core/Divider';
-import ListItem from '@material-ui/core/ListItem';
+import { Drawer, Button, List, Divider, ListItem, Box, Typography } from '@material-ui/core';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import InboxIcon from '@material-ui/icons/MoveToInbox';
 import MailIcon from '@material-ui/icons/Mail';
+import CloseIcon from '@material-ui/icons/Close';
+
+import MenuNotch from '../../atom/menuNotch';
 
 const useStyles = makeStyles({
   list: {
@@ -17,14 +16,18 @@ const useStyles = makeStyles({
   fullList: {
     width: 'auto',
   },
+  menuHeader: {
+    padding: 8,
+  },
+  menuIcon: {
+    marginTop: 10,
+    float: 'right',
+  }
 });
 
 export default function Menu() {
   const classes = useStyles();
   const [state, setState] = React.useState({
-    top: false,
-    left: false,
-    bottom: false,
     right: false,
   });
 
@@ -44,6 +47,10 @@ export default function Menu() {
       onClick={toggleDrawer(side, false)}
       onKeyDown={toggleDrawer(side, false)}
     >
+      <div className={classes.menuHeader}>
+        <Typography variant="h4" component="span">Tome</Typography>
+        <CloseIcon className={classes.menuIcon} />
+      </div>
       <List>
         {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
           <ListItem button key={text}>
@@ -66,7 +73,7 @@ export default function Menu() {
 
   return (
     <React.Fragment>
-      <Button onClick={toggleDrawer('right', true)}>Open Right</Button>
+      <MenuNotch onClick={toggleDrawer('right', true)} />
       <Drawer anchor="right" open={state.right} onClose={toggleDrawer('right', false)}>
         {sideList('right')}
       </Drawer>
