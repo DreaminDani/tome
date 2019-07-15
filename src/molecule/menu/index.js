@@ -1,8 +1,6 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import { Drawer, Button, List, Divider, ListItem, Box, Typography } from '@material-ui/core';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
+import Link from 'next/link';
+import { makeStyles, Drawer, Button, List, Divider, ListItem, Box, Typography, IconButton, ListItemIcon, ListItemText } from '@material-ui/core';
 import InboxIcon from '@material-ui/icons/MoveToInbox';
 import MailIcon from '@material-ui/icons/Mail';
 import CloseIcon from '@material-ui/icons/Close';
@@ -20,62 +18,53 @@ const useStyles = makeStyles({
     padding: 8,
   },
   menuIcon: {
-    marginTop: 10,
     float: 'right',
   }
 });
 
 export default function Menu() {
   const classes = useStyles();
-  const [state, setState] = React.useState({
-    right: false,
-  });
+  const [open, setOpen] = React.useState(false);
 
-  const toggleDrawer = (side, open) => event => {
-    if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
-      return;
-    }
-
-    setState({ ...state, [side]: open });
-  };
-  
-  // todo use a real menu
-  const sideList = side => (
+  const menuList = () => (
     <div
       className={classes.list}
       role="presentation"
-      onClick={toggleDrawer(side, false)}
-      onKeyDown={toggleDrawer(side, false)}
+      onClick={() => setOpen(false)}
+      onKeyDown={() => setOpen(false)}
     >
       <div className={classes.menuHeader}>
         <Typography variant="h4" component="span">Tome</Typography>
-        <CloseIcon className={classes.menuIcon} />
+        <IconButton className={classes.menuIcon}><CloseIcon /></IconButton>
       </div>
       <List>
-        {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
-          <ListItem button key={text}>
-            <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
-            <ListItemText primary={text} />
+        <Link href="/about">
+          <ListItem button >
+            <ListItemIcon><InboxIcon /></ListItemIcon>
+            <ListItemText primary="About" />
           </ListItem>
-        ))}
-      </List>
-      <Divider />
-      <List>
-        {['All mail', 'Trash', 'Spam'].map((text, index) => (
-          <ListItem button key={text}>
-            <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
-            <ListItemText primary={text} />
+        </Link>
+        <Link href="/artifact">
+          <ListItem button >
+            <ListItemIcon><MailIcon /></ListItemIcon>
+            <ListItemText primary="Artifact" />
           </ListItem>
-        ))}
+        </Link>
+        <Link href="/">
+          <ListItem button >
+            <ListItemIcon><InboxIcon /></ListItemIcon>
+            <ListItemText primary="Index" />
+          </ListItem>
+        </Link>
       </List>
     </div>
   );
 
   return (
     <React.Fragment>
-      <MenuNotch onClick={toggleDrawer('right', true)} />
-      <Drawer anchor="right" open={state.right} onClose={toggleDrawer('right', false)}>
-        {sideList('right')}
+      <MenuNotch onClick={() => setOpen(true)} />
+      <Drawer anchor="right" open={open} onClose={() => setOpen(false)}>
+        {menuList()}
       </Drawer>
     </React.Fragment>
   )

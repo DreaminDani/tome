@@ -4,6 +4,7 @@ import Head from 'next/head';
 import { ThemeProvider } from '@material-ui/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import theme from '../src/theme';
+import Menu from '../src/molecule/menu';
 
 class MyApp extends App {
   componentDidMount() {
@@ -20,11 +21,12 @@ class MyApp extends App {
     return (
       <Container>
         <Head>
-          <title>My page</title>
+          <title>Tome</title>
         </Head>
         <ThemeProvider theme={theme}>
           {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
           <CssBaseline />
+          <Menu />
           <Component {...pageProps} />
         </ThemeProvider>
       </Container>
