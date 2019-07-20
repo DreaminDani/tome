@@ -5,9 +5,27 @@ workflow "Deploy to PCF after build" {
   on = "push"
 }
 
+action "Install" {
+  uses = "nuxt/actions-yarn@master"
+  args = "install --ignore-scripts"
+}
+
+action "Lint" {
+  uses = "nuxt/actions-yarn@master"
+  args = "lint"  
+  needs = ["Install"]
+}
+
+action "Test" {
+  uses = "nuxt/actions-yarn@master"
+  needs = ["Lint"]
+  args = "test"
+}
+
 action "If on master" {
   uses = "actions/bin/filter@0dbb077f64d0ec1068a644d25c71b1db66148a24"
   args = "branch master"
+  needs = ["Test"]
 }
 
 action "Deploy to PCF" {
