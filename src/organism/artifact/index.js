@@ -1,5 +1,5 @@
+import { Box, Container, Typography } from '@material-ui/core';
 import React, { useState } from 'react';
-import { Container, Box, Typography } from '@material-ui/core';
 import TextContent from '../../atom/TextContent';
 
 export default function Artifact() {

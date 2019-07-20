@@ -1,10 +1,10 @@
-import React from 'react';
-import fetch from "isomorphic-fetch";
+import Box from '@material-ui/core/Box';
 import Container from '@material-ui/core/Container';
 import Typography from '@material-ui/core/Typography';
-import Box from '@material-ui/core/Box';
-import Link from '../src/Link';
-
+import fetch from "isomorphic-fetch";
+import PropTypes from 'prop-types';
+import React from 'react';
+import Link from '../src/atom/Link';
 
 function Index(props) {
   return (
@@ -49,5 +49,13 @@ Index.getInitialProps = async ({ req }) => {
     }
   }  
 };
+
+Index.propTypes = {
+  thoughts: PropTypes.objectOf({
+    _id: PropTypes.string,
+    message: PropTypes.string,
+    author: PropTypes.string,
+  })
+}
 
 export default Index;

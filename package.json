@@ -26,6 +26,9 @@
     "babel-jest": "latest",
     "enzyme": "latest",
     "enzyme-adapter-react-16": "latest",
+    "eslint": "^6.0.1",
+    "eslint-plugin-jsx-ally": "^6.0.3",
+    "eslint-plugin-react": "^7.14.2",
     "jest": "latest",
     "jsdom": "latest",
     "react-addons-test-utils": "latest",
@@ -37,6 +40,8 @@
     "start": "NODE_ENV=production PORT=8080 node server.js",
     "test": "jest",
     "test:coverage": "jest --coverage",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
     "postinstall": "next build"
   }
 }

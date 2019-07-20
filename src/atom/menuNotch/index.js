@@ -1,6 +1,7 @@
-import React from 'react';
 import { makeStyles, Typography } from '@material-ui/core';
 import MenuIcon from '@material-ui/icons/Menu';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 const useStyles = makeStyles({
   root: {
@@ -60,5 +61,9 @@ const MenuNotch = (props) => {
     </div>
   )
 };
+
+MenuNotch.propTypes = {
+  onClick: PropTypes.func,
+}
 
 export default MenuNotch;
