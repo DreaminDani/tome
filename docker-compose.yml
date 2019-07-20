@@ -10,9 +10,6 @@ services:
     image: db-migrate:latest
     build: ./db
     restart: on-failure
-    environment:
-      - TARGET_URI=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db/${POSTGRES_DATABASE}
-      - SQITCH_PASSWORD=${POSTGRES_PASSWORD}
     depends_on:
       - db
     env_file: .env
