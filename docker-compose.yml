@@ -1,0 +1,27 @@
+version: '3'
+services:
+  db:
+    image: postgres
+    restart: always
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    env_file: .env
+  db-migrate:
+    image: db-migrate:latest
+    build: ./db
+    restart: on-failure
+    environment:
+      - TARGET_URI=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db/${POSTGRES_DATABASE}
+      - SQITCH_PASSWORD=${POSTGRES_PASSWORD}
+    depends_on:
+      - db
+    env_file: .env
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 7772:8080
+
+volumes:
+  db-data:
+    driver: local
