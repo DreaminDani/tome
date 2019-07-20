@@ -2,13 +2,29 @@
 
 ## How to use
 
-Install it and run:
+### 1. Database
+TBD
+
+### 2. Environment File
+Then create a `.env` file with the required creds:
+```
+PORT=3000
+AUTH0_DOMAIN=your-domain.auth0.com
+AUTH0_CLIENT_ID=...
+AUTH0_CLIENT_SECRET=...
+AUTH0_CALLBACK_URL=http://localhost:3000/callback
+BASE_URL=http://localhost:3000
+```
+Make sure you set the callback and login urls in the auth0 dashboard for auth to work.
+
+### 3. Localhost dev environment
+Finally, install the node packages and spin up a dev environment:
 
 ```sh
 yarn
 yarn dev
 ```
 
-## The idea behind the example
+## Deployment
 
-[Next.js](https://github.com/zeit/next.js) is a framework for server-rendered React apps.
+Tome deploys to PCF via GitHub Actions. See the `.github` directory for more info.
