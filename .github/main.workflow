@@ -1,7 +1,7 @@
-workflow "Deploy to PCF after build" {
+workflow "Pipeline" {
   resolves = [
     "Deploy to PCF",
-    "Database Migrations",
+    "Database migrations",
   ]
   on = "push"
 }
@@ -40,7 +40,8 @@ action "Deploy to PCF" {
   needs = ["If on master"]
 }
 
-action "Database Migrations" {
+action "Database migrations" {
   uses = "./db"
+  needs = ["If on master"]
   secrets = ["TARGET_URI"]
 }
