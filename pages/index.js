@@ -50,12 +50,4 @@ Index.getInitialProps = async ({ req }) => {
   }  
 };
 
-Index.propTypes = {
-  thoughts: PropTypes.objectOf({
-    _id: PropTypes.string,
-    message: PropTypes.string,
-    author: PropTypes.string,
-  })
-}
-
 export default Index;

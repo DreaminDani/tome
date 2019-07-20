@@ -44,7 +44,7 @@ describe('Artifact responds to mouse events', () => {
     expect(window.getSelection).toHaveBeenCalled();
 
     const domSelection = window.getSelection.mock.results[0].value;
-    expect(domSelection.removeAllRanges).not.toHaveBeenCalled();
+    expect(domSelection.removeAllRanges).toHaveBeenCalled();
   })
 
   it('does not update the selection, if nothing is clicked', () => {
