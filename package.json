@@ -6,28 +6,42 @@
     "@material-ui/core": "latest",
     "@material-ui/icons": "^4.2.1",
     "@material-ui/styles": "latest",
+    "body-parser": "^1.19.0",
     "clsx": "latest",
+    "dotenv": "^8.0.0",
+    "dotenv-webpack": "^1.7.0",
+    "express": "^4.17.1",
+    "express-session": "^1.16.2",
+    "isomorphic-fetch": "^2.2.1",
     "next": "latest",
+    "passport": "^0.4.0",
+    "passport-auth0": "^1.1.0",
     "prop-types": "latest",
     "react": "latest",
-    "react-dom": "latest"
+    "react-dom": "latest",
+    "uid-safe": "^2.1.5"
   },
   "devDependencies": {
     "@babel/core": "latest",
     "babel-jest": "latest",
     "enzyme": "latest",
     "enzyme-adapter-react-16": "latest",
+    "eslint": "^6.0.1",
+    "eslint-plugin-jsx-ally": "^6.0.3",
+    "eslint-plugin-react": "^7.14.2",
     "jest": "latest",
     "jsdom": "latest",
     "react-addons-test-utils": "latest",
     "react-test-renderer": "latest"
   },
   "scripts": {
-    "dev": "next",
+    "dev": "node server.js",
     "build": "next build",
-    "start": "next start -p 8080",
+    "start": "NODE_ENV=production PORT=8080 node server.js",
     "test": "jest",
     "test:coverage": "jest --coverage",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
     "postinstall": "next build"
   }
 }

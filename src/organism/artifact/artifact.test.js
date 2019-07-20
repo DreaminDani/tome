@@ -1,7 +1,7 @@
 /* eslint-env jest */
 
-import React from 'react';
 import { shallow } from 'enzyme';
+import React from 'react';
 import Artifact from './';
 
 describe('Artifact responds to mouse events', () => {
