@@ -35,7 +35,9 @@ function Index(props) {
 Index.getInitialProps = async ({ req }) => {
   const baseURL = req ? `${req.protocol}://${req.get("Host")}` : "";
   const res = await fetch(`${baseURL}/api/thoughts`, {
-    credentials: 'include'  
+    headers: {
+      cookie: req.headers.cookie,
+    },
   });
   if (res.status === 200) {
     return {
