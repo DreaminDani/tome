@@ -1,6 +1,9 @@
 #! /bin/bash
 
-ls -al
+# make sure you're in the db directory, if happens to run at root (e.g. github actions)
+if [ -d db ]; then
+  cd db
+fi
 
 RETRIES=5
 
