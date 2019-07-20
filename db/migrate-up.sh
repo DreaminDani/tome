@@ -12,4 +12,4 @@ until psql "$TARGET_URI" -c '\q' > /dev/null 2>&1 || [ $RETRIES -eq 0 ]; do
   sleep 1
 done
 
-sqitch deploy --target "${TARGET_URI}" --verify
+sqitch deploy --target "${TARGET_URI}?sslmode=require" --verify
