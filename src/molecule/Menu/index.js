@@ -4,7 +4,7 @@ import MailIcon from '@material-ui/icons/Mail';
 import InboxIcon from '@material-ui/icons/MoveToInbox';
 import Link from 'next/link';
 import React from 'react';
-import MenuNotch from '../../atom/menuNotch';
+import MenuNotch from '../../atom/MenuNotch';
 
 const useStyles = makeStyles({
   list: {
