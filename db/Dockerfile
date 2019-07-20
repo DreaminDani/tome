@@ -4,5 +4,6 @@ ENV SQITCH_PASSWORD example
 
 COPY . .
 
-ENTRYPOINT ["/bin/bash"]
-CMD ["./migrate-up.sh"]
+ADD migrate-up.sh /migrate-up.sh
+
+ENTRYPOINT ["/migrate-up.sh"]
