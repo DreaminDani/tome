@@ -1,6 +1,13 @@
 workflow "Deploy to PCF after build" {
-  resolves = ["Deploy to PCF"]
+  resolves = [
+    "Deploy to PCF",
+  ]
   on = "push"
+}
+
+action "If on master" {
+  uses = "actions/bin/filter@0dbb077f64d0ec1068a644d25c71b1db66148a24"
+  args = "branch master"
 }
 
 action "Deploy to PCF" {
@@ -11,4 +18,5 @@ action "Deploy to PCF" {
     CF_TARGET_SPACE = "development"
   }
   args = "push tome -b https://github.com/cloudfoundry/nodejs-buildpack"
+  needs = ["If on master"]
 }
