@@ -10,7 +10,6 @@ router.use(bodyParser.json());
 //  1. list of artifacts I own
 //  2. list of artifacts shared with me
 router.get("/api/artifacts", ensureAuthenticated, async (req, res) => {
-  console.log('made it!')
   const client = await req.app.get("db").connect();
   const artifacts = {};
 

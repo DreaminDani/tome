@@ -1,9 +1,9 @@
 import Box from '@material-ui/core/Box';
-import Container from '@material-ui/core/Container';
-import Typography from '@material-ui/core/Typography';
+import { Container, Typography, Button } from '@material-ui/core';
 import PropTypes from 'prop-types';
 import React from 'react';
-import Link from '../src/atom/Link';
+import Link from 'next/link';
+import MaterialLink from '../src/atom/Link';
 import { getData } from '../src/api';
 
 function Index(props) {
@@ -14,24 +14,47 @@ function Index(props) {
           Welcome
         </Typography>
         {props.user ? (
-          props.list &&
-            props.list.map(artifact => (
-                <Typography key={artifact.id}>
-                  <Link href='/artifact/[slug]' as={`/artifact/${artifact.id}`}>
-                    {artifact.name}
-                  </Link>
+          <React.Fragment>
+            <Link href="/edit">
+              <Button color="primary">
+                Create New Artifact
+              </Button>
+            </Link>
+            {props.list && (props.list.length > 0) && (
+              <React.Fragment>
+                <Typography variant="subtitle1">
+                  Or have a look at your previous work...
                 </Typography>
-            ))
-        ) : 'You must be logged in to continue'}
+                {props.list.map(artifact => (
+                    <Typography key={artifact.id}>
+                      <MaterialLink href='/artifact/[slug]' as={`/artifact/${artifact.id}`}>
+                        {artifact.name}
+                      </MaterialLink>
+                    </Typography>
+                ))}
+              </React.Fragment>
+            )}
+          </React.Fragment>
+        ) : (
+          <React.Fragment>
+            <Typography>
+              You must be logged in to continue
+            </Typography>
+            <Link href="/login">
+              <Button variant="contained" color="primary">
+                Login
+              </Button>
+            </Link>
+          </React.Fragment>
+        )}
       </Box>
     </Container>
   );
 }
 
 Index.getInitialProps = async ({ req }) => {
-  if (req.session && req.session.passport && req.session.passport.user) {
+  if (req && req.session && req.session.passport && req.session.passport.user) {
     const res = await getData(`/api/artifacts`, req.headers.cookie);
-    console.log(res);
     return res;
   }
 
@@ -40,14 +63,14 @@ Index.getInitialProps = async ({ req }) => {
 
 Index.propTypes = {
   user: PropTypes.object,
-  list: PropTypes.arrayOf({
+  list: PropTypes.arrayOf(PropTypes.shape({
     id: PropTypes.string,
     name: PropTypes.string,
     user_id: PropTypes.number,
     created_at: PropTypes.string,
     updated_at: PropTypes.string,
     auth_metadata: PropTypes.object,
-  })
+  }))
 }
 
 export default Index;

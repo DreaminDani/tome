@@ -20,8 +20,8 @@ function Edit(props) {
   const classes = useStyles();
 
   const [values, setValues] = useState({
-    name: props.artifact_data.name ? props.artifact_data.name : '',
-    body: props.artifact_data.body ? props.artifact_data.body : '',
+    name: (props.artifact_data && props.artifact_data.name) ? props.artifact_data.name : '',
+    body: (props.artifact_data && props.artifact_data.body) ? props.artifact_data.body : '',
   });
 
   const handleChange = name => event => {
@@ -68,8 +68,12 @@ function Edit(props) {
 }
 
 Edit.getInitialProps = async ({ req }) => {
-  const res = await getData(`/api/artifact/${req.params.slug}`, req.headers.cookie);
-  return res;
+  if (req && req.params && req.params.slug) {
+    const res = await getData(`/api/artifact/${req.params.slug}`, req.headers.cookie);
+    return res;
+  }
+
+  return {};
 }
 
 Edit.propTypes = {

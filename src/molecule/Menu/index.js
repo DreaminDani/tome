@@ -1,7 +1,8 @@
 import { Drawer, IconButton, List, ListItem, ListItemIcon, ListItemText, makeStyles, Typography } from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
-import MailIcon from '@material-ui/icons/Mail';
-import InboxIcon from '@material-ui/icons/MoveToInbox';
+import CreateIcon from '@material-ui/icons/Create';
+import HomeIcon from '@material-ui/icons/Home';
+import InfoIcon from '@material-ui/icons/Info';
 import Link from 'next/link';
 import React from 'react';
 import MenuNotch from '../../atom/MenuNotch';
@@ -37,22 +38,22 @@ export default function Menu() {
         <IconButton className={classes.menuIcon}><CloseIcon /></IconButton>
       </div>
       <List>
-        <Link href="/about">
-          <ListItem button >
-            <ListItemIcon><InboxIcon /></ListItemIcon>
-            <ListItemText primary="About" />
-          </ListItem>
-        </Link>
-        <Link href="/artifact">
-          <ListItem button >
-            <ListItemIcon><MailIcon /></ListItemIcon>
-            <ListItemText primary="Artifact" />
-          </ListItem>
-        </Link>
         <Link href="/">
           <ListItem button >
-            <ListItemIcon><InboxIcon /></ListItemIcon>
-            <ListItemText primary="Index" />
+            <ListItemIcon><HomeIcon /></ListItemIcon>
+            <ListItemText primary="Home" />
+          </ListItem>
+        </Link>
+        <Link href="/edit">
+          <ListItem button >
+            <ListItemIcon><CreateIcon /></ListItemIcon>
+            <ListItemText primary="New" />
+          </ListItem>
+        </Link>
+        <Link href="/about">
+          <ListItem button >
+            <ListItemIcon><InfoIcon /></ListItemIcon>
+            <ListItemText primary="About" />
           </ListItem>
         </Link>
       </List>
