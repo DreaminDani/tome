@@ -37,7 +37,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-function New(props) {
+function Edit(props) {
   const classes = useStyles();
 
   const [values, setValues] = React.useState({
@@ -125,4 +125,4 @@ function New(props) {
   )
 }
 
-export default New;
+export default Edit;

@@ -20,18 +20,26 @@ router.get("/api/artifact", ensureAuthenticated, (req, res) => {
 });
 
 // get artifact by id
-router.get("/api/artifact/:id", ensureAuthenticated, (req, res) => {
-  res.send({});
+router.get("/api/artifact/:id", ensureAuthenticated, async (req, res) => {
+  const client = await req.app.get("db").connect();
+  let artifact = {};
+
+  try {
+    const getArtifact = await client.query('SELECT * FROM artifacts WHERE id = $1', [req.params.id]);
+    artifact = getArtifact.rows[0];
+  } finally {
+    client.release();
+  }
+
+  res.send(artifact);
 });
 
 router.post("/api/artifact/add", ensureAuthenticated, async (req, res) => {
   // todo security validation
-  console.log(req.body);
   const client = await req.app.get("db").connect();
   let saved = {};
 
   try {
-    console.log(req.user.id);
     const getUser = await client.query('SELECT * FROM users WHERE auth_id = $1', [req.user.id]);
     const response = await client.query(`
             INSERT INTO artifacts(user_id, artifact_data)

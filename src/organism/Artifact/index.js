@@ -2,7 +2,7 @@ import { Box, Container, Typography } from '@material-ui/core';
 import React, { useState } from 'react';
 import TextContent from '../../atom/TextContent';
 
-export default function Artifact() {
+export default function Artifact(props) {
   const [selection, setSelection] = useState("");
 
   const mouseDownHandler = e => {
@@ -36,12 +36,11 @@ export default function Artifact() {
     <Container id="artifact" maxWidth="sm" onMouseDown={mouseDownHandler} onMouseUp={mouseUpHandler}>
       <Box my={4}>
           <Typography>
-          Currently selected:<br/>
-          {selection}
-          <br/>
-          <br/>
+            {props.name}
           </Typography>
-          <TextContent />
+          <TextContent>
+            {props.body}
+          </TextContent>
       </Box>
     </Container>
   )

@@ -39,10 +39,11 @@ app.prepare().then(() => {
   // routes and endpoints
   server.use(authRoutes);
   server.use(artifactAPI);
-  server.use("/new", restrictAccess); // todo change to "edit"
+  server.use("/edit", restrictAccess); // todo change to "edit"
+  server.get('/artifact', (req, res) => res.redirect("/edit"));
   server.get('/artifact/:slug', restrictAccess, (req, res) => {
     return app.render(req, res, '/artifact', { slug: req.params.slug })
-  })
+  });
   server.get("*", handle);
 
   http.createServer(server).listen(process.env.PORT, () => {
