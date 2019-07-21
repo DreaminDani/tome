@@ -14,7 +14,7 @@ const { sessionConfig, auth0Strategy, connectionString } = require("./config");
 const { restrictAccess } = require("./helpers");
 
 const authRoutes = require("./auth-routes");
-const thoughtsAPI = require("./thoughts-api");
+const artifactAPI = require("./artifact-api");
 
 const app = next({ dev });
 const handle = app.getRequestHandler();
@@ -36,10 +36,20 @@ app.prepare().then(() => {
   server.use(passport.initialize());
   server.use(passport.session());
 
+  // api endpoints
+  server.use(artifactAPI);
+
   // routes
   server.use(authRoutes);
-  server.use(thoughtsAPI);
-  server.use("/", restrictAccess);
+  server.use("/edit", restrictAccess);
+  server.get('/edit/:slug', restrictAccess, (req, res) => {
+    return app.render(req, res, '/edit', { slug: req.params.slug })
+  });
+  server.get('/artifact', (req, res) => res.redirect("/edit"));
+  server.get('/artifact/:slug', restrictAccess, (req, res) => {
+    return app.render(req, res, '/artifact', { slug: req.params.slug })
+  });
+  
   server.get("*", handle);
 
   http.createServer(server).listen(process.env.PORT, () => {

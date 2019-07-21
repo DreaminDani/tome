@@ -4,6 +4,9 @@ const path = require("path");
 const Dotenv = require("dotenv-webpack");
 
 module.exports = {
+  env: {
+    BASE_URL: process.env.BASE_URL
+  },
   webpack: config => {
     config.plugins = config.plugins || [];
 

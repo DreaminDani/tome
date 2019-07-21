@@ -9,6 +9,7 @@ const useStyles = makeStyles({
     position: 'fixed',
     top: 0,
     right: 0,
+    zIndex: 10,
     // elevation level 2
     filter: `
       drop-shadow(0px 1px 5px rgba(0,0,0,0.2))
