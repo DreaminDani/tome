@@ -2,8 +2,7 @@ import Box from '@material-ui/core/Box';
 import { Container, Typography, Button } from '@material-ui/core';
 import PropTypes from 'prop-types';
 import React from 'react';
-import Link from 'next/link';
-import MaterialLink from '../src/atom/Link';
+import Link from '../src/atom/Link';
 import { getData } from '../src/api';
 
 function Index(props) {
@@ -14,25 +13,25 @@ function Index(props) {
           Welcome
         </Typography>
         {props.user ? (
-          <React.Fragment>
+          <Typography>
             <Button color="primary" href="/edit">
               Create New Artifact
             </Button>
             {props.list && (props.list.length > 0) && (
-              <React.Fragment>
+              <Typography>
                 <Typography variant="subtitle1">
                   Or have a look at your previous work...
                 </Typography>
                 {props.list.map(artifact => (
                     <Typography key={artifact.id}>
-                      <MaterialLink href='/artifact/[slug]' as={`/artifact/${artifact.id}`}>
+                      <Link href='/artifact/[slug]' as={`/artifact/${artifact.id}`}>
                         {artifact.name}
-                      </MaterialLink>
+                      </Link>
                     </Typography>
                 ))}
-              </React.Fragment>
+              </Typography>
             )}
-          </React.Fragment>
+          </Typography>
         ) : (
           <React.Fragment>
             <Typography>
