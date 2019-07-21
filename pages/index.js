@@ -20,35 +20,35 @@ function Index(props) {
         <Link href="/artifact" color="primary">
           Go to an artifact page
         </Link>
-        {props.thoughts &&
+        {/* {props.thoughts &&
           props.thoughts.map(thought => (
               <Typography key={thought._id}>
                 {thought.message} | {thought.author}
               </Typography>
           ))}
-        {!props.thoughts && <Typography>Loading...</Typography>}
+        {!props.thoughts && <Typography>Loading...</Typography>} */}
       </Box>
     </Container>
   );
 }
 
-Index.getInitialProps = async ({ req }) => {
-  const baseURL = req ? `${req.protocol}://${req.get("Host")}` : "";
-  const res = await fetch(`${baseURL}/api/thoughts`, {
-    headers: {
-      cookie: req.headers.cookie,
-    },
-  });
-  if (res.status === 200) {
-    return {
-      thoughts: await res.json()
-    };
-  } else {
-    return {
-      thoughts: ["error"]
-    }
-  }  
-};
+// Index.getInitialProps = async ({ req }) => {
+//   const baseURL = req ? `${req.protocol}://${req.get("Host")}` : "";
+//   const res = await fetch(`${baseURL}/api/thoughts`, {
+//     headers: {
+//       cookie: req.headers.cookie,
+//     },
+//   });
+//   if (res.status === 200) {
+//     return {
+//       thoughts: await res.json()
+//     };
+//   } else {
+//     return {
+//       thoughts: ["error"]
+//     }
+//   }  
+// };
 
 Index.propTypes = {
   thoughts: PropTypes.objectOf({

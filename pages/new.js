@@ -1,5 +1,7 @@
 import React, { useEffect } from 'react';
 import { Box, Grid, ButtonGroup, Button, TextField, makeStyles, Typography } from '@material-ui/core';
+import { postData } from '../src/api';
+import Router from 'next/router';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -48,11 +50,22 @@ function New(props) {
     const calculatedRows = Math.round(document.getElementById('body-border').clientHeight / 19);
     setValues({...values, numRows: calculatedRows });
   });
-  
 
   const handleChange = name => event => {
     setValues({ ...values, [name]: event.target.value });
   };
+
+  const handleSave = async () => {
+    // todo validate
+    const res = await postData('/api/artifact/add',{
+      name: values.name,
+      body: values.body
+    });
+    
+    if (res.id) {
+      Router.push(`/artifact/slug=${res.id}`, `/artifact/${res.id}`);
+    }
+  }
 
   return (
     <div className={classes.root}>
@@ -94,7 +107,7 @@ function New(props) {
         <Grid item xs={12} sm={4} className={classes.settings}>
           <div className={classes.actions}>
             <Button className={classes.button}>Discard</Button>
-            <Button variant="contained" color="primary" className={classes.button}>
+            <Button variant="contained" color="primary" className={classes.button} onClick={handleSave}>
               Save
             </Button>
           </div>

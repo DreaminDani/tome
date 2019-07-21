@@ -20,7 +20,7 @@ router.get("/callback", (req, res, next) => {
       const client = await req.app.get("db").connect();
 
       try {
-        const getUser = await client.query('SELECT * FROM users WHERE auth_id = $1', [user.id])
+        const getUser = await client.query('SELECT * FROM users WHERE auth_id = $1', [user.id]);
         if (getUser.rows[0]) {
           await client.query(`
             UPDATE users
