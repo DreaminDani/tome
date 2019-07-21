@@ -1,9 +1,8 @@
-import { Drawer, IconButton, List, ListItem, ListItemIcon, ListItemText, makeStyles, Typography } from '@material-ui/core';
+import { Drawer, IconButton, List, ListItem, Link, ListItemIcon, ListItemText, makeStyles, Typography } from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
 import CreateIcon from '@material-ui/icons/Create';
 import HomeIcon from '@material-ui/icons/Home';
 import InfoIcon from '@material-ui/icons/Info';
-import Link from 'next/link';
 import React from 'react';
 import MenuNotch from '../../atom/MenuNotch';
 
