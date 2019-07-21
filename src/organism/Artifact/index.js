@@ -1,8 +1,9 @@
 import { Box, Container, Typography } from '@material-ui/core';
+import PropTypes from 'prop-types';
 import React, { useState } from 'react';
 import TextContent from '../../atom/TextContent';
 
-export default function Artifact(props) {
+function Artifact(props) {
   const [selection, setSelection] = useState("");
 
   const mouseDownHandler = e => {
@@ -32,6 +33,8 @@ export default function Artifact(props) {
     }
   }
 
+  console.log(selection); // todo pass this to the commenting tool
+
   return (
     <Container id="artifact" maxWidth="sm" onMouseDown={mouseDownHandler} onMouseUp={mouseUpHandler}>
       <Box my={4}>
@@ -45,3 +48,10 @@ export default function Artifact(props) {
     </Container>
   )
 }
+
+Artifact.propTypes = {
+  name: PropTypes.string,
+  body: PropTypes.string,
+};
+
+export default Artifact;

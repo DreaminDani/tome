@@ -51,7 +51,7 @@ function Index(props) {
 // };
 
 Index.propTypes = {
-  thoughts: PropTypes.objectOf({
+  thoughts: PropTypes.shape({
     _id: PropTypes.string,
     message: PropTypes.string,
     author: PropTypes.string,

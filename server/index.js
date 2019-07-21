@@ -36,14 +36,20 @@ app.prepare().then(() => {
   server.use(passport.initialize());
   server.use(passport.session());
 
-  // routes and endpoints
-  server.use(authRoutes);
+  // api endpoints
   server.use(artifactAPI);
-  server.use("/edit", restrictAccess); // todo change to "edit"
+
+  // routes
+  server.use(authRoutes);
+  server.use("/edit", restrictAccess);
+  server.get('/edit/:slug', restrictAccess, (req, res) => {
+    return app.render(req, res, '/edit', { slug: req.params.slug })
+  });
   server.get('/artifact', (req, res) => res.redirect("/edit"));
   server.get('/artifact/:slug', restrictAccess, (req, res) => {
     return app.render(req, res, '/artifact', { slug: req.params.slug })
   });
+  
   server.get("*", handle);
 
   http.createServer(server).listen(process.env.PORT, () => {

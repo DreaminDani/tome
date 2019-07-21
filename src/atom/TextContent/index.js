@@ -1,5 +1,7 @@
 import { makeStyles } from "@material-ui/core";
+import PropTypes from 'prop-types';
 import React from 'react';
+
 const useStyles = makeStyles(theme => ({
     text: {
         fontFamily: `'Cormorant Garamond', serif`,
@@ -11,12 +13,17 @@ const useStyles = makeStyles(theme => ({
     }
 }))
 
-export default function TextContent(props) {
+function TextContent(props) {
     const classes = useStyles();
-    console.log(props.children);
     return (
         <p className={classes.text}>
             {props.children}
         </p>
     )
 }
+
+TextContent.propTypes = {
+    children: PropTypes.string,
+};
+
+export default TextContent;

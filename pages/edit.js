@@ -1,54 +1,27 @@
-import React, { useEffect } from 'react';
-import { Box, Grid, ButtonGroup, Button, TextField, makeStyles, Typography } from '@material-ui/core';
-import { postData } from '../src/api';
+import React, { useState } from 'react';
+import PropTypes from 'prop-types';
+import { Grid, makeStyles, Typography } from '@material-ui/core';
+import { getData, postData } from '../src/api';
 import Router from 'next/router';
 
-const useStyles = makeStyles(theme => ({
+import ArtifactEditPane from '../src/molecule/ArtifactEditPane';
+import ArtifactSettingsPane from '../src/molecule/ArtifactSettingsPane';
+
+const useStyles = makeStyles({
   root: {
     margin: '0 16px',
   },
   title: {
     maxWidth: 'calc(100% - 120px)', //header width
-  },
-  name: {
-    fontWeight: 'bold',
-    marginBottom: 8,
-  },
-  settings: {
-    [theme.breakpoints.down('xs')]: {
-      background: '#ffffff',
-      zIndex: 5,
-      boxShadow: theme.shadows[2],
-      position: 'absolute',
-      bottom: 0,
-      width: '100%',
-      marginLeft: -8,
-    }
-  },
-  actions: {
-    [theme.breakpoints.down('xs')]: {
-      float: 'right'
-    },
-    marginTop: 24,
-    marginBottom: 24
-  },
-  button: {
-    marginRight: 8,
   }
-}));
+});
 
 function Edit(props) {
   const classes = useStyles();
 
-  const [values, setValues] = React.useState({
-    name: '',
-    body: '',
-    numRows: 4,
-  });
-
-  useEffect(() => {
-    const calculatedRows = Math.round(document.getElementById('body-border').clientHeight / 19);
-    setValues({...values, numRows: calculatedRows });
+  const [values, setValues] = useState({
+    name: props.artifact_data.name ? props.artifact_data.name : '',
+    body: props.artifact_data.body ? props.artifact_data.body : '',
   });
 
   const handleChange = name => event => {
@@ -57,10 +30,18 @@ function Edit(props) {
 
   const handleSave = async () => {
     // todo validate
-    const res = await postData('/api/artifact/add',{
+    const request = {
       name: values.name,
       body: values.body
-    });
+    };
+    if (props.id) {
+      request.id = props.id;
+    }
+
+    const res = await postData(
+      props.id ? '/api/artifact/update' : '/api/artifact/add',
+      request
+    );
     
     if (res.id) {
       Router.push(`/artifact/slug=${res.id}`, `/artifact/${res.id}`);
@@ -70,7 +51,7 @@ function Edit(props) {
   return (
     <div className={classes.root}>
       <Typography variant="h1" className={classes.title}>
-          New Artifact
+          { props.id ? 'Edit' : 'New' } Artifact
       </Typography>
       <Grid
         container
@@ -79,50 +60,27 @@ function Edit(props) {
         alignItems="stretch"
         spacing={2}
       >
-        <Grid item xs={12} sm={8}>
-          <TextField
-            id="outlined-name"
-            label="Name"
-            className={classes.name}
-            value={values.name}
-            onChange={handleChange('name')}
-            margin="normal"
-            variant="outlined"
-            fullWidth
-          />
-          <Box height="100%" maxHeight="40vh" width="100%" id="body-border">
-            <TextField
-              id="outlined-body"
-              label="Body"
-              multiline
-              rows={values.numRows} // each row is 19px
-              value={values.body}
-              onChange={handleChange('body')}
-              margin="normal"
-              variant="outlined"
-              fullWidth
-            />
-          </Box>
-        </Grid>
-        <Grid item xs={12} sm={4} className={classes.settings}>
-          <div className={classes.actions}>
-            <Button className={classes.button}>Discard</Button>
-            <Button variant="contained" color="primary" className={classes.button} onClick={handleSave}>
-              Save
-            </Button>
-          </div>
-          <Typography variant="h4" component="h2" gutterBottom>
-            Font type
-          </Typography>
-          <ButtonGroup aria-label="Small outlined button group">
-            <Button>Serif</Button>
-            <Button>Sans</Button>
-            <Button>Mono</Button>
-          </ButtonGroup>
-        </Grid>
+        <ArtifactEditPane handleChange={handleChange} name={values.name} body={values.body} />
+        <ArtifactSettingsPane handleSave={handleSave} />
       </Grid>
     </div>
   )
+}
+
+Edit.getInitialProps = async ({ req }) => {
+  const res = await getData(`/api/artifact/${req.params.slug}`, req.headers.cookie);
+  return res;
+}
+
+Edit.propTypes = {
+  id: PropTypes.string,
+  user_id: PropTypes.number,
+  artifact_data: PropTypes.shape({
+    body: PropTypes.string,
+    name: PropTypes.string
+  }),
+  created_at: PropTypes.string,
+  updated_at: PropTypes.string
 }
 
 export default Edit;
