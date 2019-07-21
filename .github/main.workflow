@@ -1,6 +1,7 @@
-workflow "Deploy to PCF after build" {
+workflow "Pipeline" {
   resolves = [
     "Deploy to PCF",
+    "Database migrations",
   ]
   on = "push"
 }
@@ -12,7 +13,7 @@ action "Install" {
 
 action "Lint" {
   uses = "nuxt/actions-yarn@master"
-  args = "lint"  
+  args = "lint"
   needs = ["Install"]
 }
 
@@ -37,4 +38,10 @@ action "Deploy to PCF" {
   }
   args = "push tome -b https://github.com/cloudfoundry/nodejs-buildpack"
   needs = ["If on master"]
+}
+
+action "Database migrations" {
+  uses = "./db"
+  needs = ["If on master"]
+  secrets = ["TARGET_URI"]
 }

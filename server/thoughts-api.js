@@ -16,7 +16,6 @@ const thoughts = [
 ];
 
 router.get("/api/thoughts", ensureAuthenticated, (req, res) => {
-  console.log(req.isAuthenticated());
   const orderedThoughts = thoughts.sort((t1, t2) => t2._id - t1._id);
   res.send(orderedThoughts);
 });

@@ -1,5 +1,5 @@
 import React from 'react';
-import Artifact from '../src/organism/artifact';
+import Artifact from '../src/organism/Artifact';
 
 export default function ArtifactPage() {
   return (

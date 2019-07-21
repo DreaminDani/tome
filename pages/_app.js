@@ -3,7 +3,7 @@ import { ThemeProvider } from '@material-ui/styles';
 import App, { Container } from 'next/app';
 import Head from 'next/head';
 import React from 'react';
-import Menu from '../src/molecule/menu';
+import Menu from '../src/molecule/Menu';
 import theme from '../src/theme';
 
 class MyApp extends App {

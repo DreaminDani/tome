@@ -1,0 +1,29 @@
+version: '3'
+services:
+  db:
+    image: postgres
+    restart: always
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    env_file: ../.env
+    ports:
+      - 5432:5432
+  db-migrate:
+    image: db-migrate:latest
+    build: ./
+    restart: on-failure
+    environment:
+      - TARGET_URI=postgres://postgres:example@db/postgres
+      - NOSSL=true
+    depends_on:
+      - db
+    env_file: ../.env
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 7772:8080
+
+volumes:
+  db-data:
+    driver: local
