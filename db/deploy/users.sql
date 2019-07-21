@@ -1,4 +1,4 @@
--- Deploy anymessage:users to pg
+-- Deploy tome:users to pg
 -- requires: appschema
 
 BEGIN;

@@ -2,6 +2,7 @@ const dev = process.env.NODE_ENV !== "production";
 if (dev) {
   require("dotenv").config();
 }
+
 const express = require("express");
 const http = require("http");
 const next = require("next");
@@ -9,8 +10,7 @@ const session = require("express-session");
 const passport = require("passport");
 const { Pool } = require('pg');
 
-const connectionString = process.env.TARGET_URI
-const { sessionConfig, auth0Strategy } = require("./config");
+const { sessionConfig, auth0Strategy, connectionString } = require("./config");
 const { restrictAccess } = require("./helpers");
 
 const authRoutes = require("./auth-routes");
@@ -23,7 +23,7 @@ app.prepare().then(() => {
   const server = express();
   const pool = new Pool({connectionString: connectionString,});
   pool.on('error', (err, client) => {
-    console.error('Unexpected error on idle client', err)
+    console.error(`Unexpected error on idle client: ${client}`, err)
     process.exit(-1)
   })
   server.set("db", pool);

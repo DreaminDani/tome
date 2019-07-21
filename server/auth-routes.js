@@ -3,10 +3,12 @@ const passport = require("passport");
 
 const router = express.Router();
 
+// login user through auth0
 router.get("/login", passport.authenticate("auth0", {
   scope: "openid email profile"
 }), (req, res) => res.redirect("/"));
 
+// save user data in db
 router.get("/callback", (req, res, next) => {
   passport.authenticate("auth0", (err, user) => {
     if (err) return next(err);
@@ -16,7 +18,7 @@ router.get("/callback", (req, res, next) => {
       if (err) return next(err);
 
       const client = await req.app.get("db").connect();
-      
+
       try {
         const getUser = await client.query('SELECT * FROM users WHERE auth_id = $1', [user.id])
         if (getUser.rows[0]) {
@@ -40,6 +42,7 @@ router.get("/callback", (req, res, next) => {
   })(req, res, next);
 });
 
+// logout user through auth0
 router.get("/logout", (req, res) => {
   req.logout();
 

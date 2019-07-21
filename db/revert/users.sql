@@ -1,4 +1,4 @@
--- Revert anymessage:users from pg
+-- Revert tome:users from pg
 
 BEGIN;
 

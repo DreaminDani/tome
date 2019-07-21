@@ -1,13 +1,20 @@
 const uid = require('uid-safe');
 const Auth0Strategy = require("passport-auth0");
+const session = require("express-session");
+const PostgreSqlStore = require('connect-pg-simple')(session);
+
+const connectionString = process.env.TARGET_URI
 
 const sessionConfig = {
-  secret: process.env.NODE_ENV !== "production" ? "secret" : uid.sync(18),
+  secret: process.env.NODE_ENV === "production" ? uid.sync(18) : "secret",
   cookie: {
     maxAge: 86400 * 1000 // 24 hours in milliseconds
   },
   resave: false,
-  saveUninitialized: true
+  saveUninitialized: true,
+  store: new PostgreSqlStore({
+    conString: connectionString
+  })
 };
 
 const auth0Strategy = new Auth0Strategy(
@@ -22,7 +29,8 @@ const auth0Strategy = new Auth0Strategy(
   }
 );
 
-module.exports = { 
+module.exports = {
+  connectionString,
   sessionConfig,
   auth0Strategy
 };
