@@ -15,11 +15,9 @@ function Index(props) {
         </Typography>
         {props.user ? (
           <React.Fragment>
-            <Link href="/edit">
-              <Button color="primary">
-                Create New Artifact
-              </Button>
-            </Link>
+            <Button color="primary" href="/edit">
+              Create New Artifact
+            </Button>
             {props.list && (props.list.length > 0) && (
               <React.Fragment>
                 <Typography variant="subtitle1">
@@ -40,11 +38,9 @@ function Index(props) {
             <Typography>
               You must be logged in to continue
             </Typography>
-            <Link href="/login">
-              <Button variant="contained" color="primary">
-                Login
-              </Button>
-            </Link>
+            <Button variant="contained" color="primary" href="/edit">
+              Login
+            </Button>
           </React.Fragment>
         )}
       </Box>
