@@ -22,7 +22,7 @@ module.exports = {
     },
     "plugins": [
         "react",
-        "jsx-ally"
+        "jsx-a11y"
     ],
     "rules": {
     }

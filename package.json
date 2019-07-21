@@ -28,7 +28,7 @@
     "enzyme": "latest",
     "enzyme-adapter-react-16": "latest",
     "eslint": "^6.0.1",
-    "eslint-plugin-jsx-ally": "^6.0.3",
+    "eslint-plugin-jsx-a11y": "^6.0.3",
     "eslint-plugin-react": "^7.14.2",
     "jest": "latest",
     "jsdom": "latest",
