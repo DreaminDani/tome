@@ -3,10 +3,13 @@
 ## How to use
 
 ### 1. Database
-Tome is backed by Postgresql and uses Sqitch to manage migrations. For a development environment db, use docker:
+Tome is backed by Postgresql and uses Sqitch to manage migrations. A quick development environment requires docker to run:
 ```sh
-docker-compose up
+cd db
+./local-db.sh
 ```
+
+A postgresql database will be running on port 5421 and an administrative ui will be available at http://localhost:7772
 
 ### 2. Environment File
 Then create a `.env` file with the required creds:
