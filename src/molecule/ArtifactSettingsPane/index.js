@@ -1,7 +1,8 @@
-import React from 'react';
+import { Button, ButtonGroup, Grid, makeStyles, Typography } from '@material-ui/core';
+import { Router } from 'next/router';
 import PropTypes from 'prop-types';
+import React from 'react';
 
-import { Button, ButtonGroup, Grid, Typography, makeStyles } from '@material-ui/core';
 
 const useStyles = makeStyles(theme => ({
   settings: {
@@ -31,10 +32,18 @@ function ArtifactSettingsPane(props) {
   const classes = useStyles();
   const { handleSave } = props;
 
+  const handleDiscard = () => {
+    if (history) {
+      history.back()
+    } else {
+      Router.push("/");
+    }
+  }
+
   return (
     <Grid item xs={12} sm={4} className={classes.settings}>
       <div className={classes.actions}>
-        <Button className={classes.button}>Discard</Button>
+        <Button className={classes.button} onClick={handleDiscard}>Discard</Button>
         <Button variant="contained" color="primary" className={classes.button} onClick={handleSave}>
           Save
         </Button>

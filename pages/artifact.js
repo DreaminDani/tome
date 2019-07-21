@@ -1,13 +1,17 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import Link from 'next/link';
+import { Button } from '@material-ui/core'
 import { getData } from '../src/api';
 import Artifact from '../src/organism/Artifact';
 
 function ArtifactPage(props) {
   return (
     <div>
-        {/* Header info about artifact will go here */}
-        <Artifact name={props.artifact_data.name} body={props.artifact_data.body} />
+      <Link href='/edit/[slug]' as={`/edit/${props.id}`}>
+        <Button color="secondary">Edit</Button>
+      </Link>
+      <Artifact name={props.artifact_data.name} body={props.artifact_data.body} />
     </div>
   );
 }

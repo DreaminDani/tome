@@ -6,17 +6,27 @@ const router = express.Router();
 
 router.use(bodyParser.json());
 
-const thoughts = [
-  { _id: 123, message: "I love pepperoni pizza!", author: "unknown" },
-  { _id: 456, message: "I'm watching Netflix.", author: "unknown" }
-];
-
 // todo ids of artifacts for user:
 //  1. list of artifacts I own
 //  2. list of artifacts shared with me
-router.get("/api/artifact", ensureAuthenticated, (req, res) => {
-  const orderedThoughts = thoughts.sort((t1, t2) => t2._id - t1._id);
-  res.send(orderedThoughts);
+router.get("/api/artifacts", ensureAuthenticated, async (req, res) => {
+  console.log('made it!')
+  const client = await req.app.get("db").connect();
+  const artifacts = {};
+
+  try {
+    const getArtifacts = await client.query(`
+      SELECT a.id, jsonb_extract_path(a.artifact_data,'name') as name,
+        a.user_id, a.created_at, a.updated_at, u.auth_metadata
+      FROM artifacts a, users u
+      WHERE a.user_id=u.id and auth_id = $1
+    `, [req.user.id]);
+    artifacts.list = getArtifacts.rows; // currently just gets all that user owns
+  } finally {
+    client.release();
+  }
+
+  res.send(artifacts);
 });
 
 // get artifact by id
