@@ -24,6 +24,8 @@ function Edit(props) {
     body: (props.artifact_data && props.artifact_data.body) ? props.artifact_data.body : '',
   });
 
+  const [focused, setFocus] = useState(false);
+
   const handleChange = name => event => {
     setValues({ ...values, [name]: event.target.value });
   };
@@ -48,6 +50,9 @@ function Edit(props) {
     }
   }
 
+  const handleFocus = () => { setFocus(true) };
+  const handleBlur = () => { setFocus(false) };
+
   return (
     <div className={classes.root}>
       <Typography variant="h1" className={classes.title}>
@@ -60,8 +65,8 @@ function Edit(props) {
         alignItems="stretch"
         spacing={2}
       >
-        <ArtifactEditPane handleChange={handleChange} name={values.name} body={values.body} />
-        <ArtifactSettingsPane handleSave={handleSave} />
+        <ArtifactEditPane handleChange={handleChange} handleFocus={handleFocus} handleBlur={handleBlur} name={values.name} body={values.body} />
+        <ArtifactSettingsPane handleSave={handleSave} focused={focused} />
       </Grid>
     </div>
   )

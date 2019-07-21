@@ -14,6 +14,9 @@ const useStyles = makeStyles(theme => ({
       bottom: 0,
       width: '100%',
       marginLeft: -8,
+      '&.keyboard-focused': {
+        display: 'none'
+      }
     },
   },
   actions: {
@@ -41,7 +44,7 @@ function ArtifactSettingsPane(props) {
   }
 
   return (
-    <Grid item xs={12} sm={4} className={classes.settings}>
+    <Grid item xs={12} sm={4} className={`${classes.settings} ${props.focused ? 'keyboard-focused' : ''}`}>
       <div className={classes.actions}>
         <Button className={classes.button} onClick={handleDiscard}>Discard</Button>
         <Button variant="contained" color="primary" className={classes.button} onClick={handleSave}>
@@ -62,6 +65,7 @@ function ArtifactSettingsPane(props) {
 
 ArtifactSettingsPane.propTypes = {
   handleSave: PropTypes.func,
+  focused: PropTypes.bool,
 };
 
 export default ArtifactSettingsPane;
