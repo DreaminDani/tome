@@ -14,7 +14,7 @@ function MadeWithLove() {
       </Link>
       {' team.'}
     </Typography>
-  );  
+  );
 }
 
 export default function AboutPage() {

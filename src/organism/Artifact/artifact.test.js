@@ -2,7 +2,7 @@
 
 import { shallow } from 'enzyme';
 import React from 'react';
-import Artifact from './';
+import Artifact from '.';
 
 describe('Artifact responds to mouse events', () => {
   const map = {};
@@ -12,23 +12,20 @@ describe('Artifact responds to mouse events', () => {
     window.addEventListener = jest.fn((event, cb) => {
       map[event] = cb;
     });
-  })
+  });
 
   beforeEach(() => {
     container = document.createElement('div');
     document.body.appendChild(container);
 
-    window.getSelection = jest.fn(() => {
-      return {
-        type: "None",
-        removeAllRanges: jest.fn(),
-        addRange: jest.fn()
-      }
-    });
+    window.getSelection = jest.fn(() => ({
+      type: 'None',
+      removeAllRanges: jest.fn(),
+      addRange: jest.fn(),
+    }));
 
     document.createRange = jest.fn();
   });
-
 
   afterEach(() => {
     document.body.removeChild(container);
@@ -39,20 +36,20 @@ describe('Artifact responds to mouse events', () => {
     // Act
     const artifact = shallow(<Artifact />);
     artifact.simulate('mousedown', new Event('mousedown'));
-    
-     // Assert
+
+    // Assert
     expect(window.getSelection).toHaveBeenCalled();
 
     const domSelection = window.getSelection.mock.results[0].value;
     expect(domSelection.removeAllRanges).toHaveBeenCalled();
-  })
+  });
 
   it('does not update the selection, if nothing is clicked', () => {
     // Act
     const artifact = shallow(<Artifact />);
     artifact.simulate('mouseup', new Event('mouseup'));
-    
-     // Assert
+
+    // Assert
     expect(window.getSelection).toHaveBeenCalled();
 
     const domSelection = window.getSelection.mock.results[0].value;
@@ -63,24 +60,22 @@ describe('Artifact responds to mouse events', () => {
 
   it('does not update the selection, if a Range is selected', () => {
     // Arrange
-    window.getSelection = jest.fn(() => {
-      return {
-        type: "Range",
-        anchorNode: {
-          nodeName: '#text'
-        },
-        focusNode: {
-          textContent: 'line'
-        },
-        removeAllRanges: jest.fn(),
-        addRange: jest.fn()
-      }
-    });
+    window.getSelection = jest.fn(() => ({
+      type: 'Range',
+      anchorNode: {
+        nodeName: '#text',
+      },
+      focusNode: {
+        textContent: 'line',
+      },
+      removeAllRanges: jest.fn(),
+      addRange: jest.fn(),
+    }));
 
     // Act
     const artifact = shallow(<Artifact />);
     artifact.simulate('mouseup', new Event('mouseup'));
-  
+
     // Assert
     expect(window.getSelection).toHaveBeenCalled();
 
@@ -92,24 +87,20 @@ describe('Artifact responds to mouse events', () => {
 
   it('selects the whole line, if Caret is clicked', () => {
     // Arrange
-    window.getSelection = jest.fn(() => {
-      return {
-        type: "Caret",
-        anchorNode: {
-          nodeName: '#text'
-        },
-        focusNode: {
-          textContent: 'line'
-        },
-        removeAllRanges: jest.fn(),
-        addRange: jest.fn()
-      }
-    });
-    document.createRange = jest.fn(() => {
-      return {
-        selectNodeContents: jest.fn()
-      }
-    });
+    window.getSelection = jest.fn(() => ({
+      type: 'Caret',
+      anchorNode: {
+        nodeName: '#text',
+      },
+      focusNode: {
+        textContent: 'line',
+      },
+      removeAllRanges: jest.fn(),
+      addRange: jest.fn(),
+    }));
+    document.createRange = jest.fn(() => ({
+      selectNodeContents: jest.fn(),
+    }));
 
     // Act
     const artifact = shallow(<Artifact />);

@@ -1,4 +1,6 @@
 /* eslint-disable react/display-name */
+/* eslint-disable jsx-a11y/anchor-has-content */
+
 import MuiLink from '@material-ui/core/Link';
 import clsx from 'clsx';
 import NextLink from 'next/link';
@@ -25,17 +27,32 @@ NextComposed.propTypes = {
 // A styled version of the Next.js Link component:
 // https://nextjs.org/docs/#with-link
 function Link(props) {
-  const { activeClassName, router, className: classNameProps, innerRef, naked, ...other } = props;
+  const {
+    activeClassName,
+    router,
+    className: classNameProps,
+    innerRef,
+    naked,
+    href,
+    ...other
+  } = props;
 
   const className = clsx(classNameProps, {
-    [activeClassName]: router.pathname === props.href && activeClassName,
+    [activeClassName]: router.pathname === href && activeClassName,
   });
 
   if (naked) {
     return <NextComposed className={className} ref={innerRef} {...other} />;
   }
 
-  return <MuiLink component={NextComposed} className={className} ref={innerRef} {...other} />;
+  return (
+    <MuiLink
+      component={NextComposed}
+      className={className}
+      ref={innerRef}
+      {...other}
+    />
+  );
 }
 
 Link.propTypes = {
@@ -58,4 +75,6 @@ Link.defaultProps = {
 
 const RouterLink = withRouter(Link);
 
-export default React.forwardRef((props, ref) => <RouterLink {...props} innerRef={ref} />);
+export default React.forwardRef((props, ref) => (
+  <RouterLink {...props} innerRef={ref} />
+));

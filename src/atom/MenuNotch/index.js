@@ -23,7 +23,7 @@ const useStyles = makeStyles({
         drop-shadow(0px 3px 4px rgba(0,0,0,0.14))
         drop-shadow(0px 3px 3px rgba(0,0,0,0.12))
       `,
-    }
+    },
   },
   paperNotch: {
     background: '#ffffff',
@@ -42,29 +42,38 @@ const useStyles = makeStyles({
     '&:hover': {
       color: 'black',
       cursor: 'pointer',
-    }
+    },
   },
   menuIcon: {
     marginTop: 10,
     float: 'right',
-  }
+  },
 });
 
-const MenuNotch = (props) => {
+const MenuNotch = props => {
   const classes = useStyles();
+  const { onClick } = props;
 
   return (
-    <div className={classes.root} onClick={props.onClick}>
+    <div
+      className={classes.root}
+      onClick={onClick}
+      onKeyPress={onClick}
+      role="button"
+      tabIndex="0"
+    >
       <div className={classes.paperNotch}>
-        <Typography variant="h4" component="span">Tome</Typography>
+        <Typography variant="h4" component="span">
+          Tome
+        </Typography>
         <MenuIcon className={classes.menuIcon} />
       </div>
     </div>
-  )
+  );
 };
 
 MenuNotch.propTypes = {
   onClick: PropTypes.func,
-}
+};
 
 export default MenuNotch;

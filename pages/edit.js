@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { Grid, makeStyles, Typography } from '@material-ui/core';
-import { getData, postData } from '../src/api';
 import Router from 'next/router';
+import { getData, postData } from '../src/api';
 
 import ArtifactEditPane from '../src/molecule/ArtifactEditPane';
 import ArtifactSettingsPane from '../src/molecule/ArtifactSettingsPane';
@@ -12,16 +12,17 @@ const useStyles = makeStyles({
     margin: '0 16px',
   },
   title: {
-    maxWidth: 'calc(100% - 120px)', //header width
-  }
+    maxWidth: 'calc(100% - 120px)', // header width
+  },
 });
 
 function Edit(props) {
   const classes = useStyles();
+  const { artifact_data, id } = props;
 
   const [values, setValues] = useState({
-    name: (props.artifact_data && props.artifact_data.name) ? props.artifact_data.name : '',
-    body: (props.artifact_data && props.artifact_data.body) ? props.artifact_data.body : '',
+    name: artifact_data && artifact_data.name ? artifact_data.name : '',
+    body: artifact_data && artifact_data.body ? artifact_data.body : '',
   });
 
   const [focused, setFocus] = useState(false);
@@ -34,7 +35,7 @@ function Edit(props) {
     // todo validate
     const request = {
       name: values.name,
-      body: values.body
+      body: values.body,
     };
     if (props.id) {
       request.id = props.id;
@@ -44,19 +45,23 @@ function Edit(props) {
       props.id ? '/api/artifact/update' : '/api/artifact/add',
       request
     );
-    
+
     if (res.id) {
       Router.push(`/artifact/slug=${res.id}`, `/artifact/${res.id}`);
     }
-  }
+  };
 
-  const handleFocus = () => { setFocus(true) };
-  const handleBlur = () => { setFocus(false) };
+  const handleFocus = () => {
+    setFocus(true);
+  };
+  const handleBlur = () => {
+    setFocus(false);
+  };
 
   return (
     <div className={classes.root}>
       <Typography variant="h1" className={classes.title}>
-          { props.id ? 'Edit' : 'New' } Artifact
+        {id ? 'Edit' : 'New'} Artifact
       </Typography>
       <Grid
         container
@@ -65,31 +70,40 @@ function Edit(props) {
         alignItems="stretch"
         spacing={2}
       >
-        <ArtifactEditPane handleChange={handleChange} handleFocus={handleFocus} handleBlur={handleBlur} name={values.name} body={values.body} />
+        <ArtifactEditPane
+          handleChange={handleChange}
+          handleFocus={handleFocus}
+          handleBlur={handleBlur}
+          name={values.name}
+          body={values.body}
+        />
         <ArtifactSettingsPane handleSave={handleSave} focused={focused} />
       </Grid>
     </div>
-  )
+  );
 }
 
 Edit.getInitialProps = async ({ req }) => {
   if (req && req.params && req.params.slug) {
-    const res = await getData(`/api/artifact/${req.params.slug}`, req.headers.cookie);
+    const res = await getData(
+      `/api/artifact/${req.params.slug}`,
+      req.headers.cookie
+    );
     return res;
   }
 
   return {};
-}
+};
 
 Edit.propTypes = {
   id: PropTypes.string,
-  user_id: PropTypes.number,
+  // user_id: PropTypes.number,
   artifact_data: PropTypes.shape({
     body: PropTypes.string,
-    name: PropTypes.string
+    name: PropTypes.string,
   }),
-  created_at: PropTypes.string,
-  updated_at: PropTypes.string
-}
+  // created_at: PropTypes.string,
+  // updated_at: PropTypes.string,
+};
 
 export default Edit;

@@ -11,8 +11,8 @@ const theme = createMuiTheme({
     },
   },
   typography: {
-    fontFamily: `'EB Garamond', serif`
-  }
+    fontFamily: `'EB Garamond', serif`,
+  },
 });
 
 export default theme;

@@ -1,8 +1,13 @@
-import { Button, ButtonGroup, Grid, makeStyles, Typography } from '@material-ui/core';
+import {
+  Button,
+  ButtonGroup,
+  Grid,
+  makeStyles,
+  Typography,
+} from '@material-ui/core';
 import { Router } from 'next/router';
 import PropTypes from 'prop-types';
 import React from 'react';
-
 
 const useStyles = makeStyles(theme => ({
   settings: {
@@ -15,39 +20,51 @@ const useStyles = makeStyles(theme => ({
       width: '100%',
       marginLeft: -8,
       '&.keyboard-focused': {
-        display: 'none'
-      }
+        display: 'none',
+      },
     },
   },
   actions: {
     [theme.breakpoints.down('xs')]: {
-      float: 'right'
+      float: 'right',
     },
     marginTop: 24,
-    marginBottom: 24
+    marginBottom: 24,
   },
   button: {
     marginRight: 8,
-  }
+  },
 }));
 
 function ArtifactSettingsPane(props) {
   const classes = useStyles();
-  const { handleSave } = props;
+  const { handleSave, focused } = props;
 
   const handleDiscard = () => {
     if (history) {
-      history.back()
+      history.back();
     } else {
-      Router.push("/");
+      Router.push('/');
     }
-  }
+  };
 
   return (
-    <Grid item xs={12} sm={4} className={`${classes.settings} ${props.focused ? 'keyboard-focused' : ''}`}>
+    <Grid
+      item
+      xs={12}
+      sm={4}
+      className={`${classes.settings} ${focused ? 'keyboard-focused' : ''}`}
+    >
       <div className={classes.actions}>
-        <Button className={classes.button} onClick={handleDiscard}>Discard</Button>
-        <Button variant="contained" color="primary" className={classes.button} onClick={handleSave}>
+        <Button className={classes.button} onClick={handleDiscard}>
+          Discard
+        </Button>
+        <Button
+          variant="contained"
+          color="primary"
+          className={classes.button}
+          onClick={handleSave}
+        >
           Save
         </Button>
       </div>
@@ -60,7 +77,7 @@ function ArtifactSettingsPane(props) {
         <Button>Mono</Button>
       </ButtonGroup>
     </Grid>
-  )
+  );
 }
 
 ArtifactSettingsPane.propTypes = {

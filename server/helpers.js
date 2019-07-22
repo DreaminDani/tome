@@ -1,6 +1,6 @@
 // restrict routes
 const restrictAccess = (req, res, next) => {
-  if (!req.isAuthenticated()) return res.redirect("/login");
+  if (!req.isAuthenticated()) return res.redirect('/login');
   next();
 };
 

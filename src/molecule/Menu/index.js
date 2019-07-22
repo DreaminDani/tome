@@ -1,4 +1,14 @@
-import { Drawer, IconButton, List, ListItem, Link, ListItemIcon, ListItemText, makeStyles, Typography } from '@material-ui/core';
+import {
+  Drawer,
+  IconButton,
+  List,
+  ListItem,
+  Link,
+  ListItemIcon,
+  ListItemText,
+  makeStyles,
+  Typography,
+} from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
 import CreateIcon from '@material-ui/icons/Create';
 import HomeIcon from '@material-ui/icons/Home';
@@ -18,7 +28,7 @@ const useStyles = makeStyles({
   },
   menuIcon: {
     float: 'right',
-  }
+  },
 });
 
 export default function Menu() {
@@ -33,25 +43,35 @@ export default function Menu() {
       onKeyDown={() => setOpen(false)}
     >
       <div className={classes.menuHeader}>
-        <Typography variant="h4" component="span">Tome</Typography>
-        <IconButton className={classes.menuIcon}><CloseIcon /></IconButton>
+        <Typography variant="h4" component="span">
+          Tome
+        </Typography>
+        <IconButton className={classes.menuIcon}>
+          <CloseIcon />
+        </IconButton>
       </div>
       <List>
         <Link href="/">
-          <ListItem button >
-            <ListItemIcon><HomeIcon /></ListItemIcon>
+          <ListItem button>
+            <ListItemIcon>
+              <HomeIcon />
+            </ListItemIcon>
             <ListItemText primary="Home" />
           </ListItem>
         </Link>
         <Link href="/edit">
-          <ListItem button >
-            <ListItemIcon><CreateIcon /></ListItemIcon>
+          <ListItem button>
+            <ListItemIcon>
+              <CreateIcon />
+            </ListItemIcon>
             <ListItemText primary="New" />
           </ListItem>
         </Link>
         <Link href="/about">
-          <ListItem button >
-            <ListItemIcon><InfoIcon /></ListItemIcon>
+          <ListItem button>
+            <ListItemIcon>
+              <InfoIcon />
+            </ListItemIcon>
             <ListItemText primary="About" />
           </ListItem>
         </Link>
@@ -66,6 +86,5 @@ export default function Menu() {
         {menuList()}
       </Drawer>
     </React.Fragment>
-  )
-
+  );
 }
