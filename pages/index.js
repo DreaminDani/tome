@@ -2,8 +2,8 @@ import Box from '@material-ui/core/Box';
 import { Container, Typography, Button } from '@material-ui/core';
 import PropTypes from 'prop-types';
 import React from 'react';
-import Link from '../src/atom/Link';
 import { getData } from '../src/api';
+import ArtifactList from '../src/organism/ArtifactList';
 
 function Index(props) {
   const { user, list } = props;
@@ -14,28 +14,12 @@ function Index(props) {
           Welcome
         </Typography>
         {user ? (
-          <Typography>
+          <React.Fragment>
             <Button color="primary" href="/edit">
               Create New Artifact
             </Button>
-            {list && list.length > 0 && (
-              <Typography>
-                <Typography variant="subtitle1">
-                  Or have a look at your previous work...
-                </Typography>
-                {list.map(artifact => (
-                  <Typography key={artifact.id}>
-                    <Link
-                      href="/artifact/[slug]"
-                      as={`/artifact/${artifact.id}`}
-                    >
-                      {artifact.name}
-                    </Link>
-                  </Typography>
-                ))}
-              </Typography>
-            )}
-          </Typography>
+            <ArtifactList list={list} />
+          </React.Fragment>
         ) : (
           <React.Fragment>
             <Typography>You must be logged in to continue</Typography>
