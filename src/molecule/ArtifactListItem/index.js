@@ -5,6 +5,9 @@ import Link from '../../atom/Link';
 
 const useStyles = makeStyles(theme => ({
   root: {
+    listStyle: 'none',
+  },
+  paper: {
     padding: theme.spacing(3, 2),
   },
 }));
@@ -18,19 +21,21 @@ function ArtifactListItem(props) {
   const createdDate = new Date(created_at);
 
   return (
-    <Link href="/artifact/[slug]" as={`/artifact/${id}`}>
-      <Paper className={classes.root}>
-        <Typography variant="h5" component="h3">
-          {name}
-        </Typography>
-        <Typography component="p">
-          <strong>Created by: </strong>
-          {auth_metadata.name ? auth_metadata.name : 'A tome user'} on{' '}
-          {createdDate.toLocaleDateString()} at{' '}
-          {createdDate.toLocaleTimeString()}
-        </Typography>
-      </Paper>
-    </Link>
+    <li className={classes.root}>
+      <Link href="/artifact/[slug]" as={`/artifact/${id}`}>
+        <Paper className={classes.paper}>
+          <Typography variant="h5" component="h3">
+            {name}
+          </Typography>
+          <Typography component="p">
+            <strong>Created by: </strong>
+            {auth_metadata.name ? auth_metadata.name : 'A tome user'} on{' '}
+            {createdDate.toLocaleDateString()} at{' '}
+            {createdDate.toLocaleTimeString()}
+          </Typography>
+        </Paper>
+      </Link>
+    </li>
   );
 }
 

@@ -1,9 +1,17 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import Typography from '@material-ui/core/Typography';
+import { makeStyles, Typography } from '@material-ui/core';
 import ArtifactListItem from '../../molecule/ArtifactListItem';
 
+const useStyles = makeStyles({
+  listRoot: {
+    padding: 0,
+  },
+});
+
 function ArtifactList(props) {
+  const classes = useStyles();
+
   const { list } = props;
 
   if (list && list.length) {
@@ -12,9 +20,11 @@ function ArtifactList(props) {
         <Typography variant="subtitle1">
           Or have a look at your previous work...
         </Typography>
-        {list.map(artifact => (
-          <ArtifactListItem artifact={artifact} key={artifact.id} />
-        ))}
+        <ul className={classes.listRoot}>
+          {list.map(artifact => (
+            <ArtifactListItem artifact={artifact} key={artifact.id} />
+          ))}
+        </ul>
       </React.Fragment>
     );
   }

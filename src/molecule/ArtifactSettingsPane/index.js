@@ -5,7 +5,6 @@ import {
   makeStyles,
   Typography,
 } from '@material-ui/core';
-import { Router } from 'next/router';
 import PropTypes from 'prop-types';
 import React from 'react';
 
@@ -38,15 +37,7 @@ const useStyles = makeStyles(theme => ({
 
 function ArtifactSettingsPane(props) {
   const classes = useStyles();
-  const { handleSave, focused } = props;
-
-  const handleDiscard = () => {
-    if (history) {
-      history.back();
-    } else {
-      Router.push('/');
-    }
-  };
+  const { handleDiscard, handleSave, focused } = props;
 
   return (
     <Grid
@@ -81,6 +72,7 @@ function ArtifactSettingsPane(props) {
 }
 
 ArtifactSettingsPane.propTypes = {
+  handleDiscard: PropTypes.func,
   handleSave: PropTypes.func,
   focused: PropTypes.bool,
 };

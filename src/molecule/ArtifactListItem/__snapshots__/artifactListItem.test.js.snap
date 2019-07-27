@@ -1,0 +1,16 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ArtifactListItem should display details about the artifact 1`] = `
+Array [
+  <strong>
+    Created by: 
+  </strong>,
+  "A tome user",
+  " on",
+  " ",
+  "3/25/2015",
+  " at",
+  " ",
+  "8:00:00 AM",
+]
+`;

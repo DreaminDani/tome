@@ -3,7 +3,6 @@ import Container from '@material-ui/core/Container';
 import Link from '@material-ui/core/Link';
 import Typography from '@material-ui/core/Typography';
 import React from 'react';
-import ProTip from '../src/ProTip';
 
 function MadeWithLove() {
   return (
@@ -25,7 +24,6 @@ export default function AboutPage() {
           There will be more coming soon
         </Typography>
         <Link href="/">Go to the main page</Link>
-        <ProTip />
         <MadeWithLove />
       </Box>
     </Container>

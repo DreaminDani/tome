@@ -1,6 +1,7 @@
 /* eslint-disable react/display-name */
 /* eslint-disable jsx-a11y/anchor-has-content */
 
+// copy/pasted from: https://github.com/mui-org/material-ui/blob/master/examples/nextjs/src/Link.js
 import MuiLink from '@material-ui/core/Link';
 import clsx from 'clsx';
 import NextLink from 'next/link';

@@ -31,6 +31,14 @@ function Edit(props) {
     setValues({ ...values, [name]: event.target.value });
   };
 
+  const handleDiscard = () => {
+    if (history) {
+      history.back();
+    } else {
+      Router.push('/');
+    }
+  };
+
   const handleSave = async () => {
     // todo validate
     const request = {
@@ -77,7 +85,11 @@ function Edit(props) {
           name={values.name}
           body={values.body}
         />
-        <ArtifactSettingsPane handleSave={handleSave} focused={focused} />
+        <ArtifactSettingsPane
+          handleDiscard={handleDiscard}
+          handleSave={handleSave}
+          focused={focused}
+        />
       </Grid>
     </div>
   );
