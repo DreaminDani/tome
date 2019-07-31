@@ -1,11 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { makeStyles, Paper, Typography } from '@material-ui/core';
-import Link from '../../atom/Link';
+import Link from 'next/link';
 
 const useStyles = makeStyles(theme => ({
   root: {
     listStyle: 'none',
+    '&:hover': {
+      cursor: 'pointer',
+    },
   },
   paper: {
     padding: theme.spacing(3, 2),

@@ -43,7 +43,9 @@
     "nodemon": "latest",
     "prettier": "latest",
     "react-addons-test-utils": "latest",
-    "react-test-renderer": "latest"
+    "react-test-renderer": "latest",
+    "sinon": "^7.3.2",
+    "sinon-express-mock": "^2.2.0"
   },
   "scripts": {
     "dev": "nodemon server/index.js",
