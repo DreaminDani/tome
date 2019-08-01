@@ -13,6 +13,8 @@ const list = async (req, res) => {
       [req.user.id]
     );
     artifacts.list = getArtifacts.rows; // currently just gets all that user owns
+  } catch (e) {
+    res.send({ error: 'this error message sucks' });
   } finally {
     client.release();
   }
