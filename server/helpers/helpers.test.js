@@ -1,6 +1,8 @@
 /* eslint-env jest */
 
-const helpers = require('.');
+const { restrictAccess, ensureAuthenticated, serverError } = require('.');
+
+jest.spyOn(console, 'error');
 
 describe('restrictAccess', () => {
   it('redirects to login, if not authenticated', () => {
@@ -13,7 +15,7 @@ describe('restrictAccess', () => {
     };
     const next = jest.fn();
 
-    helpers.restrictAccess(req, res, next);
+    restrictAccess(req, res, next);
     expect(req.isAuthenticated).toHaveBeenCalled();
     expect(res.redirect).toHaveBeenCalledWith('/login');
     expect(next).not.toHaveBeenCalled();
@@ -29,7 +31,7 @@ describe('restrictAccess', () => {
     };
     const next = jest.fn();
 
-    helpers.restrictAccess(req, res, next);
+    restrictAccess(req, res, next);
     expect(req.isAuthenticated).toHaveBeenCalled();
     expect(res.redirect).not.toHaveBeenCalled();
     expect(next).toHaveBeenCalled();
@@ -47,7 +49,7 @@ describe('ensureAuthenticated', () => {
     };
     const next = jest.fn();
 
-    helpers.ensureAuthenticated(req, res, next);
+    ensureAuthenticated(req, res, next);
     expect(req.isAuthenticated).toHaveBeenCalled();
     expect(res.sendStatus).toHaveBeenCalledWith(401);
     expect(next).not.toHaveBeenCalled();
@@ -63,9 +65,62 @@ describe('ensureAuthenticated', () => {
     };
     const next = jest.fn();
 
-    helpers.ensureAuthenticated(req, res, next);
+    ensureAuthenticated(req, res, next);
     expect(req.isAuthenticated).toHaveBeenCalled();
     expect(res.sendStatus).not.toHaveBeenCalled();
     expect(next).toHaveBeenCalled();
+  });
+});
+
+describe('serverError', () => {
+  const fakeRequest = { something: 'fake' };
+  const fakeResponse = {
+    status: jest.fn(),
+    send: jest.fn(),
+  };
+
+  it('logs errors with request as string', () => {
+    serverError(fakeRequest, fakeResponse);
+    expect(console.error.mock.calls.length).toBe(1);
+    expect(console.error.mock.calls[0][0]).toContain(
+      JSON.stringify(fakeRequest)
+    );
+  });
+
+  it('logs error codes', () => {
+    serverError(fakeRequest, fakeResponse, null, 123);
+    expect(console.error.mock.calls.length).toBe(1);
+    expect(console.error.mock.calls[0][0]).toContain('123');
+  });
+
+  it('logs error descriptions', () => {
+    serverError(fakeRequest, fakeResponse, null, 123, 'Some Test');
+    expect(console.error.mock.calls.length).toBe(1);
+    expect(console.error.mock.calls[0][0]).toContain('Some Test');
+  });
+
+  it('logs error stack traces', () => {
+    try {
+      throw new Error('Trace Test');
+    } catch (e) {
+      serverError(fakeRequest, fakeResponse, e);
+    } finally {
+      expect(console.error.mock.calls.length).toBe(1);
+      expect(console.error.mock.calls[0][0]).toContain('Error: Trace Test');
+    }
+  });
+
+  it('sends status in response', () => {
+    serverError(fakeRequest, fakeResponse, null, 123);
+    expect(fakeResponse.status).toBeCalledWith(123);
+  });
+
+  it('sends description in response', () => {
+    serverError(fakeRequest, fakeResponse, null, 123, 'Some Test');
+    expect(fakeResponse.send).toBeCalledWith({ error: 'Some Test' });
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
   });
 });

@@ -1,3 +1,5 @@
+const { serverError } = require('../helpers');
+
 const list = async (req, res) => {
   const client = await req.app.get('db').connect();
   const artifacts = {};
@@ -14,7 +16,7 @@ const list = async (req, res) => {
     );
     artifacts.list = getArtifacts.rows; // currently just gets all that user owns
   } catch (e) {
-    res.send({ error: 'this error message sucks' });
+    serverError(req, res, e);
   } finally {
     client.release();
   }
@@ -32,6 +34,8 @@ const byID = async (req, res) => {
       [req.params.id]
     );
     [artifact] = getArtifact.rows;
+  } catch (e) {
+    serverError(req, res, e);
   } finally {
     client.release();
   }
@@ -62,6 +66,8 @@ const update = async (req, res) => {
       ]
     );
     [saved] = updateArtifact.rows;
+  } catch (e) {
+    serverError(req, res, e);
   } finally {
     client.release();
   }
@@ -87,6 +93,8 @@ const add = async (req, res) => {
       [getUser.rows[0].id, req.body]
     );
     [saved] = insertArtifact.rows;
+  } catch (e) {
+    serverError(req, res, e);
   } finally {
     client.release();
   }
