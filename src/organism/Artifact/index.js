@@ -1,7 +1,13 @@
-import { Box, Container, Typography } from '@material-ui/core';
+import { Grid, Typography, makeStyles } from '@material-ui/core';
 import PropTypes from 'prop-types';
 import React, { useState } from 'react';
 import TextContent from '../../atom/TextContent';
+
+const useStyles = makeStyles({
+  root: {
+    margin: '0 40px',
+  },
+});
 
 // looks for word in anchorNode text and returns its start/end points
 const getWordOffsetsFromCaret = (anchorNode, anchorOffset) => {
@@ -25,6 +31,7 @@ const getWordOffsetsFromCaret = (anchorNode, anchorOffset) => {
 };
 
 function Artifact(props) {
+  const classes = useStyles();
   const [selection, setSelection] = useState('');
   const { name, body } = props;
 
@@ -74,17 +81,18 @@ function Artifact(props) {
   console.log(selection); // todo pass this to the commenting tool
 
   return (
-    <Container
-      id="artifact"
-      maxWidth="sm"
-      onMouseDown={mouseDownHandler}
-      onMouseUp={mouseUpHandler}
-    >
-      <Box my={4}>
-        <Typography>{name}</Typography>
-        <TextContent>{body}</TextContent>
-      </Box>
-    </Container>
+    <Grid container className={classes.root}>
+      <Grid item xs={12} sm={6}>
+        <Typography variant="h4">{name}</Typography>
+        <TextContent
+          id="artifact-content"
+          onMouseDown={mouseDownHandler}
+          onMouseUp={mouseUpHandler}
+        >
+          {body}
+        </TextContent>
+      </Grid>
+    </Grid>
   );
 }
 

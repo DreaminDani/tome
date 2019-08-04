@@ -15,12 +15,20 @@ const useStyles = makeStyles(theme => ({
 
 function TextContent(props) {
   const classes = useStyles();
-  const { children } = props;
-  return <p className={classes.text}>{children}</p>;
+  const { children, onMouseDown, onMouseUp } = props;
+  return (
+    // todo make this accessible
+    // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
+    <p onMouseDown={onMouseDown} onMouseUp={onMouseUp} className={classes.text}>
+      {children}
+    </p>
+  );
 }
 
 TextContent.propTypes = {
   children: PropTypes.string,
+  onMouseDown: PropTypes.func,
+  onMouseUp: PropTypes.func,
 };
 
 export default TextContent;

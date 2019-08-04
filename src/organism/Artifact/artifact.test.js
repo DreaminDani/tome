@@ -35,7 +35,10 @@ describe('Artifact responds to mouse events', () => {
   it('clears selection on mousedown, to prepare for next selection', () => {
     // Act
     const artifact = shallow(<Artifact />);
-    artifact.simulate('mousedown', new Event('mousedown'));
+    artifact
+      .find('#artifact-content')
+      .first()
+      .simulate('mousedown', new Event('mousedown'));
 
     // Assert
     expect(window.getSelection).toHaveBeenCalled();
@@ -47,7 +50,10 @@ describe('Artifact responds to mouse events', () => {
   it('does not update the selection, if nothing is clicked', () => {
     // Act
     const artifact = shallow(<Artifact />);
-    artifact.simulate('mouseup', new Event('mouseup'));
+    artifact
+      .find('#artifact-content')
+      .first()
+      .simulate('mouseup', new Event('mouseup'));
 
     // Assert
     expect(window.getSelection).toHaveBeenCalled();
@@ -74,7 +80,10 @@ describe('Artifact responds to mouse events', () => {
 
     // Act
     const artifact = shallow(<Artifact />);
-    artifact.simulate('mouseup', new Event('mouseup'));
+    artifact
+      .find('#artifact-content')
+      .first()
+      .simulate('mouseup', new Event('mouseup'));
 
     // Assert
     expect(window.getSelection).toHaveBeenCalled();
@@ -108,7 +117,10 @@ describe('Artifact responds to mouse events', () => {
 
     // Act
     const artifact = shallow(<Artifact />);
-    artifact.simulate('mouseup', new Event('mouseup'));
+    artifact
+      .find('#artifact-content')
+      .first()
+      .simulate('mouseup', new Event('mouseup'));
 
     // Assert
     expect(document.createRange).toHaveBeenCalled();
