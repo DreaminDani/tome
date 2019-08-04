@@ -1,15 +1,6 @@
-const bodyParser = require('body-parser');
-const express = require('express');
-const { ensureAuthenticated } = require('./helpers');
+const { serverError } = require('../../helpers');
 
-const router = express.Router();
-
-router.use(bodyParser.json());
-
-// todo ids of artifacts for user:
-//  1. list of artifacts I own
-//  2. list of artifacts shared with me
-router.get('/api/artifacts', ensureAuthenticated, async (req, res) => {
+const list = async (req, res) => {
   const client = await req.app.get('db').connect();
   const artifacts = {};
 
@@ -24,15 +15,16 @@ router.get('/api/artifacts', ensureAuthenticated, async (req, res) => {
       [req.user.id]
     );
     artifacts.list = getArtifacts.rows; // currently just gets all that user owns
+  } catch (e) {
+    serverError(req, res, e);
   } finally {
     client.release();
   }
 
   res.send(artifacts);
-});
+};
 
-// get artifact by id
-router.get('/api/artifact/:id', ensureAuthenticated, async (req, res) => {
+const byID = async (req, res) => {
   const client = await req.app.get('db').connect();
   let artifact = {};
 
@@ -42,14 +34,16 @@ router.get('/api/artifact/:id', ensureAuthenticated, async (req, res) => {
       [req.params.id]
     );
     [artifact] = getArtifact.rows;
+  } catch (e) {
+    serverError(req, res, e);
   } finally {
     client.release();
   }
 
   res.send(artifact);
-});
+};
 
-router.post('/api/artifact/update', ensureAuthenticated, async (req, res) => {
+const update = async (req, res) => {
   // todo security validation
   const client = await req.app.get('db').connect();
   let saved = {};
@@ -72,14 +66,16 @@ router.post('/api/artifact/update', ensureAuthenticated, async (req, res) => {
       ]
     );
     [saved] = updateArtifact.rows;
+  } catch (e) {
+    serverError(req, res, e);
   } finally {
     client.release();
   }
 
   res.send(saved);
-});
+};
 
-router.post('/api/artifact/add', ensureAuthenticated, async (req, res) => {
+const add = async (req, res) => {
   // todo security validation
   const client = await req.app.get('db').connect();
   let saved = {};
@@ -97,11 +93,18 @@ router.post('/api/artifact/add', ensureAuthenticated, async (req, res) => {
       [getUser.rows[0].id, req.body]
     );
     [saved] = insertArtifact.rows;
+  } catch (e) {
+    serverError(req, res, e);
   } finally {
     client.release();
   }
 
   res.send(saved);
-});
+};
 
-module.exports = router;
+module.exports = {
+  list,
+  byID,
+  update,
+  add,
+};
