@@ -3,6 +3,27 @@ import PropTypes from 'prop-types';
 import React, { useState } from 'react';
 import TextContent from '../../atom/TextContent';
 
+// looks for word in anchorNode text and returns its start/end points
+const getWordOffsetsFromCaret = (anchorNode, anchorOffset) => {
+  const word = [0, 0];
+
+  for (let i = 0; i < anchorNode.textContent.length + 1; i += 1) {
+    if (
+      /\s/.exec(anchorNode.textContent.charAt(i)) ||
+      anchorNode.textContent.charAt(i) === ''
+    ) {
+      if (i < anchorOffset) {
+        word[0] = i + 1;
+      } else {
+        word[1] = i;
+        break;
+      }
+    }
+  }
+
+  return word;
+};
+
 function Artifact(props) {
   const [selection, setSelection] = useState('');
   const { name, body } = props;
@@ -28,10 +49,23 @@ function Artifact(props) {
       domSelection.anchorNode.nodeName === '#text'
     ) {
       const range = document.createRange();
-      range.selectNodeContents(domSelection.anchorNode); // todo only select the word that was clicked
+      const wordOffsets = getWordOffsetsFromCaret(
+        domSelection.anchorNode,
+        domSelection.anchorOffset
+      );
+
+      range.setStart(domSelection.anchorNode, wordOffsets[0]);
+      range.setEnd(domSelection.anchorNode, wordOffsets[1]);
+
       domSelection.removeAllRanges();
       domSelection.addRange(range);
-      setSelection(domSelection.focusNode.textContent);
+
+      setSelection(
+        domSelection.anchorNode.textContent.substring(
+          wordOffsets[0],
+          wordOffsets[1]
+        )
+      );
     } else {
       setSelection('');
     }

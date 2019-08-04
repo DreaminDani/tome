@@ -85,22 +85,26 @@ describe('Artifact responds to mouse events', () => {
     expect(domSelection.addRange).not.toHaveBeenCalled();
   });
 
-  it('selects the whole line, if Caret is clicked', () => {
+  it('selects an entire word, if Caret is clicked', () => {
     // Arrange
+    const anchorNode = {
+      nodeName: '#text',
+      textContent: 'line with words',
+    };
     window.getSelection = jest.fn(() => ({
       type: 'Caret',
-      anchorNode: {
-        nodeName: '#text',
-      },
-      focusNode: {
-        textContent: 'line',
-      },
+      anchorNode,
+      anchorOffset: 7,
       removeAllRanges: jest.fn(),
       addRange: jest.fn(),
     }));
-    document.createRange = jest.fn(() => ({
+
+    const range = {
       selectNodeContents: jest.fn(),
-    }));
+      setStart: jest.fn(),
+      setEnd: jest.fn(),
+    };
+    document.createRange = jest.fn(() => range);
 
     // Act
     const artifact = shallow(<Artifact />);
@@ -108,5 +112,7 @@ describe('Artifact responds to mouse events', () => {
 
     // Assert
     expect(document.createRange).toHaveBeenCalled();
+    expect(range.setStart).toHaveBeenCalledWith(anchorNode, 5);
+    expect(range.setEnd).toHaveBeenCalledWith(anchorNode, 9);
   });
 });
