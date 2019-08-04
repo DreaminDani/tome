@@ -2,7 +2,7 @@
 
 const { mockReq, mockRes } = require('sinon-express-mock');
 
-const { commitUserToDatabase, callback, logout } = require('./commands');
+const { _commitUserToDatabase, callback, logout } = require('./commands');
 
 let req;
 let res;
@@ -27,7 +27,7 @@ beforeEach(() => {
   next = jest.fn();
 });
 
-describe('authRoutes commitUserToDatabase', () => {
+describe('_commitUserToDatabase', () => {
   it('handles error and does not continue login', async () => {
     mockDB = {
       connect: jest.fn(),
@@ -41,7 +41,7 @@ describe('authRoutes commitUserToDatabase', () => {
       }),
     });
 
-    await commitUserToDatabase(req, res, next, 'error', fakeUser);
+    await _commitUserToDatabase(req, res, next, 'error', fakeUser);
 
     expect(next).toBeCalledWith('error');
     expect(mockDB.connect).not.toBeCalled();
@@ -60,7 +60,7 @@ describe('authRoutes commitUserToDatabase', () => {
       },
     });
 
-    await commitUserToDatabase(req, res, next, null, fakeUser);
+    await _commitUserToDatabase(req, res, next, null, fakeUser);
 
     expect(mockDB.connect).toBeCalled();
     expect(mockClient.query).toBeCalled();
@@ -83,7 +83,7 @@ describe('authRoutes commitUserToDatabase', () => {
       }),
     });
 
-    await commitUserToDatabase(req, res, next, null, fakeUser);
+    await _commitUserToDatabase(req, res, next, null, fakeUser);
 
     expect(mockDB.connect).toBeCalled();
     expect(mockClient.query).toHaveBeenCalledTimes(2);
@@ -112,7 +112,7 @@ describe('authRoutes commitUserToDatabase', () => {
       }),
     });
 
-    await commitUserToDatabase(req, res, next, null, fakeUser);
+    await _commitUserToDatabase(req, res, next, null, fakeUser);
 
     expect(mockDB.connect).toBeCalled();
     expect(mockClient.query).toHaveBeenCalledTimes(2);

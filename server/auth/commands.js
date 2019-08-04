@@ -1,6 +1,6 @@
 const { serverError } = require('../helpers');
 
-const commitUserToDatabase = async (req, res, next, error, user) => {
+const _commitUserToDatabase = async (req, res, next, error, user) => {
   if (error) return next(error);
 
   const client = await req.app.get('db').connect();
@@ -40,7 +40,7 @@ async function callback(req, res, next, err, user) {
   if (err) return next(err);
   if (!user) return res.redirect('/login');
   await req.logIn(user, async error =>
-    commitUserToDatabase(req, res, next, error, user)
+    _commitUserToDatabase(req, res, next, error, user)
   );
   res.redirect('/');
 }
@@ -55,7 +55,7 @@ const logout = (req, res) => {
 };
 
 module.exports = {
-  commitUserToDatabase,
+  _commitUserToDatabase,
   callback,
   logout,
 };
