@@ -14,8 +14,8 @@ const { Pool } = require('pg');
 const { sessionConfig, auth0Strategy, connectionString } = require('./config');
 const { restrictAccess } = require('./helpers');
 
-const authRoutes = require('./auth-routes');
-const artifactAPI = require('./artifact-api');
+const authRoutes = require('./auth');
+const artifactAPI = require('./api/artifact');
 
 const app = next({ dev });
 const handle = app.getRequestHandler();
@@ -38,7 +38,7 @@ app.prepare().then(() => {
   server.use(passport.session());
 
   // api endpoints
-  server.use(artifactAPI);
+  server.use('/api', artifactAPI);
 
   // routes
   server.use(authRoutes);

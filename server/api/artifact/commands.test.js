@@ -1,3 +1,5 @@
+/* eslint-env jest */
+
 const { mockReq, mockRes } = require('sinon-express-mock');
 
 const { list, byID, update, add } = require('./commands');
@@ -19,7 +21,7 @@ beforeEach(() => {
   };
 });
 
-describe('artifact-api list', () => {
+describe('artifactAPI list', () => {
   it('returns a list of artifacts, after retrieving from database', async () => {
     mockClient.query = jest.fn(() => fakeArtifacts);
     mockDB = {
@@ -69,7 +71,7 @@ describe('artifact-api list', () => {
   });
 });
 
-describe('artifact-api byID', () => {
+describe('artifactAPI byID', () => {
   it('returns a single artifact, after retrieving from database', async () => {
     mockClient.query = jest.fn(() => fakeArtifacts);
     mockDB = {
@@ -119,7 +121,7 @@ describe('artifact-api byID', () => {
   });
 });
 
-describe('artifact-api update', () => {
+describe('artifactAPI update', () => {
   const fakeNewArtifact = {
     id: 1,
     name: 'Test Name',
@@ -171,7 +173,7 @@ describe('artifact-api update', () => {
   });
 });
 
-describe('artifact-api add', () => {
+describe('artifactAPI add', () => {
   const fakeNewArtifact = {
     id: 1,
     name: 'Test Name',

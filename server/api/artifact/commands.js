@@ -1,4 +1,4 @@
-const { serverError } = require('../helpers');
+const { serverError } = require('../../helpers');
 
 const list = async (req, res) => {
   const client = await req.app.get('db').connect();
