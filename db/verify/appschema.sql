@@ -1,4 +1,4 @@
--- Verify anymessage
+-- Verify tome
 
 BEGIN;
 

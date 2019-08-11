@@ -12,7 +12,7 @@ const passport = require('passport');
 const { Pool } = require('pg');
 
 const { sessionConfig, auth0Strategy, connectionString } = require('./config');
-const { restrictAccess } = require('./helpers');
+const { restrictAccess, canEdit } = require('./helpers');
 
 const authRoutes = require('./auth');
 const artifactAPI = require('./api/artifact');
@@ -43,7 +43,7 @@ app.prepare().then(() => {
   // routes
   server.use(authRoutes);
   server.use('/edit', restrictAccess);
-  server.get('/edit/:slug', restrictAccess, (req, res) =>
+  server.get('/edit/:slug', restrictAccess, canEdit, (req, res) =>
     app.render(req, res, '/edit', { slug: req.params.slug })
   );
   server.get('/artifact', (req, res) => res.redirect('/edit'));

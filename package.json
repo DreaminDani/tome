@@ -53,6 +53,7 @@
     "start": "NODE_ENV=production PORT=8080 node server/index.js",
     "test": "jest",
     "test:coverage": "jest --coverage",
+    "test:watch": "jest --silent --watch",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "postinstall": "next build"
