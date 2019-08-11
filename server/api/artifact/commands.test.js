@@ -174,8 +174,8 @@ describe('artifactAPI update', () => {
 });
 
 describe('artifactAPI add', () => {
+  // this is a lie! need to update to reflect returning "id" only
   const fakeNewArtifact = {
-    id: 1,
     name: 'Test Name',
     body: 'Test Body',
   };
