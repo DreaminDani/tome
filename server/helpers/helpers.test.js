@@ -1,6 +1,11 @@
 /* eslint-env jest */
 
-const { restrictAccess, ensureAuthenticated, serverError, canEdit } = require('.');
+const {
+  restrictAccess,
+  ensureAuthenticated,
+  serverError,
+  canEdit,
+} = require('.');
 
 jest.spyOn(console, 'error');
 
@@ -39,42 +44,61 @@ describe('restrictAccess', () => {
 });
 
 describe('canEdit', () => {
-  const mockClient ={
-    query: jest.fn(() => {rows: [{user_id: 1}]})
-  };
-  const mockDB = {
-    connect: jest.fn(() => mockClient),
-  }
-  const req = {
-    app: {
-      get: () => mockDB,
-    },
-    params: {
-      slug: 'abc-123'
-    },
-    user: {
-      id: 'auth0|some-thing'
-    }
-  };
-  const res = {};
+  let mockClient;
+  let mockDB;
+  let req;
+  let res;
   let next;
-  
+
   beforeEach(() => {
     next = jest.fn();
+    mockClient = {
+      query: jest.fn(() => ({
+        rows: [{ user_id: 1, id: 1 }],
+      })),
+      release: jest.fn(),
+    };
+    mockDB = {
+      connect: jest.fn(() => mockClient),
+    };
+    req = {
+      app: {
+        get: () => mockDB,
+      },
+      params: {
+        slug: 'abc-123',
+      },
+      user: {
+        id: 'auth0|some-thing',
+      },
+    };
+    res = {
+      sendStatus: jest.fn(),
+    };
   });
-  
+
   it('gets list of allowed users for the artifact', async () => {
     await canEdit(req, res, next);
     expect(mockDB.connect).toBeCalled();
-    expect(mockClient.query).toBeCalledWith(expect.any(String), expect.arrayContaining([req.params.slug]));
-  })
+    expect(mockClient.query).toBeCalledWith(
+      expect.any(String),
+      expect.arrayContaining([req.params.slug])
+    );
+  });
   it('allows allowed users to continue', async () => {
     await canEdit(req, res, next);
     expect(next).toHaveBeenCalled();
-  })
-  it('sends a 403 status if user not allowed', () => {})
-})
-
+    expect(res.sendStatus).not.toHaveBeenCalled();
+  });
+  it('sends a 403 status if user not allowed', async () => {
+    mockClient.query = jest.fn(() => ({
+      rows: [{ user_id: 2, id: 1 }],
+    }));
+    await canEdit(req, res, next);
+    expect(res.sendStatus).toHaveBeenCalledWith(403);
+    expect(next).not.toHaveBeenCalled();
+  });
+});
 
 describe('ensureAuthenticated', () => {
   it('sends a 401 status, if not authenticated', () => {
