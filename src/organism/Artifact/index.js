@@ -2,6 +2,7 @@ import { Grid, Typography, makeStyles } from '@material-ui/core';
 import PropTypes from 'prop-types';
 import React, { useState } from 'react';
 import TextContent from '../../atom/TextContent';
+import CommentPane from '../../molecule/CommentPane';
 
 const useStyles = makeStyles({
   root: {
@@ -78,7 +79,13 @@ function Artifact(props) {
     }
   };
 
-  console.log(selection); // todo pass this to the commenting tool
+  const commentSaveHandler = () => {
+    console.log(selection);
+  };
+
+  const commentCloseHandler = () => {
+    setSelection('');
+  };
 
   return (
     <Grid container className={classes.root}>
@@ -86,11 +93,21 @@ function Artifact(props) {
         <Typography variant="h4">{name}</Typography>
         <TextContent
           id="artifact-content"
+          // todo onBlur-like behavior to highlight selected region during commenting
           onMouseDown={mouseDownHandler}
           onMouseUp={mouseUpHandler}
         >
           {body}
         </TextContent>
+      </Grid>
+      <Grid item xs={12} sm={6}>
+        {selection ? (
+          <CommentPane
+            selection={selection}
+            onSave={commentSaveHandler}
+            onClose={commentCloseHandler}
+          />
+        ) : null}
       </Grid>
     </Grid>
   );
