@@ -25,11 +25,13 @@ function CommentPane(props) {
   const { commentList, onSave, onClose } = props;
   const [comment, setComment] = useState('');
 
-  const onSaveHandler = () => {
-    // todo actually submit to backend in parent onSave
-    console.log(comment);
+  const onSaveHandler = async () => {
     if (comment) {
-      onSave(comment);
+      await onSave({
+        comment,
+        location: [0, 1],
+      });
+      setComment('');
     }
   };
 
@@ -53,7 +55,7 @@ function CommentPane(props) {
         data-testid="comment-input"
         label="Comment"
         multiline
-        // className={classes.textField}
+        value={comment}
         margin="normal"
         variant="outlined"
         onChange={onChangeHandler}
@@ -63,7 +65,6 @@ function CommentPane(props) {
         data-testid="comment-save"
         variant="contained"
         color="primary"
-        // className={classes.button}
         onClick={onSaveHandler}
         fullWidth
       >
@@ -74,13 +75,7 @@ function CommentPane(props) {
 }
 
 CommentPane.propTypes = {
-  commentList: PropTypes.arrayOf(
-    PropTypes.shape({
-      id: PropTypes.string,
-      user: PropTypes.string,
-      comment: PropTypes.string,
-    })
-  ),
+  commentList: CommentList.propTypes.items,
   onSave: PropTypes.func,
   onClose: PropTypes.func,
 };

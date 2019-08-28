@@ -105,60 +105,64 @@ const add = async (req, res) => {
 const addComment = async (req, res) => {
   // todo security validation
   const client = await req.app.get('db').connect();
-  let commentList = {};
 
   try {
     const getUser = await client.query(
       'SELECT * FROM users WHERE auth_id = $1',
       [req.user.id]
     );
+    const { name } = getUser.rows[0].auth_metadata;
+
     const getCommentsLength = await client.query(
-      `select jsonb_array_length((artifact_data->'comments'))
-      from artifacts where id = '$1';`,
-      [req.params.id]
+      `SELECT jsonb_array_length((artifact_data->'comments'))
+      FROM artifacts WHERE id = $1;`,
+      [req.body.id]
     );
-    const [commentsLength] = getCommentsLength.rows;
+    const commentsLength = getCommentsLength.rows[0]
+      ? getCommentsLength.rows[0].jsonb_array_length
+      : 0;
 
     let insertComment;
     if (commentsLength > 0) {
       insertComment = await client.query(
         `UPDATE artifacts
-        SET artifact_data = jsonb_insert(artifact_data, '{comments,$1}, ('[{"id": "' || gen_random_uuid() || '", "user": {id: $2, name: $3}, "comment": $4 }]')::jsonb, true)
-        WHERE id = $4
-        RETURNING artifact_data->'comments'
+        SET artifact_data = jsonb_insert(artifact_data, '{comments,${commentsLength}}', ('{"id": "' || gen_random_uuid() || '", "user": {"id": '|| $1 ||', "name": "'|| $2 ||'"}, "comment": '|| $3 ||', "location": '|| $4 ||'}')::jsonb, true)
+        WHERE id = $5
+        RETURNING artifact_data->'comments' as commentlist
 `,
         [
-          commentsLength,
           getUser.rows[0].id,
-          getUser.rows[0].name,
-          req.params.comment,
-          req.params.id,
+          name,
+          JSON.stringify(req.body.comment),
+          JSON.stringify(req.body.location),
+          req.body.id,
         ]
       );
     } else {
       insertComment = await client.query(
         `UPDATE artifacts
-        SET artifact_data = jsonb_set(artifact_data, '{comments}', ('[{"id": "' || gen_random_uuid() || '", "user": {id: $1, name: $2}, "comment": $3 }]')::jsonb, true)
-        WHERE id = $4
-        RETURNING artifact_data->'comments'
+        SET artifact_data = jsonb_set(artifact_data, '{comments}', ('[{"id": "' || gen_random_uuid() || '", "user": {"id": '|| $1 ||', "name": "'|| $2 ||'"}, "comment": '|| $3 ||', "location": '|| $4 ||'}]')::jsonb, true)
+        WHERE id = $5
+        RETURNING artifact_data->'comments' as commentlist
 `,
         [
           getUser.rows[0].id,
-          getUser.rows[0].name,
-          req.params.comment,
-          req.params.id,
+          name,
+          JSON.stringify(req.body.comment),
+          JSON.stringify(req.body.location),
+          req.body.id,
         ]
       );
     }
 
-    [commentList] = insertComment.rows;
+    const { commentlist } = insertComment.rows[0];
+
+    res.send(commentlist);
   } catch (e) {
     serverError(req, res, e);
   } finally {
     client.release();
   }
-
-  res.send(commentList);
 };
 
 module.exports = {

@@ -1,5 +1,5 @@
 import React from 'react';
-import PropTypes from 'prop-types';
+// import PropTypes from 'prop-types';
 import Link from 'next/link';
 import { Button } from '@material-ui/core';
 import { getData } from '../src/api';
@@ -13,7 +13,7 @@ function ArtifactPage(props) {
       <Link href="/edit/[slug]" as={`/edit/${id}`}>
         <Button color="secondary">Edit</Button>
       </Link>
-      <Artifact name={artifact_data.name} body={artifact_data.body} />
+      <Artifact id={id} artifact_data={artifact_data} />
     </div>
   );
 }
@@ -27,19 +27,8 @@ ArtifactPage.getInitialProps = async ({ req }) => {
 };
 
 ArtifactPage.propTypes = {
-  id: PropTypes.string,
   // user_id: PropTypes.number,
-  artifact_data: PropTypes.shape({
-    body: PropTypes.string,
-    name: PropTypes.string,
-    comments: PropTypes.arrayOf(
-      PropTypes.shape({
-        id: PropTypes.string,
-        user: PropTypes.string,
-        comment: PropTypes.string,
-      })
-    ),
-  }),
+  ...Artifact.propTypes,
   // created_at: PropTypes.string,
   // updated_at: PropTypes.string,
 };

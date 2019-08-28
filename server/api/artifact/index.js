@@ -19,6 +19,6 @@ router.post('/artifact/update', ensureAuthenticated, update);
 
 router.post('/artifact/add', ensureAuthenticated, add);
 
-router.post('/artifact/:id/comments/add', ensureAuthenticated, addComment);
+router.post('/artifact/comment/add', ensureAuthenticated, addComment);
 
 module.exports = router;

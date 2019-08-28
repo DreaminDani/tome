@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import React, { useState } from 'react';
 import TextContent from '../../atom/TextContent';
 import CommentPane from '../../molecule/CommentPane';
+import { postData } from '../../api';
 
 const useStyles = makeStyles({
   root: {
@@ -31,10 +32,11 @@ const getWordOffsetsFromCaret = (anchorNode, anchorOffset) => {
   return word;
 };
 
-function Artifact(props) {
+function Artifact({ artifact_data, id }) {
   const classes = useStyles();
   const [selection, setSelection] = useState('');
-  const { name, body } = props;
+  const [updatedComments, updateComments] = useState([]);
+  const { name, body, comments } = artifact_data;
 
   const mouseDownHandler = e => {
     e.stopPropagation();
@@ -79,8 +81,13 @@ function Artifact(props) {
     }
   };
 
-  const commentSaveHandler = () => {
-    console.log(selection);
+  const commentSaveHandler = async ({ comment, location }) => {
+    const res = await postData(`/api/artifact/comment/add`, {
+      id,
+      comment,
+      location,
+    });
+    updateComments(res);
   };
 
   const commentCloseHandler = () => {
@@ -103,18 +110,9 @@ function Artifact(props) {
       <Grid item xs={12} sm={3}>
         {selection && (
           <CommentPane
-            commentList={[
-              {
-                id: 'some-uuid',
-                user: 'Some Guy',
-                comment: 'some comment',
-              },
-              {
-                id: 'some-uuid2',
-                user: 'Some Other Guy',
-                comment: 'some comment',
-              },
-            ]}
+            commentList={
+              updatedComments.length > 0 ? updatedComments : comments
+            }
             selection={selection}
             onSave={commentSaveHandler}
             onClose={commentCloseHandler}
@@ -126,8 +124,12 @@ function Artifact(props) {
 }
 
 Artifact.propTypes = {
-  name: PropTypes.string,
-  body: PropTypes.string,
+  id: PropTypes.string,
+  artifact_data: PropTypes.shape({
+    body: PropTypes.string,
+    name: PropTypes.string,
+    comments: CommentPane.propTypes.commentList,
+  }),
 };
 
 export default Artifact;

@@ -34,7 +34,7 @@ describe('Artifact responds to mouse events', () => {
 
   it('clears selection on mousedown, to prepare for next selection', () => {
     // Act
-    const artifact = shallow(<Artifact />);
+    const artifact = shallow(<Artifact artifact_data={{}} />);
     artifact
       .find('#artifact-content')
       .first()
@@ -49,7 +49,7 @@ describe('Artifact responds to mouse events', () => {
 
   it('does not update the selection, if nothing is clicked', () => {
     // Act
-    const artifact = shallow(<Artifact />);
+    const artifact = shallow(<Artifact artifact_data={{}} />);
     artifact
       .find('#artifact-content')
       .first()
@@ -79,7 +79,7 @@ describe('Artifact responds to mouse events', () => {
     }));
 
     // Act
-    const artifact = shallow(<Artifact />);
+    const artifact = shallow(<Artifact artifact_data={{}} />);
     artifact
       .find('#artifact-content')
       .first()
@@ -116,7 +116,7 @@ describe('Artifact responds to mouse events', () => {
     document.createRange = jest.fn(() => range);
 
     // Act
-    const artifact = shallow(<Artifact />);
+    const artifact = shallow(<Artifact artifact_data={{}} />);
     artifact
       .find('#artifact-content')
       .first()

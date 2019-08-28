@@ -54,6 +54,7 @@ describe('commentPane', () => {
       .find('[data-testid="comment-save"]')
       .first()
       .simulate('click');
+    // todo use real location to show where the comment was
     expect(onSave).toHaveBeenCalledWith(testComment);
   });
   it('calls closehandler when closed', () => {

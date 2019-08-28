@@ -48,7 +48,7 @@
     "sinon-express-mock": "^2.2.0"
   },
   "scripts": {
-    "dev": "nodemon server/index.js",
+    "dev": "nodemon --inspect server/index.js",
     "build": "next build",
     "start": "NODE_ENV=production PORT=8080 node server/index.js",
     "test": "jest",
