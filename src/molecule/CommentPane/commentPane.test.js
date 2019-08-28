@@ -12,10 +12,29 @@ describe('commentPane', () => {
     onSave = jest.fn();
     onClose = jest.fn();
   });
-  it('shows a commenting interface', () => {
+  it('does not show a list of comments, just a commenting input', () => {
     const comments = shallow(<CommentPane onSave={onSave} onClose={onClose} />);
+    expect(comments.find('[data-testid="comment-list"]')).toHaveLength(0);
     expect(comments.find('[data-testid="comment-input"]')).toHaveLength(1);
-  }); // todo split this into "shows empty comments list" and "shows existing comments"
+  });
+  it('shows existing comments and a commenting input', () => {
+    const commentList = [
+      {
+        id: 'some-uuid',
+        user: 'Some Guy',
+        comment: 'some comment',
+      },
+    ];
+    const comments = shallow(
+      <CommentPane
+        commentList={commentList}
+        onSave={onSave}
+        onClose={onClose}
+      />
+    );
+    expect(comments.find('[data-testid="comment-list"]')).toHaveLength(1);
+    expect(comments.find('[data-testid="comment-input"]')).toHaveLength(1);
+  });
   it('does not save empty comments', () => {
     const comments = shallow(<CommentPane onSave={onSave} onClose={onClose} />);
     comments

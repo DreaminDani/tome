@@ -8,16 +8,21 @@ import {
   IconButton,
 } from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
+import CommentList from '../../atom/CommentList';
 
 const useStyles = makeStyles(theme => ({
   root: {
     padding: theme.spacing(3, 2),
   },
+  closeIcon: {
+    float: 'right',
+    marginTop: -16,
+  },
 }));
 
 function CommentPane(props) {
   const classes = useStyles();
-  const { onSave, onClose } = props;
+  const { commentList, onSave, onClose } = props;
   const [comment, setComment] = useState('');
 
   const onSaveHandler = () => {
@@ -34,6 +39,16 @@ function CommentPane(props) {
 
   return (
     <Paper className={classes.root}>
+      <IconButton
+        className={classes.closeIcon}
+        data-testid="comment-close"
+        onClick={onClose}
+      >
+        <CloseIcon />
+      </IconButton>
+      {commentList && (
+        <CommentList items={commentList} data-testid="comment-list" />
+      )}
       <TextField
         data-testid="comment-input"
         label="Comment"
@@ -42,6 +57,7 @@ function CommentPane(props) {
         margin="normal"
         variant="outlined"
         onChange={onChangeHandler}
+        fullWidth
       />
       <Button
         data-testid="comment-save"
@@ -49,24 +65,24 @@ function CommentPane(props) {
         color="primary"
         // className={classes.button}
         onClick={onSaveHandler}
+        fullWidth
       >
         Add Comment
       </Button>
-      <IconButton
-        className={classes.menuIcon}
-        data-testid="comment-close"
-        onClick={onClose}
-      >
-        <CloseIcon />
-      </IconButton>
     </Paper>
   );
 }
 
 CommentPane.propTypes = {
+  commentList: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.string,
+      user: PropTypes.string,
+      comment: PropTypes.string,
+    })
+  ),
   onSave: PropTypes.func,
   onClose: PropTypes.func,
-  // todo add comment list for existing comments
 };
 
 export default CommentPane;

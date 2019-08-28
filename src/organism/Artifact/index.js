@@ -6,7 +6,7 @@ import CommentPane from '../../molecule/CommentPane';
 
 const useStyles = makeStyles({
   root: {
-    margin: '0 40px',
+    padding: '0 40px',
   },
 });
 
@@ -89,7 +89,7 @@ function Artifact(props) {
 
   return (
     <Grid container className={classes.root}>
-      <Grid item xs={12} sm={6}>
+      <Grid item xs={12} sm={8}>
         <Typography variant="h4">{name}</Typography>
         <TextContent
           id="artifact-content"
@@ -100,14 +100,26 @@ function Artifact(props) {
           {body}
         </TextContent>
       </Grid>
-      <Grid item xs={12} sm={6}>
-        {selection ? (
+      <Grid item xs={12} sm={3}>
+        {selection && (
           <CommentPane
+            commentList={[
+              {
+                id: 'some-uuid',
+                user: 'Some Guy',
+                comment: 'some comment',
+              },
+              {
+                id: 'some-uuid2',
+                user: 'Some Other Guy',
+                comment: 'some comment',
+              },
+            ]}
             selection={selection}
             onSave={commentSaveHandler}
             onClose={commentCloseHandler}
           />
-        ) : null}
+        )}
       </Grid>
     </Grid>
   );
