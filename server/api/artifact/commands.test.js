@@ -2,7 +2,7 @@
 
 const { mockReq, mockRes } = require('sinon-express-mock');
 
-const { list, byID, update, add } = require('./commands');
+const { list, byID, update, add, addComment } = require('./commands');
 
 let req;
 let res;
@@ -82,7 +82,7 @@ describe('artifactAPI byID', () => {
         get: () => mockDB,
       },
       params: {
-        id: 1,
+        id: 'some-uuid',
       },
     });
 
@@ -106,7 +106,7 @@ describe('artifactAPI byID', () => {
         get: () => mockDB,
       },
       params: {
-        id: 1,
+        id: 'some-uuid',
       },
     });
 
@@ -229,4 +229,39 @@ describe('artifactAPI add', () => {
     expect(res.send).not.toBeCalledWith(fakeArtifacts.rows[0]);
     expect(mockClient.release).toBeCalled();
   });
+});
+
+describe('artifactAPI addComment', () => {
+  const fakeComments = {
+    rows: [
+      {
+        id: 'some-uuid',
+        name: 'some guy',
+        comment: 'some comment',
+      },
+    ],
+  };
+  it('returns the comment with enough information to show in the list', async () => {
+    mockClient.query = jest.fn(() => fakeComments);
+    mockDB = {
+      connect: jest.fn(() => mockClient),
+    };
+    req = mockReq({
+      app: {
+        get: () => mockDB,
+      },
+      params: {
+        id: 'some-uuid',
+        comment: 'some comment',
+      },
+    });
+
+    await addComment(req, res);
+
+    expect(mockDB.connect).toBeCalled();
+    expect(mockClient.query).toBeCalled();
+    expect(res.send).toBeCalledWith(fakeArtifacts.rows[0]);
+    expect(mockClient.release).toBeCalled();
+  });
+  it('returns an error, if query fails', () => {});
 });

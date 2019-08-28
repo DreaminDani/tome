@@ -1,7 +1,7 @@
 const bodyParser = require('body-parser');
 const express = require('express');
 const { ensureAuthenticated } = require('../../helpers');
-const { list, byID, update, add } = require('./commands');
+const { list, byID, update, add, addComment } = require('./commands');
 
 const router = express.Router();
 
@@ -18,5 +18,7 @@ router.get('/artifact/:id', ensureAuthenticated, byID);
 router.post('/artifact/update', ensureAuthenticated, update);
 
 router.post('/artifact/add', ensureAuthenticated, add);
+
+router.post('/artifact/:id/comments/add', ensureAuthenticated, addComment);
 
 module.exports = router;

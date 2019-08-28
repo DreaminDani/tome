@@ -102,9 +102,69 @@ const add = async (req, res) => {
   res.send(saved);
 };
 
+const addComment = async (req, res) => {
+  // todo security validation
+  const client = await req.app.get('db').connect();
+  let commentList = {};
+
+  try {
+    const getUser = await client.query(
+      'SELECT * FROM users WHERE auth_id = $1',
+      [req.user.id]
+    );
+    const getCommentsLength = await client.query(
+      `select jsonb_array_length((artifact_data->'comments'))
+      from artifacts where id = '$1';`,
+      [req.params.id]
+    );
+    const [commentsLength] = getCommentsLength.rows;
+
+    let insertComment;
+    if (commentsLength > 0) {
+      insertComment = await client.query(
+        `UPDATE artifacts
+        SET artifact_data = jsonb_insert(artifact_data, '{comments,$1}, ('[{"id": "' || gen_random_uuid() || '", "user": {id: $2, name: $3}, "comment": $4 }]')::jsonb, true)
+        WHERE id = $4
+        RETURNING artifact_data->'comments'
+`,
+        [
+          commentsLength,
+          getUser.rows[0].id,
+          getUser.rows[0].name,
+          req.params.comment,
+          req.params.id,
+        ]
+      );
+    } else {
+      insertComment = await client.query(
+        `UPDATE artifacts
+        SET artifact_data = jsonb_set(artifact_data, '{comments}', ('[{"id": "' || gen_random_uuid() || '", "user": {id: $1, name: $2}, "comment": $3 }]')::jsonb, true)
+        WHERE id = $4
+        RETURNING artifact_data->'comments'
+`,
+        [
+          getUser.rows[0].id,
+          getUser.rows[0].name,
+          req.params.comment,
+          req.params.id,
+        ]
+      );
+    }
+
+    [commentList] = insertComment.rows;
+  } catch (e) {
+    serverError(req, res, e);
+  } finally {
+    client.release();
+  }
+
+  res.send(commentList);
+};
+
 module.exports = {
   list,
   byID,
   update,
   add,
+  addComment,
 };

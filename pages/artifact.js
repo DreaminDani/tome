@@ -32,6 +32,13 @@ ArtifactPage.propTypes = {
   artifact_data: PropTypes.shape({
     body: PropTypes.string,
     name: PropTypes.string,
+    comments: PropTypes.arrayOf(
+      PropTypes.shape({
+        id: PropTypes.string,
+        user: PropTypes.string,
+        comment: PropTypes.string,
+      })
+    ),
   }),
   // created_at: PropTypes.string,
   // updated_at: PropTypes.string,
