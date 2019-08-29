@@ -27,10 +27,7 @@ function CommentPane(props) {
 
   const onSaveHandler = async () => {
     if (comment) {
-      await onSave({
-        comment,
-        location: [0, 1],
-      });
+      await onSave(comment);
       setComment('');
     }
   };

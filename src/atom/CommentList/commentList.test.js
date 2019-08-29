@@ -9,7 +9,10 @@ describe('commentList', () => {
     const commentListItems = [
       {
         id: 'some-uuid',
-        user: 'Some Guy',
+        user: {
+          id: 1,
+          name: 'Some Guy',
+        },
         comment: 'some comment',
       },
     ];
@@ -22,12 +25,18 @@ describe('commentList', () => {
     const commentListItems = [
       {
         id: 'some-uuid1',
-        user: 'Some Guy',
+        user: {
+          id: 1,
+          name: 'Some Guy',
+        },
         comment: 'some comment',
       },
       {
         id: 'some-uuid2',
-        user: 'Some Other Guy',
+        user: {
+          id: 2,
+          name: 'Some Other Guy',
+        },
         comment: 'some comment',
       },
     ];

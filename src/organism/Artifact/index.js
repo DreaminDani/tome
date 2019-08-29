@@ -34,7 +34,10 @@ const getWordOffsetsFromCaret = (anchorNode, anchorOffset) => {
 
 function Artifact({ artifact_data, id }) {
   const classes = useStyles();
-  const [selection, setSelection] = useState('');
+  const [selection, setSelection] = useState({
+    selection: '',
+    location: [],
+  });
   const [updatedComments, updateComments] = useState([]);
   const { name, body, comments } = artifact_data;
 
@@ -53,7 +56,10 @@ function Artifact({ artifact_data, id }) {
         domSelection.anchorOffset,
         domSelection.focusOffset
       );
-      setSelection(part);
+      setSelection({
+        selection: part,
+        location: [domSelection.anchorOffset, domSelection.focusOffset],
+      });
     } else if (
       domSelection.type === 'Caret' &&
       domSelection.anchorNode.nodeName === '#text'
@@ -70,29 +76,38 @@ function Artifact({ artifact_data, id }) {
       domSelection.removeAllRanges();
       domSelection.addRange(range);
 
-      setSelection(
-        domSelection.anchorNode.textContent.substring(
+      setSelection({
+        selection: domSelection.anchorNode.textContent.substring(
           wordOffsets[0],
           wordOffsets[1]
-        )
-      );
+        ),
+        location: wordOffsets,
+      });
     } else {
-      setSelection('');
+      setSelection({
+        selection: '',
+        location: [],
+      });
     }
   };
 
-  const commentSaveHandler = async ({ comment, location }) => {
+  const commentSaveHandler = async comment => {
     const res = await postData(`/api/artifact/comment/add`, {
       id,
       comment,
-      location,
+      location: selection.location,
     });
     updateComments(res);
   };
 
   const commentCloseHandler = () => {
-    setSelection('');
+    setSelection({
+      selection: '',
+      location: [],
+    });
   };
+
+  const commentList = updatedComments.length > 0 ? updatedComments : comments;
 
   return (
     <Grid container className={classes.root}>
@@ -100,6 +115,7 @@ function Artifact({ artifact_data, id }) {
         <Typography variant="h4">{name}</Typography>
         <TextContent
           id="artifact-content"
+          commentList={commentList}
           // todo onBlur-like behavior to highlight selected region during commenting
           onMouseDown={mouseDownHandler}
           onMouseUp={mouseUpHandler}
@@ -110,10 +126,7 @@ function Artifact({ artifact_data, id }) {
       <Grid item xs={12} sm={3}>
         {selection && (
           <CommentPane
-            commentList={
-              updatedComments.length > 0 ? updatedComments : comments
-            }
-            selection={selection}
+            commentList={commentList}
             onSave={commentSaveHandler}
             onClose={commentCloseHandler}
           />

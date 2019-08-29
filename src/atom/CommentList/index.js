@@ -30,6 +30,7 @@ CommentList.propTypes = {
         name: PropTypes.string,
       }),
       comment: PropTypes.string,
+      location: PropTypes.array,
     })
   ),
 };

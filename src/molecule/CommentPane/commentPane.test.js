@@ -21,8 +21,12 @@ describe('commentPane', () => {
     const commentList = [
       {
         id: 'some-uuid',
-        user: 'Some Guy',
+        user: {
+          id: 1,
+          name: 'Some Guy',
+        },
         comment: 'some comment',
+        location: [0, 1],
       },
     ];
     const comments = shallow(
