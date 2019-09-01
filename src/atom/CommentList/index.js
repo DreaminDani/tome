@@ -11,8 +11,8 @@ const useStyles = makeStyles({
 const CommentList = props => {
   const classes = useStyles();
   const { items } = props;
-  return items.map(comment => (
-    <div key={comment.id} data-testid="comment-list-item">
+  return items.map((comment, index) => (
+    <div key={comment.id + index} data-testid="comment-list-item">
       <Typography variant="caption">{comment.user.name}</Typography>
       <Typography variant="body1" className={classes.text} gutterBottom>
         {comment.comment}

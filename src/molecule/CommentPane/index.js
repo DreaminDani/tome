@@ -22,8 +22,10 @@ const useStyles = makeStyles(theme => ({
 
 function CommentPane(props) {
   const classes = useStyles();
-  const { commentList, onSave, onClose } = props;
+  const { selection, commentList, onSave, onClose } = props;
   const [comment, setComment] = useState('');
+
+  const selectionComments = commentList.filter(c => c.id === selection);
 
   const onSaveHandler = async () => {
     if (comment) {
@@ -45,8 +47,8 @@ function CommentPane(props) {
       >
         <CloseIcon />
       </IconButton>
-      {commentList && (
-        <CommentList items={commentList} data-testid="comment-list" />
+      {selectionComments.length > 0 && (
+        <CommentList items={selectionComments} data-testid="comment-list" />
       )}
       <TextField
         data-testid="comment-input"
@@ -71,7 +73,13 @@ function CommentPane(props) {
   );
 }
 
+CommentPane.defaultProps = {
+  selection: '',
+  commentList: [],
+};
+
 CommentPane.propTypes = {
+  selection: PropTypes.string,
   commentList: CommentList.propTypes.items,
   onSave: PropTypes.func,
   onClose: PropTypes.func,

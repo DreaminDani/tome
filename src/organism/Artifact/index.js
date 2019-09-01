@@ -41,6 +41,12 @@ function Artifact({ artifact_data, id }) {
   const [updatedComments, updateComments] = useState([]);
   const { name, body, comments } = artifact_data;
 
+  const getSelectionLocation = (content, start, end) => {
+    const remains = body.split(content);
+    console.log(remains);
+    return [remains[0].length + start, remains[0].length + end];
+  };
+
   const mouseDownHandler = e => {
     e.stopPropagation();
     const domSelection = window.getSelection();
@@ -50,54 +56,89 @@ function Artifact({ artifact_data, id }) {
   const mouseUpHandler = e => {
     // todo respond to touch events
     e.stopPropagation();
-    const domSelection = window.getSelection();
-    if (domSelection.type === 'Range') {
-      const part = domSelection.focusNode.textContent.slice(
-        domSelection.anchorOffset,
-        domSelection.focusOffset
-      );
+    if (e.target.localName === 'mark') {
       setSelection({
-        selection: part,
-        location: [domSelection.anchorOffset, domSelection.focusOffset],
-      });
-    } else if (
-      domSelection.type === 'Caret' &&
-      domSelection.anchorNode.nodeName === '#text'
-    ) {
-      const range = document.createRange();
-      const wordOffsets = getWordOffsetsFromCaret(
-        domSelection.anchorNode,
-        domSelection.anchorOffset
-      );
-
-      range.setStart(domSelection.anchorNode, wordOffsets[0]);
-      range.setEnd(domSelection.anchorNode, wordOffsets[1]);
-
-      domSelection.removeAllRanges();
-      domSelection.addRange(range);
-
-      setSelection({
-        selection: domSelection.anchorNode.textContent.substring(
-          wordOffsets[0],
-          wordOffsets[1]
-        ),
-        location: wordOffsets,
-      });
-    } else {
-      setSelection({
-        selection: '',
+        selection: e.target.id,
         location: [],
       });
+    } else {
+      const domSelection = window.getSelection();
+      if (domSelection.type === 'Range') {
+        const part = domSelection.focusNode.textContent.slice(
+          domSelection.anchorOffset,
+          domSelection.focusOffset
+        );
+        setSelection({
+          selection: part,
+          location: getSelectionLocation(
+            domSelection.focusNode.textContent,
+            domSelection.anchorOffset,
+            domSelection.focusOffset
+          ),
+        });
+      } else if (
+        domSelection.type === 'Caret' &&
+        domSelection.anchorNode.nodeName === '#text'
+      ) {
+        const range = document.createRange();
+        const wordOffsets = getWordOffsetsFromCaret(
+          domSelection.anchorNode,
+          domSelection.anchorOffset
+        );
+
+        range.setStart(domSelection.anchorNode, wordOffsets[0]);
+        range.setEnd(domSelection.anchorNode, wordOffsets[1]);
+
+        domSelection.removeAllRanges();
+        domSelection.addRange(range);
+
+        setSelection({
+          selection: domSelection.anchorNode.textContent.substring(
+            wordOffsets[0],
+            wordOffsets[1]
+          ),
+          location: getSelectionLocation(
+            domSelection.anchorNode.textContent,
+            ...wordOffsets
+          ),
+        });
+      } else {
+        setSelection({
+          selection: '',
+          location: [],
+        });
+      }
     }
   };
 
   const commentSaveHandler = async comment => {
-    const res = await postData(`/api/artifact/comment/add`, {
-      id,
-      comment,
-      location: selection.location,
-    });
+    let res = [];
+    if (selection.location.length > 0) {
+      res = await postData(`/api/artifact/comment/add`, {
+        id,
+        comment,
+        location: selection.location,
+      });
+    } else {
+      res = await postData(`/api/artifact/comment/update`, {
+        id,
+        comment,
+        commentId: selection.selection,
+      });
+    }
+
     updateComments(res);
+
+    for (let i = res.length - 1; i > -1; i -= 1) {
+      // expects submitted comment to not have the same text AND be later in the array
+      // beware of bugs / race conditions here
+      if (res[i].comment === comment) {
+        setSelection({
+          selection: res[i].id,
+          location: [],
+        });
+      }
+    }
   };
 
   const commentCloseHandler = () => {
@@ -105,6 +146,8 @@ function Artifact({ artifact_data, id }) {
       selection: '',
       location: [],
     });
+    const domSelection = window.getSelection();
+    domSelection.removeAllRanges();
   };
 
   const commentList = updatedComments.length > 0 ? updatedComments : comments;
@@ -117,6 +160,7 @@ function Artifact({ artifact_data, id }) {
           id="artifact-content"
           commentList={commentList}
           // todo onBlur-like behavior to highlight selected region during commenting
+          // see getBoundingClientRect
           onMouseDown={mouseDownHandler}
           onMouseUp={mouseUpHandler}
         >
@@ -124,8 +168,9 @@ function Artifact({ artifact_data, id }) {
         </TextContent>
       </Grid>
       <Grid item xs={12} sm={3}>
-        {selection && (
+        {selection.selection.length > 0 && (
           <CommentPane
+            selection={selection.selection}
             commentList={commentList}
             onSave={commentSaveHandler}
             onClose={commentCloseHandler}

@@ -14,6 +14,14 @@ const useStyles = makeStyles(theme => ({
       background: theme.palette.primary.light,
       color: 'white',
     },
+    '& mark': {
+      background: theme.palette.secondary.light,
+      color: 'white',
+      cursor: 'pointer',
+      '&:hover': {
+        background: theme.palette.secondary.dark,
+      },
+    },
   },
 }));
 
@@ -23,6 +31,21 @@ function TextContent(props) {
 
   const withComments = [];
   if (commentList && commentList.length > 0) {
+    // reorder comments based on location start position
+    commentList.sort(function(a, b) {
+      if (a.location && b.location) {
+        return a.location[0] - b.location[0];
+      }
+      if (a.location) {
+        return 1;
+      }
+      if (b.location) {
+        return -1;
+      }
+    });
+    console.log(commentList);
+
+    // then add marks to locations
     const characters = children.split('');
     let i = 0;
     let offset = 0;
@@ -33,7 +56,7 @@ function TextContent(props) {
           i += 1;
         }
 
-        withComments[i + offset] = '<mark>';
+        withComments[i + offset] = `<mark id="${comment.id}">`;
         offset += 1;
 
         while (i < comment.location[1]) {
