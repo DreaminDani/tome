@@ -30,9 +30,10 @@ function TextContent(props) {
   const { children, commentList, onMouseDown, onMouseUp } = props;
 
   const withComments = [];
-  if (commentList && commentList.length > 0) {
+  const textComments = [...commentList];
+  if (textComments.length > 0) {
     // reorder comments based on location start position
-    commentList.sort(function(a, b) {
+    textComments.sort(function(a, b) {
       if (a.location && b.location) {
         return a.location[0] - b.location[0];
       }
@@ -43,13 +44,12 @@ function TextContent(props) {
         return -1;
       }
     });
-    console.log(commentList);
 
     // then add marks to locations
     const characters = children.split('');
     let i = 0;
     let offset = 0;
-    commentList.map(comment => {
+    textComments.map(comment => {
       if (comment.location) {
         while (i < comment.location[0]) {
           withComments[i + offset] = characters[i];

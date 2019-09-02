@@ -43,7 +43,6 @@ function Artifact({ artifact_data, id }) {
 
   const getSelectionLocation = (content, start, end) => {
     const remains = body.split(content);
-    console.log(remains);
     return [remains[0].length + start, remains[0].length + end];
   };
 
@@ -127,14 +126,14 @@ function Artifact({ artifact_data, id }) {
       });
     }
 
-    updateComments(res);
+    updateComments(res.commentlist);
 
-    for (let i = res.length - 1; i > -1; i -= 1) {
+    for (let i = res.commentlist.length - 1; i > -1; i -= 1) {
       // expects submitted comment to not have the same text AND be later in the array
       // beware of bugs / race conditions here
-      if (res[i].comment === comment) {
+      if (res.commentlist[i].comment === comment) {
         setSelection({
-          selection: res[i].id,
+          selection: res.commentlist[i].id,
           location: [],
         });
       }
