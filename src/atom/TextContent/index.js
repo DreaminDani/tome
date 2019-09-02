@@ -30,7 +30,7 @@ function TextContent(props) {
   const { children, commentList, onMouseDown, onMouseUp } = props;
 
   const withComments = [];
-  const textComments = [...commentList];
+  const textComments = commentList ? [...commentList] : [];
   if (textComments.length > 0) {
     // reorder comments based on location start position
     textComments.sort(function(a, b) {
