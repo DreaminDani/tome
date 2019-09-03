@@ -4,33 +4,18 @@ import React, { useState } from 'react';
 import TextContent from '../../atom/TextContent';
 import CommentPane from '../../molecule/CommentPane';
 import { postData } from '../../api';
+import {
+  setRangeSelection,
+  setCaretSelection,
+  updateFocusedComment,
+  getCurrentCommentList,
+} from './helpers';
 
 const useStyles = makeStyles({
   root: {
     padding: '0 40px',
   },
 });
-
-// looks for word in anchorNode text and returns its start/end points
-const getWordOffsetsFromCaret = (anchorNode, anchorOffset) => {
-  const word = [0, 0];
-
-  for (let i = 0; i < anchorNode.textContent.length + 1; i += 1) {
-    if (
-      /\s/.exec(anchorNode.textContent.charAt(i)) ||
-      anchorNode.textContent.charAt(i) === ''
-    ) {
-      if (i < anchorOffset) {
-        word[0] = i + 1;
-      } else {
-        word[1] = i;
-        break;
-      }
-    }
-  }
-
-  return word;
-};
 
 function Artifact({ artifact_data, id }) {
   const classes = useStyles();
@@ -41,10 +26,11 @@ function Artifact({ artifact_data, id }) {
   const [updatedComments, updateComments] = useState([]);
   const { name, body, comments } = artifact_data;
 
-  const getSelectionLocation = (content, start, end) => {
-    const remains = body.split(content);
-    return [remains[0].length + start, remains[0].length + end];
-  };
+  const commentList = getCurrentCommentList(
+    comments,
+    updatedComments,
+    selection
+  );
 
   const mouseDownHandler = e => {
     e.stopPropagation();
@@ -63,44 +49,12 @@ function Artifact({ artifact_data, id }) {
     } else {
       const domSelection = window.getSelection();
       if (domSelection.type === 'Range') {
-        const part = domSelection.focusNode.textContent.slice(
-          domSelection.anchorOffset,
-          domSelection.focusOffset
-        );
-        setSelection({
-          selection: part,
-          location: getSelectionLocation(
-            domSelection.focusNode.textContent,
-            domSelection.anchorOffset,
-            domSelection.focusOffset
-          ),
-        });
+        setRangeSelection(body, domSelection, setSelection);
       } else if (
         domSelection.type === 'Caret' &&
         domSelection.anchorNode.nodeName === '#text'
       ) {
-        const range = document.createRange();
-        const wordOffsets = getWordOffsetsFromCaret(
-          domSelection.anchorNode,
-          domSelection.anchorOffset
-        );
-
-        range.setStart(domSelection.anchorNode, wordOffsets[0]);
-        range.setEnd(domSelection.anchorNode, wordOffsets[1]);
-
-        domSelection.removeAllRanges();
-        domSelection.addRange(range);
-
-        setSelection({
-          selection: domSelection.anchorNode.textContent.substring(
-            wordOffsets[0],
-            wordOffsets[1]
-          ),
-          location: getSelectionLocation(
-            domSelection.anchorNode.textContent,
-            ...wordOffsets
-          ),
-        });
+        setCaretSelection(body, domSelection, setSelection);
       } else {
         setSelection({
           selection: '',
@@ -127,17 +81,7 @@ function Artifact({ artifact_data, id }) {
     }
 
     updateComments(res.commentlist);
-
-    for (let i = res.commentlist.length - 1; i > -1; i -= 1) {
-      // expects a conflicting comment to not have the same text AND be later in the array
-      // beware of bugs / race conditions here
-      if (res.commentlist[i].comment === comment) {
-        setSelection({
-          selection: res.commentlist[i].id,
-          location: [],
-        });
-      }
-    }
+    updateFocusedComment(comment, res.commentlist, setSelection);
   };
 
   const commentCloseHandler = () => {
@@ -148,22 +92,6 @@ function Artifact({ artifact_data, id }) {
     const domSelection = window.getSelection();
     domSelection.removeAllRanges();
   };
-
-  // update comment list as comments get posted and returned
-  let commentList = [];
-  if (comments || updatedComments.length > 0) {
-    commentList =
-      updatedComments.length > 0 ? [...updatedComments] : [...comments];
-  }
-
-  // update comment list with temp comment to denote current selection
-  if (selection.selection.length > 0 && selection.location.length > 0) {
-    commentList.push({
-      comment: 'text',
-      id: 'current-comment',
-      location: selection.location,
-    });
-  }
 
   return (
     <Grid container className={classes.root}>

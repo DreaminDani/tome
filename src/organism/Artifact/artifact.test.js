@@ -53,7 +53,10 @@ describe('Artifact responds to mouse events', () => {
     artifact
       .find('#artifact-content')
       .first()
-      .simulate('mouseup', new Event('mouseup'));
+      .simulate('mouseup', {
+        target: { localName: 'text' },
+        stopPropagation: () => {},
+      });
 
     // Assert
     expect(window.getSelection).toHaveBeenCalled();
@@ -64,7 +67,7 @@ describe('Artifact responds to mouse events', () => {
     expect(domSelection.addRange).not.toHaveBeenCalled();
   });
 
-  it('does not update the selection, if a Range is selected', () => {
+  it('does not modify the selection, if a Range is selected', () => {
     // Arrange
     window.getSelection = jest.fn(() => ({
       type: 'Range',
@@ -79,11 +82,16 @@ describe('Artifact responds to mouse events', () => {
     }));
 
     // Act
-    const artifact = shallow(<Artifact artifact_data={{}} />);
+    const artifact = shallow(
+      <Artifact artifact_data={{ body: 'line with words' }} />
+    );
     artifact
       .find('#artifact-content')
       .first()
-      .simulate('mouseup', new Event('mouseup'));
+      .simulate('mouseup', {
+        target: { localName: 'text' },
+        stopPropagation: () => {},
+      });
 
     // Assert
     expect(window.getSelection).toHaveBeenCalled();
@@ -116,11 +124,16 @@ describe('Artifact responds to mouse events', () => {
     document.createRange = jest.fn(() => range);
 
     // Act
-    const artifact = shallow(<Artifact artifact_data={{}} />);
+    const artifact = shallow(
+      <Artifact artifact_data={{ body: 'line with words' }} />
+    );
     artifact
       .find('#artifact-content')
       .first()
-      .simulate('mouseup', new Event('mouseup'));
+      .simulate('mouseup', {
+        target: { localName: 'text' },
+        stopPropagation: () => {},
+      });
 
     // Assert
     expect(document.createRange).toHaveBeenCalled();
