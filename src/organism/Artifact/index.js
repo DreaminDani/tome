@@ -129,7 +129,7 @@ function Artifact({ artifact_data, id }) {
     updateComments(res.commentlist);
 
     for (let i = res.commentlist.length - 1; i > -1; i -= 1) {
-      // expects submitted comment to not have the same text AND be later in the array
+      // expects a conflicting comment to not have the same text AND be later in the array
       // beware of bugs / race conditions here
       if (res.commentlist[i].comment === comment) {
         setSelection({
@@ -149,24 +149,36 @@ function Artifact({ artifact_data, id }) {
     domSelection.removeAllRanges();
   };
 
-  const commentList = updatedComments.length > 0 ? updatedComments : comments;
+  // update comment list as comments get posted and returned
+  let commentList = [];
+  if (comments || updatedComments.length > 0) {
+    commentList =
+      updatedComments.length > 0 ? [...updatedComments] : [...comments];
+  }
+
+  // update comment list with temp comment to denote current selection
+  if (selection.selection.length > 0 && selection.location.length > 0) {
+    commentList.push({
+      comment: 'text',
+      id: 'current-comment',
+      location: selection.location,
+    });
+  }
 
   return (
     <Grid container className={classes.root}>
-      <Grid item xs={12} sm={8}>
+      <Grid item xs={12} sm={6} md={8}>
         <Typography variant="h4">{name}</Typography>
         <TextContent
           id="artifact-content"
           commentList={commentList}
-          // todo onBlur-like behavior to highlight selected region during commenting
-          // see getBoundingClientRect
           onMouseDown={mouseDownHandler}
           onMouseUp={mouseUpHandler}
         >
           {body}
         </TextContent>
       </Grid>
-      <Grid item xs={12} sm={3}>
+      <Grid item xs={12} sm={6} md={4} lg={3}>
         {selection.selection.length > 0 && (
           <CommentPane
             selection={selection.selection}

@@ -9,6 +9,7 @@ import CommentList from '../CommentList';
 const useStyles = makeStyles(theme => ({
   text: {
     fontFamily: `'Cormorant Garamond', serif`,
+    fontSize: '1.12rem',
     whiteSpace: 'pre',
     '&::selection': {
       background: theme.palette.primary.light,
@@ -16,6 +17,9 @@ const useStyles = makeStyles(theme => ({
     },
     '& mark': {
       background: theme.palette.secondary.light,
+      '&#current-comment': {
+        background: theme.palette.primary.light,
+      },
       color: 'white',
       cursor: 'pointer',
       '&:hover': {

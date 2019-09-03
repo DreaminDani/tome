@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import PropTypes from 'prop-types';
 import {
   Paper,
@@ -9,10 +9,12 @@ import {
 } from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
 import CommentList from '../../atom/CommentList';
+import { UserContext } from '../../contexts';
 
 const useStyles = makeStyles(theme => ({
   root: {
     padding: theme.spacing(3, 2),
+    maxWidth: 464,
   },
   closeIcon: {
     float: 'right',
@@ -22,9 +24,9 @@ const useStyles = makeStyles(theme => ({
 
 function CommentPane(props) {
   const classes = useStyles();
+  const user = useContext(UserContext);
   const { selection, commentList, onSave, onClose } = props;
   const [comment, setComment] = useState('');
-
   const selectionComments = commentList.filter(c => c.id === selection);
 
   const onSaveHandler = async () => {
@@ -47,8 +49,10 @@ function CommentPane(props) {
       >
         <CloseIcon />
       </IconButton>
-      {selectionComments.length > 0 && (
+      {selectionComments.length > 0 ? (
         <CommentList items={selectionComments} data-testid="comment-list" />
+      ) : (
+        user.displayName
       )}
       <TextField
         data-testid="comment-input"
@@ -59,6 +63,7 @@ function CommentPane(props) {
         variant="outlined"
         onChange={onChangeHandler}
         fullWidth
+        autoFocus
       />
       <Button
         data-testid="comment-save"
