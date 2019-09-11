@@ -1,27 +1,26 @@
 const { serverError } = require('../../helpers');
+const {
+  getArtifactsByUser,
+  getArtifactByID,
+  updateArtifactByID,
+  createArtifact,
+} = require('../../data/artifacts');
+const { getUserByID } = require('../../data/users');
 
 const list = async (req, res) => {
   const client = await req.app.get('db').connect();
   const artifacts = {};
 
   try {
-    const getArtifacts = await client.query(
-      `
-      SELECT a.id, jsonb_extract_path(a.artifact_data,'name') as name,
-        a.user_id, a.created_at, a.updated_at, u.auth_metadata
-      FROM artifacts a, users u
-      WHERE a.user_id=u.id and auth_id = $1
-    `,
-      [req.user.id]
-    );
-    artifacts.list = getArtifacts.rows; // currently just gets all that user owns
+    artifacts.list = await getArtifactsByUser(client, req.user.id);
   } catch (e) {
     serverError(req, res, e);
   } finally {
     client.release();
   }
-
-  res.send(artifacts);
+  if (artifacts) {
+    res.send(artifacts);
+  }
 };
 
 const byID = async (req, res) => {
@@ -29,18 +28,16 @@ const byID = async (req, res) => {
   let artifact = {};
 
   try {
-    const getArtifact = await client.query(
-      'SELECT * FROM artifacts WHERE id = $1',
-      [req.params.id]
-    );
-    [artifact] = getArtifact.rows;
+    artifact = await getArtifactByID(client, req.params.id);
   } catch (e) {
     serverError(req, res, e);
   } finally {
     client.release();
   }
 
-  res.send(artifact);
+  if (artifact) {
+    res.send(artifact);
+  }
 };
 
 const update = async (req, res) => {
@@ -49,30 +46,21 @@ const update = async (req, res) => {
   let saved = {};
 
   try {
-    const updateArtifact = await client.query(
-      `
-            UPDATE artifacts
-            SET artifact_data = $1
-            WHERE
-              id = $2
-            RETURNING id;
-          `,
-      [
-        {
-          name: req.body.name,
-          body: req.body.body,
-        },
-        req.body.id,
-      ]
+    saved = await updateArtifactByID(
+      client,
+      req.body.id,
+      req.body.name,
+      req.body.body
     );
-    [saved] = updateArtifact.rows;
   } catch (e) {
     serverError(req, res, e);
   } finally {
     client.release();
   }
 
-  res.send(saved);
+  if (saved) {
+    res.send(saved);
+  }
 };
 
 const add = async (req, res) => {
@@ -81,25 +69,17 @@ const add = async (req, res) => {
   let saved = {};
 
   try {
-    const getUser = await client.query(
-      'SELECT * FROM users WHERE auth_id = $1',
-      [req.user.id]
-    );
-    const insertArtifact = await client.query(
-      `
-            INSERT INTO artifacts(user_id, artifact_data)
-            VALUES($1, $2) RETURNING id;
-          `,
-      [getUser.rows[0].id, req.body]
-    );
-    [saved] = insertArtifact.rows;
+    const user = await getUserByID(client, req.user.id);
+    saved = await createArtifact(client, user.id, req.body.name, req.body.body);
   } catch (e) {
     serverError(req, res, e);
   } finally {
     client.release();
   }
 
-  res.send(saved);
+  if (saved) {
+    res.send(saved);
+  }
 };
 
 const addComment = async (req, res) => {
@@ -107,11 +87,7 @@ const addComment = async (req, res) => {
   const client = await req.app.get('db').connect();
 
   try {
-    const getUser = await client.query(
-      'SELECT * FROM users WHERE auth_id = $1',
-      [req.user.id]
-    );
-    const { name } = getUser.rows[0].auth_metadata;
+    const { name } = await getUserByID(req.user.id).auth_metadata;
 
     const getCommentsLength = await client.query(
       `SELECT jsonb_array_length((artifact_data->'comments'))
@@ -131,7 +107,7 @@ const addComment = async (req, res) => {
         WHERE id = $5
         RETURNING artifact_data->'comments' as commentlist
 `,
-      /* eslint-enable prettier/prettier */
+        /* eslint-enable prettier/prettier */
         [
           getUser.rows[0].id,
           name,

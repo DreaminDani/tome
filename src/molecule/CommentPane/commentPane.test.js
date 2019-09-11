@@ -12,12 +12,8 @@ describe('commentPane', () => {
     onSave = jest.fn();
     onClose = jest.fn();
   });
-  it('does not show a list of comments, just a commenting input', () => {
-    const comments = shallow(<CommentPane onSave={onSave} onClose={onClose} />);
-    expect(comments.find('[data-testid="comment-list"]')).toHaveLength(0);
-    expect(comments.find('[data-testid="comment-input"]')).toHaveLength(1);
-  });
-  it('shows existing comments and a commenting input', () => {
+  it('does not show a list of comments, just a commenting input, if selection not an existing comment', () => {
+    const selection = 'new selection';
     const commentList = [
       {
         id: 'some-uuid',
@@ -31,6 +27,31 @@ describe('commentPane', () => {
     ];
     const comments = shallow(
       <CommentPane
+        selection={selection}
+        commentList={commentList}
+        onSave={onSave}
+        onClose={onClose}
+      />
+    );
+    expect(comments.find('[data-testid="comment-list"]')).toHaveLength(0);
+    expect(comments.find('[data-testid="comment-input"]')).toHaveLength(1);
+  });
+  it('shows existing comments and a commenting input', () => {
+    const selection = 'some-uuid';
+    const commentList = [
+      {
+        id: 'some-uuid',
+        user: {
+          id: 1,
+          name: 'Some Guy',
+        },
+        comment: 'some comment',
+        location: [0, 1],
+      },
+    ];
+    const comments = shallow(
+      <CommentPane
+        selection={selection}
         commentList={commentList}
         onSave={onSave}
         onClose={onClose}
