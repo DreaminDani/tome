@@ -40,30 +40,51 @@ export const setRangeSelection = (body, domSelection, setSelection) => {
   });
 };
 
-export const setCaretSelection = (body, domSelection, setSelection) => {
-  const range = document.createRange();
+export const setCaretSelection = (
+  body,
+  domSelection,
+  commentList,
+  setSelection
+) => {
   const wordOffsets = getWordOffsetsFromCaret(
     domSelection.anchorNode,
     domSelection.anchorOffset
   );
 
-  range.setStart(domSelection.anchorNode, wordOffsets[0]);
-  range.setEnd(domSelection.anchorNode, wordOffsets[1]);
+  const wordLocation = getSelectionLocation(
+    body,
+    domSelection.anchorNode.textContent,
+    ...wordOffsets
+  );
 
-  domSelection.removeAllRanges();
-  domSelection.addRange(range);
-
-  setSelection({
-    selection: domSelection.anchorNode.textContent.substring(
-      wordOffsets[0],
-      wordOffsets[1]
-    ),
-    location: getSelectionLocation(
-      body,
-      domSelection.anchorNode.textContent,
-      ...wordOffsets
-    ),
+  // check if selected word overlaps with existing comment location
+  let isNew = true;
+  commentList.forEach(comment => {
+    if (
+      comment.location[0] >= wordLocation[0] &&
+      comment.location[1] <= wordLocation[1]
+    ) {
+      setSelection({ selection: comment.id, location: [] });
+      isNew = false;
+    }
   });
+
+  if (isNew) {
+    const range = document.createRange();
+    range.setStart(domSelection.anchorNode, wordOffsets[0]);
+    range.setEnd(domSelection.anchorNode, wordOffsets[1]);
+
+    domSelection.removeAllRanges();
+    domSelection.addRange(range);
+
+    setSelection({
+      selection: domSelection.anchorNode.textContent.substring(
+        wordOffsets[0],
+        wordOffsets[1]
+      ),
+      location: wordLocation,
+    });
+  }
 };
 
 export const updateFocusedComment = (
@@ -92,7 +113,11 @@ export const getCurrentCommentList = (comments, updatedComments, selection) => {
   }
 
   // update comment list with temp comment to denote current selection
-  if (selection.selection.length > 0 && selection.location.length > 0) {
+  if (
+    selection.selection &&
+    selection.selection.length > 0 &&
+    selection.location.length > 0
+  ) {
     commentList.push({
       comment: 'text',
       id: 'current-comment',

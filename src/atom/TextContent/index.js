@@ -27,11 +27,14 @@ const useStyles = makeStyles(theme => ({
       },
     },
   },
+  selected: {
+    background: `${theme.palette.primary.light} !important`,
+  },
 }));
 
 function TextContent(props) {
   const classes = useStyles();
-  const { children, commentList, onMouseDown, onMouseUp } = props;
+  const { children, selection, commentList, onMouseDown, onMouseUp } = props;
 
   const withComments = [];
   const textComments = commentList ? [...commentList] : [];
@@ -60,7 +63,13 @@ function TextContent(props) {
           i += 1;
         }
 
-        withComments[i + offset] = `<mark id="${comment.id}">`;
+        if (comment.id === selection) {
+          withComments[
+            i + offset
+          ] = `<mark id="${comment.id}" class="${classes.selected}">`;
+        } else {
+          withComments[i + offset] = `<mark id="${comment.id}">`;
+        }
         offset += 1;
 
         while (i < comment.location[1]) {
@@ -93,6 +102,7 @@ function TextContent(props) {
 
 TextContent.propTypes = {
   children: PropTypes.string,
+  selection: PropTypes.string,
   commentList: CommentList.propTypes.items,
   onMouseDown: PropTypes.func,
   onMouseUp: PropTypes.func,

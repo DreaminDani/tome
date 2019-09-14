@@ -54,7 +54,7 @@ function Artifact({ artifact_data, id }) {
         domSelection.type === 'Caret' &&
         domSelection.anchorNode.nodeName === '#text'
       ) {
-        setCaretSelection(body, domSelection, setSelection);
+        setCaretSelection(body, domSelection, commentList, setSelection);
       } else {
         setSelection({
           selection: '',
@@ -99,6 +99,7 @@ function Artifact({ artifact_data, id }) {
         <Typography variant="h4">{name}</Typography>
         <TextContent
           id="artifact-content"
+          selection={selection.selection}
           commentList={commentList}
           onMouseDown={mouseDownHandler}
           onMouseUp={mouseUpHandler}
@@ -107,7 +108,7 @@ function Artifact({ artifact_data, id }) {
         </TextContent>
       </Grid>
       <Grid item xs={12} sm={6} md={4} lg={3}>
-        {selection.selection.length > 0 && (
+        {selection.selection && selection.selection.length > 0 && (
           <CommentPane
             selection={selection.selection}
             commentList={commentList}
