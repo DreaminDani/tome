@@ -5,8 +5,11 @@ const {
   updateArtifactByID,
   createArtifact,
 } = require('../../data/artifacts');
-const { getUserByID } = require('../../data/users');
-const { addNewCommentToArtifact } = require('../../data/comments');
+const { getUserByAuthID } = require('../../data/users');
+const {
+  addNewCommentToArtifact,
+  updateCommentInArtifact,
+} = require('../../data/comments');
 
 const list = async (req, res) => {
   const client = await req.app.get('db').connect();
@@ -14,72 +17,67 @@ const list = async (req, res) => {
 
   try {
     artifacts.list = await getArtifactsByUser(client, req.user.id);
+
+    res.send(artifacts);
   } catch (e) {
     serverError(req, res, e);
   } finally {
     client.release();
-  }
-  if (artifacts) {
-    res.send(artifacts);
   }
 };
 
 const byID = async (req, res) => {
   const client = await req.app.get('db').connect();
-  let artifact = {};
 
   try {
-    artifact = await getArtifactByID(client, req.params.id);
+    const artifact = await getArtifactByID(client, req.params.id);
+
+    res.send(artifact);
   } catch (e) {
     serverError(req, res, e);
   } finally {
     client.release();
-  }
-
-  if (artifact) {
-    res.send(artifact);
   }
 };
 
 const update = async (req, res) => {
   // todo security validation
   const client = await req.app.get('db').connect();
-  let saved = {};
 
   try {
-    saved = await updateArtifactByID(
+    const saved = await updateArtifactByID(
       client,
       req.body.id,
       req.body.name,
       req.body.body
     );
+
+    res.send(saved);
   } catch (e) {
     serverError(req, res, e);
   } finally {
     client.release();
-  }
-
-  if (saved) {
-    res.send(saved);
   }
 };
 
 const add = async (req, res) => {
   // todo security validation
   const client = await req.app.get('db').connect();
-  let saved = {};
 
   try {
-    const user = await getUserByID(client, req.user.id);
-    saved = await createArtifact(client, user.id, req.body.name, req.body.body);
+    const user = await getUserByAuthID(client, req.user.id);
+    const saved = await createArtifact(
+      client,
+      user.id,
+      req.body.name,
+      req.body.body
+    );
+
+    res.send(saved);
   } catch (e) {
     serverError(req, res, e);
   } finally {
     client.release();
-  }
-
-  if (saved) {
-    res.send(saved);
   }
 };
 
@@ -88,7 +86,7 @@ const addComment = async (req, res) => {
   const client = await req.app.get('db').connect();
 
   try {
-    const user = await getUserByID(client, req.user.id);
+    const user = await getUserByAuthID(client, req.user.id);
     const { name: userName } = user.auth_metadata;
 
     const newComment = await addNewCommentToArtifact(
@@ -113,15 +111,15 @@ const updateComment = async (req, res) => {
   const client = await req.app.get('db').connect();
 
   try {
-    const user = await getUserByID(client, req.user.id);
+    const user = await getUserByAuthID(client, req.user.id);
     const { name: userName } = user.auth_metadata;
 
-    const newComment = await addNewCommentToArtifact(
+    const newComment = await updateCommentInArtifact(
       client,
-      req.body.commentId,
-      userName,
       user.id,
+      userName,
       req.body.comment,
+      req.body.commentID,
       req.body.id
     );
 

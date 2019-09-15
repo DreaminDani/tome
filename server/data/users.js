@@ -1,4 +1,4 @@
-const getUserByID = async (client, id) => {
+const getUserByAuthID = async (client, id) => {
   const getUser = await client.query('SELECT * FROM users WHERE auth_id = $1', [
     id,
   ]);
@@ -7,5 +7,5 @@ const getUserByID = async (client, id) => {
 };
 
 module.exports = {
-  getUserByID,
+  getUserByAuthID,
 };

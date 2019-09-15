@@ -76,7 +76,7 @@ function Artifact({ artifact_data, id }) {
       res = await postData(`/api/artifact/comment/update`, {
         id,
         comment,
-        commentId: selection.selection,
+        commentID: selection.selection,
       });
     }
 

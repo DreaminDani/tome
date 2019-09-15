@@ -64,10 +64,10 @@ const addNewCommentToArtifact = async (
 
 const updateCommentInArtifact = async (
   client,
-  commentID,
   userID,
   userName,
   commentBody,
+  commentID,
   artifactID
 ) => {
   const commentsLength = await getCommentsLengthByArtifactID(
