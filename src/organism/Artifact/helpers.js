@@ -61,6 +61,7 @@ export const setCaretSelection = (
   let isNew = true;
   commentList.forEach(comment => {
     if (
+      comment.location &&
       comment.location[0] >= wordLocation[0] &&
       comment.location[1] <= wordLocation[1]
     ) {
