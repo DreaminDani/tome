@@ -5,6 +5,7 @@ import Head from 'next/head';
 import React from 'react';
 import Menu from '../src/molecule/Menu';
 import theme from '../src/theme';
+import { UserContext } from '../src/contexts';
 
 class MyApp extends App {
   static async getInitialProps({ Component, ctx }) {
@@ -18,6 +19,13 @@ class MyApp extends App {
     return { pageProps };
   }
 
+  constructor(props) {
+    super(props);
+    this.state = {
+      user: props.pageProps.user,
+    };
+  }
+
   componentDidMount() {
     // Remove the server-side injected CSS.
     const jssStyles = document.querySelector('#jss-server-side');
@@ -29,17 +37,23 @@ class MyApp extends App {
   render() {
     const { Component, pageProps } = this.props;
 
+    const props = {
+      ...pageProps,
+      user: this.state.user,
+    };
+
     return (
       <Container>
         <Head>
           <title>Tome</title>
         </Head>
-        <ThemeProvider theme={theme}>
-          {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
-          <CssBaseline />
-          <Menu />
-          <Component {...pageProps} />
-        </ThemeProvider>
+        <UserContext.Provider value={this.state.user}>
+          <ThemeProvider theme={theme}>
+            <CssBaseline />
+            <Menu />
+            <Component {...props} />
+          </ThemeProvider>
+        </UserContext.Provider>
       </Container>
     );
   }

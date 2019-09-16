@@ -34,8 +34,11 @@ describe('Artifact responds to mouse events', () => {
 
   it('clears selection on mousedown, to prepare for next selection', () => {
     // Act
-    const artifact = shallow(<Artifact />);
-    artifact.simulate('mousedown', new Event('mousedown'));
+    const artifact = shallow(<Artifact artifact_data={{}} />);
+    artifact
+      .find('#artifact-content')
+      .first()
+      .simulate('mousedown', new Event('mousedown'));
 
     // Assert
     expect(window.getSelection).toHaveBeenCalled();
@@ -46,8 +49,14 @@ describe('Artifact responds to mouse events', () => {
 
   it('does not update the selection, if nothing is clicked', () => {
     // Act
-    const artifact = shallow(<Artifact />);
-    artifact.simulate('mouseup', new Event('mouseup'));
+    const artifact = shallow(<Artifact artifact_data={{}} />);
+    artifact
+      .find('#artifact-content')
+      .first()
+      .simulate('mouseup', {
+        target: { localName: 'text' },
+        stopPropagation: () => {},
+      });
 
     // Assert
     expect(window.getSelection).toHaveBeenCalled();
@@ -58,7 +67,7 @@ describe('Artifact responds to mouse events', () => {
     expect(domSelection.addRange).not.toHaveBeenCalled();
   });
 
-  it('does not update the selection, if a Range is selected', () => {
+  it('does not modify the selection, if a Range is selected', () => {
     // Arrange
     window.getSelection = jest.fn(() => ({
       type: 'Range',
@@ -73,8 +82,16 @@ describe('Artifact responds to mouse events', () => {
     }));
 
     // Act
-    const artifact = shallow(<Artifact />);
-    artifact.simulate('mouseup', new Event('mouseup'));
+    const artifact = shallow(
+      <Artifact artifact_data={{ body: 'line with words' }} />
+    );
+    artifact
+      .find('#artifact-content')
+      .first()
+      .simulate('mouseup', {
+        target: { localName: 'text' },
+        stopPropagation: () => {},
+      });
 
     // Assert
     expect(window.getSelection).toHaveBeenCalled();
@@ -107,8 +124,16 @@ describe('Artifact responds to mouse events', () => {
     document.createRange = jest.fn(() => range);
 
     // Act
-    const artifact = shallow(<Artifact />);
-    artifact.simulate('mouseup', new Event('mouseup'));
+    const artifact = shallow(
+      <Artifact artifact_data={{ body: 'line with words' }} />
+    );
+    artifact
+      .find('#artifact-content')
+      .first()
+      .simulate('mouseup', {
+        target: { localName: 'text' },
+        stopPropagation: () => {},
+      });
 
     // Assert
     expect(document.createRange).toHaveBeenCalled();

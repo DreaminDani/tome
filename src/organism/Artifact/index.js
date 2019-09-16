@@ -1,32 +1,36 @@
-import { Box, Container, Typography } from '@material-ui/core';
+import { Grid, Typography, makeStyles } from '@material-ui/core';
 import PropTypes from 'prop-types';
 import React, { useState } from 'react';
 import TextContent from '../../atom/TextContent';
+import CommentPane from '../../molecule/CommentPane';
+import { postData } from '../../api';
+import {
+  setRangeSelection,
+  setCaretSelection,
+  updateFocusedComment,
+  getCurrentCommentList,
+} from './helpers';
 
-// looks for word in anchorNode text and returns its start/end points
-const getWordOffsetsFromCaret = (anchorNode, anchorOffset) => {
-  const word = [0, 0];
+const useStyles = makeStyles({
+  root: {
+    padding: '0 40px',
+  },
+});
 
-  for (let i = 0; i < anchorNode.textContent.length + 1; i += 1) {
-    if (
-      /\s/.exec(anchorNode.textContent.charAt(i)) ||
-      anchorNode.textContent.charAt(i) === ''
-    ) {
-      if (i < anchorOffset) {
-        word[0] = i + 1;
-      } else {
-        word[1] = i;
-        break;
-      }
-    }
-  }
+function Artifact({ artifact_data, id }) {
+  const classes = useStyles();
+  const [selection, setSelection] = useState({
+    selection: '',
+    location: [],
+  });
+  const [updatedComments, updateComments] = useState([]);
+  const { name, body, comments } = artifact_data;
 
-  return word;
-};
-
-function Artifact(props) {
-  const [selection, setSelection] = useState('');
-  const { name, body } = props;
+  const commentList = getCurrentCommentList(
+    comments,
+    updatedComments,
+    selection
+  );
 
   const mouseDownHandler = e => {
     e.stopPropagation();
@@ -37,60 +41,93 @@ function Artifact(props) {
   const mouseUpHandler = e => {
     // todo respond to touch events
     e.stopPropagation();
-    const domSelection = window.getSelection();
-    if (domSelection.type === 'Range') {
-      const part = domSelection.focusNode.textContent.slice(
-        domSelection.anchorOffset,
-        domSelection.focusOffset
-      );
-      setSelection(part);
-    } else if (
-      domSelection.type === 'Caret' &&
-      domSelection.anchorNode.nodeName === '#text'
-    ) {
-      const range = document.createRange();
-      const wordOffsets = getWordOffsetsFromCaret(
-        domSelection.anchorNode,
-        domSelection.anchorOffset
-      );
-
-      range.setStart(domSelection.anchorNode, wordOffsets[0]);
-      range.setEnd(domSelection.anchorNode, wordOffsets[1]);
-
-      domSelection.removeAllRanges();
-      domSelection.addRange(range);
-
-      setSelection(
-        domSelection.anchorNode.textContent.substring(
-          wordOffsets[0],
-          wordOffsets[1]
-        )
-      );
+    if (e.target.localName === 'mark') {
+      setSelection({
+        selection: e.target.id,
+        location: [],
+      });
     } else {
-      setSelection('');
+      const domSelection = window.getSelection();
+      if (domSelection.type === 'Range') {
+        setRangeSelection(body, domSelection, setSelection);
+      } else if (
+        domSelection.type === 'Caret' &&
+        domSelection.anchorNode.nodeName === '#text'
+      ) {
+        setCaretSelection(body, domSelection, commentList, setSelection);
+      } else {
+        setSelection({
+          selection: '',
+          location: [],
+        });
+      }
     }
   };
 
-  console.log(selection); // todo pass this to the commenting tool
+  const commentSaveHandler = async comment => {
+    let res = [];
+    if (selection.location.length > 0) {
+      res = await postData(`/api/artifact/comment/add`, {
+        id,
+        comment,
+        location: selection.location,
+      });
+    } else {
+      res = await postData(`/api/artifact/comment/update`, {
+        id,
+        comment,
+        commentID: selection.selection,
+      });
+    }
+
+    updateComments(res.commentlist);
+    updateFocusedComment(comment, res.commentlist, setSelection);
+  };
+
+  const commentCloseHandler = () => {
+    setSelection({
+      selection: '',
+      location: [],
+    });
+    const domSelection = window.getSelection();
+    domSelection.removeAllRanges();
+  };
 
   return (
-    <Container
-      id="artifact"
-      maxWidth="sm"
-      onMouseDown={mouseDownHandler}
-      onMouseUp={mouseUpHandler}
-    >
-      <Box my={4}>
-        <Typography>{name}</Typography>
-        <TextContent>{body}</TextContent>
-      </Box>
-    </Container>
+    <Grid container className={classes.root}>
+      <Grid item xs={12} sm={6} md={8}>
+        <Typography variant="h4">{name}</Typography>
+        <TextContent
+          id="artifact-content"
+          selection={selection.selection}
+          commentList={commentList}
+          onMouseDown={mouseDownHandler}
+          onMouseUp={mouseUpHandler}
+        >
+          {body}
+        </TextContent>
+      </Grid>
+      <Grid item xs={12} sm={6} md={4} lg={3}>
+        {selection.selection && selection.selection.length > 0 && (
+          <CommentPane
+            selection={selection.selection}
+            commentList={commentList}
+            onSave={commentSaveHandler}
+            onClose={commentCloseHandler}
+          />
+        )}
+      </Grid>
+    </Grid>
   );
 }
 
 Artifact.propTypes = {
-  name: PropTypes.string,
-  body: PropTypes.string,
+  id: PropTypes.string,
+  artifact_data: PropTypes.shape({
+    body: PropTypes.string,
+    name: PropTypes.string,
+    comments: CommentPane.propTypes.commentList,
+  }),
 };
 
 export default Artifact;

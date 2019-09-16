@@ -1,105 +1,134 @@
 const { serverError } = require('../../helpers');
+const {
+  getArtifactsByUser,
+  getArtifactByID,
+  updateArtifactByID,
+  createArtifact,
+} = require('../../data/artifacts');
+const { getUserByAuthID } = require('../../data/users');
+const {
+  addNewCommentToArtifact,
+  updateCommentInArtifact,
+} = require('../../data/comments');
 
 const list = async (req, res) => {
   const client = await req.app.get('db').connect();
   const artifacts = {};
 
   try {
-    const getArtifacts = await client.query(
-      `
-      SELECT a.id, jsonb_extract_path(a.artifact_data,'name') as name,
-        a.user_id, a.created_at, a.updated_at, u.auth_metadata
-      FROM artifacts a, users u
-      WHERE a.user_id=u.id and auth_id = $1
-    `,
-      [req.user.id]
-    );
-    artifacts.list = getArtifacts.rows; // currently just gets all that user owns
+    artifacts.list = await getArtifactsByUser(client, req.user.id);
+
+    res.send(artifacts);
   } catch (e) {
     serverError(req, res, e);
   } finally {
     client.release();
   }
-
-  res.send(artifacts);
 };
 
 const byID = async (req, res) => {
   const client = await req.app.get('db').connect();
-  let artifact = {};
 
   try {
-    const getArtifact = await client.query(
-      'SELECT * FROM artifacts WHERE id = $1',
-      [req.params.id]
-    );
-    [artifact] = getArtifact.rows;
+    const artifact = await getArtifactByID(client, req.params.id);
+
+    res.send(artifact);
   } catch (e) {
     serverError(req, res, e);
   } finally {
     client.release();
   }
-
-  res.send(artifact);
 };
 
 const update = async (req, res) => {
   // todo security validation
   const client = await req.app.get('db').connect();
-  let saved = {};
 
   try {
-    const updateArtifact = await client.query(
-      `
-            UPDATE artifacts
-            SET artifact_data = $1
-            WHERE
-              id = $2
-            RETURNING id;
-          `,
-      [
-        {
-          name: req.body.name,
-          body: req.body.body,
-        },
-        req.body.id,
-      ]
+    const saved = await updateArtifactByID(
+      client,
+      req.body.id,
+      req.body.name,
+      req.body.body
     );
-    [saved] = updateArtifact.rows;
+
+    res.send(saved);
   } catch (e) {
     serverError(req, res, e);
   } finally {
     client.release();
   }
-
-  res.send(saved);
 };
 
 const add = async (req, res) => {
   // todo security validation
   const client = await req.app.get('db').connect();
-  let saved = {};
 
   try {
-    const getUser = await client.query(
-      'SELECT * FROM users WHERE auth_id = $1',
-      [req.user.id]
+    const user = await getUserByAuthID(client, req.user.id);
+    const saved = await createArtifact(
+      client,
+      user.id,
+      req.body.name,
+      req.body.body
     );
-    const insertArtifact = await client.query(
-      `
-            INSERT INTO artifacts(user_id, artifact_data)
-            VALUES($1, $2) RETURNING id;
-          `,
-      [getUser.rows[0].id, req.body]
-    );
-    [saved] = insertArtifact.rows;
+
+    res.send(saved);
   } catch (e) {
     serverError(req, res, e);
   } finally {
     client.release();
   }
+};
 
-  res.send(saved);
+const addComment = async (req, res) => {
+  // todo security validation
+  const client = await req.app.get('db').connect();
+
+  try {
+    const user = await getUserByAuthID(client, req.user.id);
+    const { name: userName } = user.auth_metadata;
+
+    const newComment = await addNewCommentToArtifact(
+      client,
+      user.id,
+      userName,
+      req.body.comment,
+      req.body.location,
+      req.body.id
+    );
+
+    res.send(newComment);
+  } catch (e) {
+    serverError(req, res, e);
+  } finally {
+    client.release();
+  }
+};
+
+const updateComment = async (req, res) => {
+  // todo security validation
+  const client = await req.app.get('db').connect();
+
+  try {
+    const user = await getUserByAuthID(client, req.user.id);
+    const { name: userName } = user.auth_metadata;
+
+    const newComment = await updateCommentInArtifact(
+      client,
+      user.id,
+      userName,
+      req.body.comment,
+      req.body.commentID,
+      req.body.id
+    );
+
+    res.send(newComment);
+  } catch (e) {
+    serverError(req, res, e);
+  } finally {
+    client.release();
+  }
 };
 
 module.exports = {
@@ -107,4 +136,6 @@ module.exports = {
   byID,
   update,
   add,
+  addComment,
+  updateComment,
 };
