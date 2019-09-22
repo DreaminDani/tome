@@ -1,0 +1,37 @@
+on: push
+name: Pipeline
+jobs:
+  install:
+    name: Install
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+    - name: Install
+      uses: nuxt/actions-yarn@master
+      with:
+        args: install --ignore-scripts
+    - name: Lint
+      uses: nuxt/actions-yarn@master
+      with:
+        args: lint
+    - name: Test
+      uses: nuxt/actions-yarn@master
+      with:
+        args: test
+    - name: If on master
+      uses: actions/bin/filter@0dbb077f64d0ec1068a644d25c71b1db66148a24
+      with:
+        args: branch master
+    - name: Database migrations
+      uses: ./db
+      env:
+        TARGET_URI: ${{ secrets.TARGET_URI }}
+    - name: Deploy to PCF
+      uses: d3sandoval/cloud-foundry-action@1.1.1
+      env:
+        CF_PASSWORD: ${{ secrets.CF_PASSWORD }}
+        CF_TARGET_ORG: dsandoval-org
+        CF_TARGET_SPACE: development
+        CF_USERNAME: ${{ secrets.CF_USERNAME }}
+      with:
+        args: push tome -b https://github.com/cloudfoundry/nodejs-buildpack
