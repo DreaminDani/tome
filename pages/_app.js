@@ -1,7 +1,6 @@
 import CssBaseline from '@material-ui/core/CssBaseline';
 import { ThemeProvider } from '@material-ui/styles';
-import App, { Container } from 'next/app';
-import Head from 'next/head';
+import App from 'next/app';
 import React from 'react';
 import Menu from '../src/molecule/Menu';
 import theme from '../src/theme';
@@ -43,18 +42,13 @@ class MyApp extends App {
     };
 
     return (
-      <Container>
-        <Head>
-          <title>Tome</title>
-        </Head>
-        <UserContext.Provider value={this.state.user}>
-          <ThemeProvider theme={theme}>
-            <CssBaseline />
-            <Menu />
-            <Component {...props} />
-          </ThemeProvider>
-        </UserContext.Provider>
-      </Container>
+      <UserContext.Provider value={this.state.user}>
+        <ThemeProvider theme={theme}>
+          <CssBaseline />
+          <Menu />
+          <Component {...props} />
+        </ThemeProvider>
+      </UserContext.Provider>
     );
   }
 }

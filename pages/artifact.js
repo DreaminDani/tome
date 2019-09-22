@@ -1,5 +1,5 @@
 import React from 'react';
-// import PropTypes from 'prop-types';
+import Head from 'next/head';
 import Link from 'next/link';
 import { Button } from '@material-ui/core';
 import { getData } from '../src/api';
@@ -7,9 +7,14 @@ import Artifact from '../src/organism/Artifact';
 
 function ArtifactPage(props) {
   const { artifact_data, id } = props;
+  const artifact_title =
+    artifact_data && artifact_data.name ? artifact_data.name : 'Artifact';
 
   return (
     <div>
+      <Head>
+        <title>Tome - "{artifact_title}"</title>
+      </Head>
       <Link href="/edit/[slug]" as={`/edit/${id}`}>
         <Button color="secondary">Edit</Button>
       </Link>
@@ -27,10 +32,7 @@ ArtifactPage.getInitialProps = async ({ req }) => {
 };
 
 ArtifactPage.propTypes = {
-  // user_id: PropTypes.number,
   ...Artifact.propTypes,
-  // created_at: PropTypes.string,
-  // updated_at: PropTypes.string,
 };
 
 export default ArtifactPage;

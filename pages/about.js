@@ -1,3 +1,4 @@
+import Head from 'next/head';
 import Box from '@material-ui/core/Box';
 import Container from '@material-ui/core/Container';
 import Link from '@material-ui/core/Link';
@@ -18,14 +19,19 @@ function MadeWithLove() {
 
 export default function AboutPage() {
   return (
-    <Container maxWidth="sm">
-      <Box my={4}>
-        <Typography variant="h4" component="h1" gutterBottom>
-          There will be more coming soon
-        </Typography>
-        <Link href="/">Go to the main page</Link>
-        <MadeWithLove />
-      </Box>
-    </Container>
+    <div>
+      <Head>
+        <title>Tome - About</title>
+      </Head>
+      <Container maxWidth="sm">
+        <Box my={4}>
+          <Typography variant="h4" component="h1" gutterBottom>
+            There will be more coming soon
+          </Typography>
+          <Link href="/">Go to the main page</Link>
+          <MadeWithLove />
+        </Box>
+      </Container>
+    </div>
   );
 }

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { Grid, makeStyles, Typography } from '@material-ui/core';
+import Head from 'next/head';
 import Router from 'next/router';
 import { getData, postData } from '../src/api';
 
@@ -19,6 +20,8 @@ const useStyles = makeStyles({
 function Edit(props) {
   const classes = useStyles();
   const { artifact_data, id } = props;
+  const artifact_title =
+    artifact_data && artifact_data.name ? artifact_data.name : 'Artifact';
 
   const [values, setValues] = useState({
     name: artifact_data && artifact_data.name ? artifact_data.name : '',
@@ -68,6 +71,9 @@ function Edit(props) {
 
   return (
     <div className={classes.root}>
+      <Head>
+        <title>Tome - {id ? `Edit "${artifact_title}"` : 'New Artifact'}</title>
+      </Head>
       <Typography variant="h1" className={classes.title}>
         {id ? 'Edit' : 'New'} Artifact
       </Typography>
