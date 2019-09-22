@@ -80,11 +80,11 @@ export default function Menu() {
   );
 
   return (
-    <React.Fragment>
+    <>
       <MenuNotch onClick={() => setOpen(true)} />
       <Drawer anchor="right" open={open} onClose={() => setOpen(false)}>
         {menuList()}
       </Drawer>
-    </React.Fragment>
+    </>
   );
 }

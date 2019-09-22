@@ -14,19 +14,19 @@ function Index(props) {
           Welcome
         </Typography>
         {user ? (
-          <React.Fragment>
+          <>
             <Button color="primary" href="/edit">
               Create New Artifact
             </Button>
             <ArtifactList list={list} />
-          </React.Fragment>
+          </>
         ) : (
-          <React.Fragment>
+          <>
             <Typography>You must be logged in to continue</Typography>
             <Button variant="contained" color="primary" href="/edit">
               Login
             </Button>
-          </React.Fragment>
+          </>
         )}
       </Box>
     </Container>

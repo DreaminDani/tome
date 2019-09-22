@@ -16,7 +16,7 @@ function ArtifactList(props) {
 
   if (list && list.length) {
     return (
-      <React.Fragment>
+      <>
         <Typography variant="subtitle1">
           Or have a look at your previous work...
         </Typography>
@@ -25,7 +25,7 @@ function ArtifactList(props) {
             <ArtifactListItem artifact={artifact} key={artifact.id} />
           ))}
         </ul>
-      </React.Fragment>
+      </>
     );
   }
 
