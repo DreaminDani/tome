@@ -1,5 +1,5 @@
 const uid = require('uid-safe');
-const Auth0Strategy = require('passport-auth0');
+const GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 const session = require('express-session');
 const PostgreSqlStore = require('connect-pg-simple')(session);
 
@@ -17,14 +17,13 @@ const sessionConfig = {
   }),
 };
 
-const auth0Strategy = new Auth0Strategy(
+const googleStrategy = new GoogleStrategy(
   {
-    domain: process.env.AUTH0_DOMAIN,
-    clientID: process.env.AUTH0_CLIENT_ID,
-    clientSecret: process.env.AUTH0_CLIENT_SECRET,
-    callbackURL: process.env.AUTH0_CALLBACK_URL,
+    clientID: process.env.GOOGLE_CLIENT_ID,
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    callbackURL: process.env.GOOGLE_CALLBACK_URL, // TODO build this based on BASE_URL
   },
-  function(accessToken, refreshToken, extraParams, profile, done) {
+  function(token, tokenSecret, profile, done) {
     return done(null, profile);
   }
 );
@@ -32,5 +31,5 @@ const auth0Strategy = new Auth0Strategy(
 module.exports = {
   connectionString,
   sessionConfig,
-  auth0Strategy,
+  googleStrategy,
 };

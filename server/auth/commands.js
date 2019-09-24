@@ -47,11 +47,7 @@ async function callback(req, res, next, err, user) {
 
 const logout = (req, res) => {
   req.logout();
-
-  const { AUTH0_DOMAIN, AUTH0_CLIENT_ID, BASE_URL } = process.env;
-  res.redirect(
-    `https://${AUTH0_DOMAIN}/logout?client_id=${AUTH0_CLIENT_ID}&returnTo=${BASE_URL}`
-  );
+  res.redirect('/');
 };
 
 module.exports = {

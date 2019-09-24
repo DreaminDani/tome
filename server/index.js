@@ -11,7 +11,7 @@ const session = require('express-session');
 const passport = require('passport');
 const { Pool } = require('pg');
 
-const { sessionConfig, auth0Strategy, connectionString } = require('./config');
+const { sessionConfig, googleStrategy, connectionString } = require('./config');
 const { restrictAccess } = require('./helpers');
 
 const authRoutes = require('./auth');
@@ -31,7 +31,7 @@ app.prepare().then(() => {
 
   // auth config
   server.use(session(sessionConfig));
-  passport.use(auth0Strategy);
+  passport.use(googleStrategy);
   passport.serializeUser((user, done) => done(null, user));
   passport.deserializeUser((user, done) => done(null, user));
   server.use(passport.initialize());
