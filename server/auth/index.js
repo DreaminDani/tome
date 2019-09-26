@@ -5,16 +5,11 @@ const { callback, logout } = require('./commands');
 
 const router = express.Router();
 
-// login user through auth0
-// TODO replace with basic login screen with optional message
+// TODO add a basic login screen (.get()) with optional message
 //  e.g. "you must be logged in to access"
 //  Default message is "log in to tome"
-router.get(
-  '/login',
-  passport.authenticate('auth0', {
-    scope: 'openid email profile',
-  }),
-  (req, res) => res.redirect('/')
+router.post('/login', passport.authenticate('local', {}), (req, res) =>
+  res.redirect('/')
 );
 
 // login user through google

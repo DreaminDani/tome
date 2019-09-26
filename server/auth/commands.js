@@ -1,4 +1,8 @@
-const { serverError } = require('../helpers');
+const { serverError, getEmailFromAuthProvider } = require('../helpers');
+
+const _localUserToDatabase = async (req, res, next, error, user) => {
+  if (error) return next(error);
+};
 
 const _commitUserToDatabase = async (req, res, next, error, user) => {
   if (error) return next(error);
@@ -6,10 +10,11 @@ const _commitUserToDatabase = async (req, res, next, error, user) => {
   const client = await req.app.get('db').connect();
 
   try {
-    const getUser = await client.query(
-      'SELECT * FROM users WHERE auth_id = $1',
-      [user.id]
-    );
+    const email = _getEmailFromAuthProvider(user);
+    // todo extract this to data helpers
+    const getUser = await client.query('SELECT * FROM users WHERE email = $1', [
+      email,
+    ]);
     if (getUser.rows[0]) {
       await client.query(
         `
@@ -23,10 +28,10 @@ const _commitUserToDatabase = async (req, res, next, error, user) => {
     } else {
       await client.query(
         `
-          INSERT INTO users(auth_id, auth_metadata)
+          INSERT INTO users(email, auth_metadata)
           VALUES($1, $2);
         `,
-        [user.id, user._json]
+        [email, user._json]
       );
     }
   } catch (e) {

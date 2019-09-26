@@ -1,5 +1,6 @@
-const getUserByAuthID = async (client, id) => {
-  const getUser = await client.query('SELECT * FROM users WHERE auth_id = $1', [
+const getUserByEmail = async (client, id) => {
+  // todo update this to be email only
+  const getUser = await client.query('SELECT * FROM users WHERE email = $1', [
     id,
   ]);
   const [user] = getUser.rows;
@@ -7,5 +8,5 @@ const getUserByAuthID = async (client, id) => {
 };
 
 module.exports = {
-  getUserByAuthID,
+  getUserByEmail,
 };

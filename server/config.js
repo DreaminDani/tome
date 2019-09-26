@@ -1,5 +1,6 @@
 const uid = require('uid-safe');
 const GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
+const LocalStrategy = require('passport-local').Strategy;
 const session = require('express-session');
 const PostgreSqlStore = require('connect-pg-simple')(session);
 
@@ -28,8 +29,33 @@ const googleStrategy = new GoogleStrategy(
   }
 );
 
+const localStrategy = db =>
+  new LocalStrategy(function(email, password, cb) {
+    const client = db.connect();
+
+    client.query(
+      'SELECT * FROM users WHERE email = $1', // update to include password crypt
+      [email],
+      function(err, getUser) {
+        if (err) {
+          client.release();
+          return cb(err);
+        }
+
+        if (getUser.rows[0]) {
+          client.release();
+          return cb(null, getUser.rows[0].auth_metadata);
+        }
+
+        client.release();
+        return cb(null, false);
+      }
+    );
+  });
+
 module.exports = {
   connectionString,
   sessionConfig,
   googleStrategy,
+  localStrategy,
 };
