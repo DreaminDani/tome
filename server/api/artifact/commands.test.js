@@ -28,12 +28,18 @@ const {
   updateCommentInArtifact,
 } = require('../../data/comments');
 
+jest.mock('../../helpers');
+const { serverError, getEmailFromAuthProvider } = require('../../helpers');
+
 let req;
 let res;
 let mockClient;
 
 const fakeArtifacts = [{ test: 'artifact' }];
 const fakeComments = [{ test: 'comment' }];
+const fakeError = new Error();
+const fakeEmail = 'email@fake.com';
+getEmailFromAuthProvider.mockImplementation(() => fakeEmail);
 
 beforeEach(() => {
   res = mockRes({
@@ -54,12 +60,11 @@ beforeEach(() => {
 
 describe('artifactAPI list', () => {
   it('returns a list of artifacts, after retrieving from database', async () => {
-    req.user = { id: 'some-user-id' }; // all these tests need to change to use email...
     getArtifactsByUser.mockImplementation(() => fakeArtifacts);
 
     await list(req, res);
 
-    expect(getArtifactsByUser).toBeCalledWith(mockClient, req.user.id);
+    expect(getArtifactsByUser).toBeCalledWith(mockClient, fakeEmail);
     expect(res.send).toBeCalledWith({ list: fakeArtifacts });
     expect(mockClient.release).toBeCalled();
 
@@ -67,18 +72,15 @@ describe('artifactAPI list', () => {
   });
 
   it('returns an error, if query fails', async () => {
-    req.user = { id: 'some-user-id' };
     getArtifactsByUser.mockImplementation(() => {
-      throw new Error();
+      throw fakeError;
     });
 
     await list(req, res);
 
-    expect(getArtifactsByUser).toBeCalledWith(mockClient, req.user.id);
-    expect(res.status).toBeCalledWith(500);
-    expect(res.send).toBeCalledWith({ error: 'Server Error' });
+    expect(getArtifactsByUser).toBeCalledWith(mockClient, fakeEmail);
+    expect(serverError).toBeCalledWith(req, res, fakeError);
     expect(res.send).not.toBeCalledWith({ list: fakeArtifacts });
-    expect(res.send).toHaveBeenCalledTimes(1);
     expect(mockClient.release).toBeCalled();
 
     getArtifactsByUser.mockReset();
@@ -87,7 +89,6 @@ describe('artifactAPI list', () => {
 
 describe('artifactAPI byID', () => {
   it('returns a single artifact, after retrieving from database', async () => {
-    req.params.id = 'some-uuid';
     getArtifactByID.mockImplementation(() => fakeArtifacts[0]);
 
     await byID(req, res);
@@ -102,16 +103,14 @@ describe('artifactAPI byID', () => {
   it('returns an error, if query fails', async () => {
     req.params.id = 'some-uuid';
     getArtifactByID.mockImplementation(() => {
-      throw new Error();
+      throw fakeError;
     });
 
     await byID(req, res);
 
     expect(getArtifactByID).toBeCalledWith(mockClient, req.params.id);
-    expect(res.status).toBeCalledWith(500);
-    expect(res.send).toBeCalledWith({ error: 'Server Error' });
+    expect(serverError).toBeCalledWith(req, res, fakeError);
     expect(res.send).not.toBeCalledWith(fakeArtifacts[0]);
-    expect(res.send).toHaveBeenCalledTimes(1);
     expect(mockClient.release).toBeCalled();
 
     getArtifactByID.mockReset();
@@ -140,7 +139,7 @@ describe('artifactAPI update', () => {
   it('returns an error, if update fails', async () => {
     req.body = { id: 'some-uuid', name: 'some name', body: 'some body' };
     updateArtifactByID.mockImplementation(() => {
-      throw new Error();
+      throw fakeError;
     });
 
     await update(req, res);
@@ -151,10 +150,8 @@ describe('artifactAPI update', () => {
       req.body.name,
       req.body.body
     );
-    expect(res.status).toBeCalledWith(500);
-    expect(res.send).toBeCalledWith({ error: 'Server Error' });
+    expect(serverError).toBeCalledWith(req, res, fakeError);
     expect(res.send).not.toBeCalledWith(fakeArtifacts[0]);
-    expect(res.send).toHaveBeenCalledTimes(1);
     expect(mockClient.release).toBeCalled();
 
     updateArtifactByID.mockReset();
@@ -174,7 +171,7 @@ describe('artifactAPI add', () => {
 
     await add(req, res);
 
-    expect(getUserByEmail).toHaveBeenCalledWith(mockClient, req.user.id);
+    expect(getUserByEmail).toHaveBeenCalledWith(mockClient, fakeEmail);
     expect(createArtifact).toHaveBeenCalledWith(
       mockClient,
       fakeUser.id,
@@ -191,17 +188,15 @@ describe('artifactAPI add', () => {
   it('handles errors when retrieving user info', async () => {
     req.user = fakeUserRequest;
     getUserByEmail.mockImplementation(() => {
-      throw new Error();
+      throw fakeError;
     });
     createArtifact.mockImplementation(() => jest.fn());
     await add(req, res);
 
-    expect(getUserByEmail).toHaveBeenCalledWith(mockClient, req.user.id);
+    expect(getUserByEmail).toHaveBeenCalledWith(mockClient, fakeEmail);
     expect(createArtifact).not.toHaveBeenCalled();
-    expect(res.status).toBeCalledWith(500);
-    expect(res.send).toBeCalledWith({ error: 'Server Error' });
+    expect(serverError).toBeCalledWith(req, res, fakeError);
     expect(res.send).not.toBeCalledWith(fakeArtifacts[0]);
-    expect(res.send).toHaveBeenCalledTimes(1);
     expect(mockClient.release).toBeCalled();
 
     getUserByEmail.mockReset();
@@ -214,21 +209,19 @@ describe('artifactAPI add', () => {
 
     getUserByEmail.mockImplementation(() => fakeUser);
     createArtifact.mockImplementation(() => {
-      throw new Error();
+      throw fakeError;
     });
     await add(req, res);
 
-    expect(getUserByEmail).toHaveBeenCalledWith(mockClient, req.user.id);
+    expect(getUserByEmail).toHaveBeenCalledWith(mockClient, fakeEmail);
     expect(createArtifact).toHaveBeenCalledWith(
       mockClient,
       fakeUser.id,
       req.body.name,
       req.body.body
     );
-    expect(res.status).toBeCalledWith(500);
-    expect(res.send).toBeCalledWith({ error: 'Server Error' });
+    expect(serverError).toBeCalledWith(req, res, fakeError);
     expect(res.send).not.toBeCalledWith(fakeArtifacts[0]);
-    expect(res.send).toHaveBeenCalledTimes(1);
     expect(mockClient.release).toBeCalled();
 
     getUserByEmail.mockReset();
@@ -253,7 +246,7 @@ describe('artifactAPI addComment', () => {
 
     await addComment(req, res);
 
-    expect(getUserByEmail).toHaveBeenCalledWith(mockClient, req.user.id);
+    expect(getUserByEmail).toHaveBeenCalledWith(mockClient, fakeEmail);
     expect(addNewCommentToArtifact).toHaveBeenCalledWith(
       mockClient,
       fakeUser.id,
@@ -272,17 +265,15 @@ describe('artifactAPI addComment', () => {
   it('handles errors when retrieving user info', async () => {
     req.user = fakeUserRequest;
     getUserByEmail.mockImplementation(() => {
-      throw new Error();
+      throw fakeError;
     });
     addNewCommentToArtifact.mockImplementation(() => jest.fn());
     await addComment(req, res);
 
-    expect(getUserByEmail).toHaveBeenCalledWith(mockClient, req.user.id);
+    expect(getUserByEmail).toHaveBeenCalledWith(mockClient, fakeEmail);
     expect(addNewCommentToArtifact).not.toHaveBeenCalled();
-    expect(res.status).toBeCalledWith(500);
-    expect(res.send).toBeCalledWith({ error: 'Server Error' });
+    expect(serverError).toBeCalledWith(req, res, fakeError);
     expect(res.send).not.toBeCalledWith(fakeComments);
-    expect(res.send).toHaveBeenCalledTimes(1);
     expect(mockClient.release).toBeCalled();
 
     getUserByEmail.mockReset();
@@ -295,11 +286,11 @@ describe('artifactAPI addComment', () => {
 
     getUserByEmail.mockImplementation(() => fakeUser);
     addNewCommentToArtifact.mockImplementation(() => {
-      throw new Error();
+      throw fakeError;
     });
     await addComment(req, res);
 
-    expect(getUserByEmail).toHaveBeenCalledWith(mockClient, req.user.id);
+    expect(getUserByEmail).toHaveBeenCalledWith(mockClient, fakeEmail);
     expect(addNewCommentToArtifact).toHaveBeenCalledWith(
       mockClient,
       fakeUser.id,
@@ -308,10 +299,8 @@ describe('artifactAPI addComment', () => {
       req.body.location,
       req.body.id
     );
-    expect(res.status).toBeCalledWith(500);
-    expect(res.send).toBeCalledWith({ error: 'Server Error' });
+    expect(serverError).toBeCalledWith(req, res, fakeError);
     expect(res.send).not.toBeCalledWith(fakeComments);
-    expect(res.send).toHaveBeenCalledTimes(1);
     expect(mockClient.release).toBeCalled();
 
     getUserByEmail.mockReset();
@@ -336,7 +325,7 @@ describe('artifactAPI updateComment', () => {
 
     await updateComment(req, res);
 
-    expect(getUserByEmail).toHaveBeenCalledWith(mockClient, req.user.id);
+    expect(getUserByEmail).toHaveBeenCalledWith(mockClient, fakeEmail);
     expect(updateCommentInArtifact).toHaveBeenCalledWith(
       mockClient,
       fakeUser.id,
@@ -355,17 +344,15 @@ describe('artifactAPI updateComment', () => {
   it('handles errors when retrieving user info', async () => {
     req.user = fakeUserRequest;
     getUserByEmail.mockImplementation(() => {
-      throw new Error();
+      throw fakeError;
     });
     updateCommentInArtifact.mockImplementation(() => jest.fn());
     await updateComment(req, res);
 
-    expect(getUserByEmail).toHaveBeenCalledWith(mockClient, req.user.id);
+    expect(getUserByEmail).toHaveBeenCalledWith(mockClient, fakeEmail);
     expect(updateCommentInArtifact).not.toHaveBeenCalled();
-    expect(res.status).toBeCalledWith(500);
-    expect(res.send).toBeCalledWith({ error: 'Server Error' });
+    expect(serverError).toBeCalledWith(req, res, fakeError);
     expect(res.send).not.toBeCalledWith(fakeComments);
-    expect(res.send).toHaveBeenCalledTimes(1);
     expect(mockClient.release).toBeCalled();
 
     getUserByEmail.mockReset();
@@ -378,11 +365,11 @@ describe('artifactAPI updateComment', () => {
 
     getUserByEmail.mockImplementation(() => fakeUser);
     updateCommentInArtifact.mockImplementation(() => {
-      throw new Error();
+      throw fakeError;
     });
     await updateComment(req, res);
 
-    expect(getUserByEmail).toHaveBeenCalledWith(mockClient, req.user.id);
+    expect(getUserByEmail).toHaveBeenCalledWith(mockClient, fakeEmail);
     expect(updateCommentInArtifact).toHaveBeenCalledWith(
       mockClient,
       fakeUser.id,
@@ -391,10 +378,8 @@ describe('artifactAPI updateComment', () => {
       req.body.commentID,
       req.body.id
     );
-    expect(res.status).toBeCalledWith(500);
-    expect(res.send).toBeCalledWith({ error: 'Server Error' });
+    expect(serverError).toBeCalledWith(req, res, fakeError);
     expect(res.send).not.toBeCalledWith(fakeComments);
-    expect(res.send).toHaveBeenCalledTimes(1);
     expect(mockClient.release).toBeCalled();
 
     getUserByEmail.mockReset();

@@ -10,7 +10,7 @@ const _commitUserToDatabase = async (req, res, next, error, user) => {
   const client = await req.app.get('db').connect();
 
   try {
-    const email = _getEmailFromAuthProvider(user);
+    const email = getEmailFromAuthProvider(user);
     // todo extract this to data helpers
     const getUser = await client.query('SELECT * FROM users WHERE email = $1', [
       email,
