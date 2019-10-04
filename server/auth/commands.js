@@ -1,7 +1,41 @@
 const { serverError, getEmailFromAuthProvider } = require('../helpers');
+const { getUserByEmail, addUser } = require('../data/users');
 
-const _localUserToDatabase = async (req, res, next, error, user) => {
-  if (error) return next(error);
+const signUpWithLocal = async (req, res, next) => {
+  const { email, password, firstName, lastName } = req.body;
+  // todo validate inputs
+
+  const client = await req.app.get('db').connect();
+
+  try {
+    const user = await getUserByEmail(client, email);
+    if (user) {
+      return res.status(400).send({
+        message:
+          'There is already an account with that email address. Please login instead.',
+      });
+    }
+
+    await addUser(client, email, password, firstName, lastName);
+    next();
+  } catch (e) {
+    serverError(e);
+  } finally {
+    client.release();
+  }
+};
+
+const loginWithLocal = async (req, res, next, err, user) => {
+  if (err) return next(err);
+  if (!user) {
+    return res.status(400).send({
+      message: 'Invalid username or password',
+    });
+  }
+  await req.logIn(user, async error => {
+    console.log(user);
+  });
+  res.redirect('/');
 };
 
 const _commitUserToDatabase = async (req, res, next, error, user) => {
@@ -56,6 +90,8 @@ const logout = (req, res) => {
 };
 
 module.exports = {
+  loginWithLocal,
+  signUpWithLocal,
   _commitUserToDatabase,
   callback,
   logout,

@@ -9,6 +9,7 @@ const http = require('http');
 const next = require('next');
 const session = require('express-session');
 const passport = require('passport');
+const bodyParser = require('body-parser');
 const { Pool } = require('pg');
 
 const {
@@ -33,6 +34,8 @@ app.prepare().then(() => {
     process.exit(-1);
   });
   server.set('db', pool);
+
+  server.use(bodyParser.json());
 
   // auth config
   server.use(session(sessionConfig));

@@ -4,6 +4,8 @@ const LocalStrategy = require('passport-local').Strategy;
 const session = require('express-session');
 const PostgreSqlStore = require('connect-pg-simple')(session);
 
+const { verifyUser } = require('./data/users');
+
 const connectionString = process.env.TARGET_URI;
 
 const sessionConfig = {
@@ -30,28 +32,16 @@ const googleStrategy = new GoogleStrategy(
 );
 
 const localStrategy = db =>
-  new LocalStrategy(function(email, password, cb) {
-    const client = db.connect();
-
-    client.query(
-      'SELECT * FROM users WHERE email = $1', // update to include password crypt
-      [email],
-      function(err, getUser) {
-        if (err) {
-          client.release();
-          return cb(err);
-        }
-
-        if (getUser.rows[0]) {
-          client.release();
-          return cb(null, getUser.rows[0].auth_metadata);
-        }
-
-        client.release();
-        return cb(null, false);
-      }
-    );
-  });
+  new LocalStrategy(
+    {
+      usernameField: 'email',
+      passwordField: 'password',
+    },
+    async function(email, password, cb) {
+      const client = await db.connect();
+      await verifyUser(client, email, password, cb);
+    }
+  );
 
 module.exports = {
   connectionString,

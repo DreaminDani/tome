@@ -1,4 +1,8 @@
 const getEmailFromAuthProvider = user => {
+  if (user.email) {
+    return user.email;
+  }
+
   if (user.emails && user.emails[0] && user.emails[0].value) {
     return user.emails[0].value;
   }

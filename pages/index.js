@@ -1,10 +1,11 @@
-import { Grid, Typography, Button, makeStyles } from '@material-ui/core';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import React from 'react';
-import ExitToAppIcon from '@material-ui/icons/ExitToApp';
+import { Grid, Typography, Button, makeStyles } from '@material-ui/core';
 
-import { getData } from '../src/api';
+import { getData, postData } from '../src/api';
 import ArtifactList from '../src/organism/ArtifactList';
+import SignUp from '../src/molecule/SignUp';
+import Login from '../src/molecule/Login';
 
 const useStyles = makeStyles({
   root: {
@@ -19,9 +20,49 @@ const useStyles = makeStyles({
 });
 
 function Index(props) {
+  const classes = useStyles();
   const { user, list } = props;
 
-  const classes = useStyles();
+  const [onLogin, setOnLogin] = useState(false);
+
+  const localLogin = async (email, password) => {
+    const res = await postData('/login', { email, password });
+    console.log(res); // todo handle error
+    // todo redirect/update user on success
+  };
+
+  const localSignup = async (firstName, lastName, email, password) => {
+    const res = await postData('/signup', {
+      firstName,
+      lastName,
+      email,
+      password,
+    });
+    console.log(res); // todo handle error
+    // todo redirect/update user on success
+  };
+
+  const getPageContent = () => {
+    if (user) {
+      return (
+        <>
+          <Button color="primary" href="/edit">
+            Create New Artifact
+          </Button>
+          <ArtifactList list={list} />
+        </>
+      );
+    }
+    if (onLogin) {
+      return (
+        <Login onSubmit={localLogin} toggleLogin={() => setOnLogin(false)} />
+      );
+    }
+
+    return (
+      <SignUp onSubmit={localSignup} toggleLogin={() => setOnLogin(true)} />
+    );
+  };
 
   return (
     <Grid container className={classes.root}>
@@ -30,22 +71,7 @@ function Index(props) {
         <Typography variant="h4" component="h1" gutterBottom>
           Welcome
         </Typography>
-        {user ? (
-          <>
-            <Button color="primary" href="/edit">
-              Create New Artifact
-            </Button>
-            <ArtifactList list={list} />
-          </>
-        ) : (
-          <>
-            <Typography>You must be logged in to continue</Typography>
-            <Button variant="contained" color="primary" href="/auth/google">
-              <ExitToAppIcon />
-              Login With Google
-            </Button>
-          </>
-        )}
+        {getPageContent()}
       </Grid>
     </Grid>
   );
