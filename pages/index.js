@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { Grid, Typography, Button, makeStyles } from '@material-ui/core';
+import { Grid, Button, makeStyles, Paper } from '@material-ui/core';
+import { useRouter } from 'next/router';
 
 import { getData, postData } from '../src/api';
 import ArtifactList from '../src/organism/ArtifactList';
 import SignUp from '../src/molecule/SignUp';
 import Login from '../src/molecule/Login';
+import AboutPageCTA from '../src/atom/AboutPageCTA';
 
-const useStyles = makeStyles({
+const useStyles = makeStyles(theme => ({
   root: {
     minHeight: '100vh',
   },
@@ -16,14 +18,31 @@ const useStyles = makeStyles({
   },
   content: {
     marginTop: 40,
+    [theme.breakpoints.down('sm')]: {
+      position: 'absolute',
+      width: '100%',
+    },
   },
-});
+  contentPaper: {
+    maxWidth: 400,
+    margin: '0 auto',
+    padding: theme.spacing(3, 2),
+    marginTop: theme.spacing(8),
+    opacity: 0.94,
+  },
+  aboutPaper: {
+    width: '100%',
+    maxWidth: 400,
+    marginTop: theme.spacing(2),
+  },
+}));
 
 function Index(props) {
   const classes = useStyles();
   const { user, list } = props;
 
   const [onLogin, setOnLogin] = useState(false);
+  const router = useRouter();
 
   const localLogin = async (email, password) => {
     const res = await postData('/login', { email, password });
@@ -55,12 +74,31 @@ function Index(props) {
     }
     if (onLogin) {
       return (
-        <Login onSubmit={localLogin} toggleLogin={() => setOnLogin(false)} />
+        <>
+          <Paper className={classes.contentPaper}>
+            <Login
+              onSubmit={localLogin}
+              toggleLogin={() => setOnLogin(false)}
+            />
+          </Paper>
+          <AboutPageCTA
+            className={classes.aboutPaper}
+            onClick={() => router.push('/about')}
+          />
+        </>
       );
     }
 
     return (
-      <SignUp onSubmit={localSignup} toggleLogin={() => setOnLogin(true)} />
+      <>
+        <Paper className={classes.contentPaper}>
+          <SignUp onSubmit={localSignup} toggleLogin={() => setOnLogin(true)} />
+        </Paper>
+        <AboutPageCTA
+          className={classes.aboutPaper}
+          onClick={() => router.push('/about')}
+        />
+      </>
     );
   };
 
@@ -68,9 +106,6 @@ function Index(props) {
     <Grid container className={classes.root}>
       <Grid item xs={12} md={6} className={classes.hero} />
       <Grid item xs={12} md={6} className={classes.content}>
-        <Typography variant="h4" component="h1" gutterBottom>
-          Welcome
-        </Typography>
         {getPageContent()}
       </Grid>
     </Grid>

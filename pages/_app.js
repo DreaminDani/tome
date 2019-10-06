@@ -45,7 +45,7 @@ class MyApp extends App {
       <UserContext.Provider value={this.state.user}>
         <ThemeProvider theme={theme}>
           <CssBaseline />
-          <Menu />
+          {this.state.user && <Menu />}
           <Component {...props} />
         </ThemeProvider>
       </UserContext.Provider>

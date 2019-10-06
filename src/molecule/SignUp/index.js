@@ -13,11 +13,9 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 
 const useStyles = makeStyles(theme => ({
   paper: {
-    marginTop: theme.spacing(8),
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
-    maxWidth: 400,
   },
   avatar: {
     margin: theme.spacing(1),
