@@ -128,3 +128,42 @@ export const getCurrentCommentList = (comments, updatedComments, selection) => {
 
   return commentList;
 };
+
+export const saveLocalComment = (
+  updatedComments,
+  comments,
+  selection,
+  comment,
+  updateComments,
+  setSelection
+) => {
+  const currentTime = new Date().getTime();
+  const newComments =
+    updatedComments.length > 0 ? [...updatedComments] : [...comments];
+  if (selection.location.length > 0) {
+    newComments.push({
+      user: {
+        id: 0,
+        name: 'Your Name',
+      },
+      comment,
+      created: currentTime,
+      updated: currentTime,
+      location: selection.location,
+      id: `${currentTime}`,
+    });
+  } else {
+    newComments.push({
+      user: {
+        id: 0,
+        name: 'Your Name',
+      },
+      comment,
+      created: currentTime,
+      updated: currentTime,
+      id: selection.selection,
+    });
+  }
+  updateComments(newComments);
+  updateFocusedComment(comment, newComments, setSelection);
+};

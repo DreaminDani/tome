@@ -24,7 +24,9 @@ const useStyles = makeStyles(theme => ({
 
 function CommentPane(props) {
   const classes = useStyles();
-  const user = useContext(UserContext);
+  const user = useContext(UserContext) || {
+    displayName: 'Your Name',
+  };
   const { selection, commentList, onSave, onClose } = props;
   const [comment, setComment] = useState('');
   const selectionComments = commentList.filter(c => c.id === selection);

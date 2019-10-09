@@ -9,6 +9,7 @@ import {
   setCaretSelection,
   updateFocusedComment,
   getCurrentCommentList,
+  saveLocalComment,
 } from './helpers';
 
 const useStyles = makeStyles({
@@ -17,7 +18,7 @@ const useStyles = makeStyles({
   },
 });
 
-function Artifact({ artifact_data, id }) {
+function Artifact({ artifact_data, id, disableSave }) {
   const classes = useStyles();
   const [selection, setSelection] = useState({
     selection: '',
@@ -65,23 +66,36 @@ function Artifact({ artifact_data, id }) {
   };
 
   const commentSaveHandler = async comment => {
-    let res = [];
-    if (selection.location.length > 0) {
-      res = await postData(`/api/artifact/comment/add`, {
-        id,
+    if (disableSave) {
+      // TODO do not overwrite actual user name with "your name"/
+      //  When user is logged in
+      saveLocalComment(
+        updatedComments,
+        comments,
+        selection,
         comment,
-        location: selection.location,
-      });
+        updateComments,
+        setSelection
+      );
     } else {
-      res = await postData(`/api/artifact/comment/update`, {
-        id,
-        comment,
-        commentID: selection.selection,
-      });
-    }
+      let res = [];
+      if (selection.location.length > 0) {
+        res = await postData(`/api/artifact/comment/add`, {
+          id,
+          comment,
+          location: selection.location,
+        });
+      } else {
+        res = await postData(`/api/artifact/comment/update`, {
+          id,
+          comment,
+          commentID: selection.selection,
+        });
+      }
 
-    updateComments(res.commentlist);
-    updateFocusedComment(comment, res.commentlist, setSelection);
+      updateComments(res.commentlist);
+      updateFocusedComment(comment, res.commentlist, setSelection);
+    }
   };
 
   const commentCloseHandler = () => {
@@ -121,6 +135,10 @@ function Artifact({ artifact_data, id }) {
   );
 }
 
+Artifact.defaultProps = {
+  disableSave: false,
+};
+
 Artifact.propTypes = {
   id: PropTypes.string,
   artifact_data: PropTypes.shape({
@@ -128,6 +146,7 @@ Artifact.propTypes = {
     name: PropTypes.string,
     comments: CommentPane.propTypes.commentList,
   }),
+  disableSave: PropTypes.bool,
 };
 
 export default Artifact;

@@ -10,7 +10,7 @@ const useStyles = makeStyles(theme => ({
   text: {
     fontFamily: `'Cormorant Garamond', serif`,
     fontSize: '1.12rem',
-    whiteSpace: 'pre',
+    whiteSpace: 'pre-wrap',
     '&::selection': {
       background: theme.palette.primary.light,
       color: 'white',

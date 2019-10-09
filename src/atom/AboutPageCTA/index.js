@@ -70,7 +70,7 @@ const AboutPageCTA = props => {
 };
 
 AboutPageCTA.propTypes = {
-  className: PropTypes.object,
+  className: PropTypes.string,
   onClick: PropTypes.func,
 };
 
