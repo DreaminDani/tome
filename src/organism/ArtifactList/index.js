@@ -17,8 +17,8 @@ function ArtifactList(props) {
   if (list && list.length) {
     return (
       <>
-        <Typography variant="subtitle1">
-          Or have a look at your previous work...
+        <Typography variant="h3" component="h1">
+          My Artifacts
         </Typography>
         <ul className={classes.listRoot}>
           {list.map(artifact => (

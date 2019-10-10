@@ -1,7 +1,7 @@
 import React from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
-import { Button } from '@material-ui/core';
+import { Button, makeStyles } from '@material-ui/core';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 
 import Artifact from '../src/organism/Artifact';
@@ -34,9 +34,10 @@ Try commenting to see what Tome has to offer!`,
     {
       user: {
         id: 0,
-        name: 'Your Name',
+        name: 'Dani Sandoval (Tome)',
       },
-      comment: 'To add a new comment, click anywhere on the artifact text.',
+      comment:
+        'To add a new comment, click (and/or drag) anywhere within the artifact.',
       created: currentTime,
       updated: currentTime,
       location: [978, 988],
@@ -45,14 +46,24 @@ Try commenting to see what Tome has to offer!`,
   ],
 };
 
+const useStyles = makeStyles({
+  topButton: {
+    marginTop: 16,
+    marginBottom: 16,
+    marginLeft: 8,
+  },
+});
+
 export default function AboutPage() {
+  const classes = useStyles();
+
   return (
     <div>
       <Head>
         <title>Tome - About</title>
       </Head>
       <Link href="/">
-        <Button color="secondary">
+        <Button className={classes.topButton} color="secondary">
           <ChevronLeftIcon />
           Return Home
         </Button>

@@ -1,6 +1,7 @@
 import { Grid, Typography, makeStyles } from '@material-ui/core';
 import PropTypes from 'prop-types';
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
+import { UserContext } from '../../contexts';
 import TextContent from '../../atom/TextContent';
 import CommentPane from '../../molecule/CommentPane';
 import { postData } from '../../api';
@@ -20,6 +21,10 @@ const useStyles = makeStyles({
 
 function Artifact({ artifact_data, id, disableSave }) {
   const classes = useStyles();
+
+  const user = useContext(UserContext) || {
+    displayName: 'Your Name',
+  };
   const [selection, setSelection] = useState({
     selection: '',
     location: [],
@@ -67,13 +72,12 @@ function Artifact({ artifact_data, id, disableSave }) {
 
   const commentSaveHandler = async comment => {
     if (disableSave) {
-      // TODO do not overwrite actual user name with "your name"/
-      //  When user is logged in
       saveLocalComment(
         updatedComments,
         comments,
         selection,
         comment,
+        user.displayName,
         updateComments,
         setSelection
       );

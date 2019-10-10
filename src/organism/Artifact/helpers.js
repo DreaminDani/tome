@@ -134,6 +134,7 @@ export const saveLocalComment = (
   comments,
   selection,
   comment,
+  displayName,
   updateComments,
   setSelection
 ) => {
@@ -144,7 +145,7 @@ export const saveLocalComment = (
     newComments.push({
       user: {
         id: 0,
-        name: 'Your Name',
+        name: displayName,
       },
       comment,
       created: currentTime,
@@ -156,7 +157,7 @@ export const saveLocalComment = (
     newComments.push({
       user: {
         id: 0,
-        name: 'Your Name',
+        name: displayName,
       },
       comment,
       created: currentTime,

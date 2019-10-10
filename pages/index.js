@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { Grid, Button, makeStyles, Paper } from '@material-ui/core';
+import { Grid, Fab, makeStyles, Paper } from '@material-ui/core';
+import AddIcon from '@material-ui/icons/Add';
 import { useRouter } from 'next/router';
 
 import { getData, postData } from '../src/api';
@@ -22,6 +23,13 @@ const useStyles = makeStyles(theme => ({
       position: 'absolute',
       width: '100%',
     },
+  },
+  floatingButton: {
+    position: 'absolute',
+    bottom: theme.spacing(2),
+  },
+  extendedIcon: {
+    marginRight: theme.spacing(1),
   },
   contentPaper: {
     maxWidth: 400,
@@ -65,9 +73,16 @@ function Index(props) {
     if (user) {
       return (
         <>
-          <Button color="primary" href="/edit">
+          {/* todo move this button out of the page content and into the bottom center of the screen */}
+          <Fab
+            className={classes.floatingButton}
+            variant="extended"
+            color="primary"
+            href="/edit"
+          >
+            <AddIcon className={classes.extendedIcon} />
             Create New Artifact
-          </Button>
+          </Fab>
           <ArtifactList list={list} />
         </>
       );
