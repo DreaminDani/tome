@@ -18,15 +18,13 @@ jobs:
       uses: nuxt/actions-yarn@master
       with:
         args: test
-    - name: If on master
-      uses: actions/bin/filter@0dbb077f64d0ec1068a644d25c71b1db66148a24
-      with:
-        args: branch master
     - name: Database migrations
+      if: github.ref == 'master'
       uses: ./db
       env:
         TARGET_URI: ${{ secrets.TARGET_URI }}
     - name: Deploy to PCF
+      if: github.ref == 'master'
       uses: d3sandoval/cloud-foundry-action@1.1.1
       env:
         CF_PASSWORD: ${{ secrets.CF_PASSWORD }}
