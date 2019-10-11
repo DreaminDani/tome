@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { Grid, Fab, makeStyles, Paper } from '@material-ui/core';
-import AddIcon from '@material-ui/icons/Add';
+import { Grid, makeStyles, Paper } from '@material-ui/core';
 import { useRouter } from 'next/router';
 
 import { getData, postData } from '../src/api';
@@ -9,6 +8,7 @@ import ArtifactList from '../src/organism/ArtifactList';
 import SignUp from '../src/molecule/SignUp';
 import Login from '../src/molecule/Login';
 import AboutPageCTA from '../src/atom/AboutPageCTA';
+import CreateArtifactFab from '../src/atom/CreateArtifactFab';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -26,10 +26,10 @@ const useStyles = makeStyles(theme => ({
   },
   floatingButton: {
     position: 'absolute',
-    bottom: theme.spacing(2),
-  },
-  extendedIcon: {
-    marginRight: theme.spacing(1),
+    bottom: 0,
+    width: '100%',
+    textAlign: 'center',
+    marginBottom: theme.spacing(2),
   },
   contentPaper: {
     maxWidth: 400,
@@ -71,22 +71,9 @@ function Index(props) {
 
   const getPageContent = () => {
     if (user) {
-      return (
-        <>
-          {/* todo move this button out of the page content and into the bottom center of the screen */}
-          <Fab
-            className={classes.floatingButton}
-            variant="extended"
-            color="primary"
-            href="/edit"
-          >
-            <AddIcon className={classes.extendedIcon} />
-            Create New Artifact
-          </Fab>
-          <ArtifactList list={list} />
-        </>
-      );
+      return <ArtifactList list={list} />;
     }
+
     if (onLogin) {
       return (
         <>
@@ -123,6 +110,7 @@ function Index(props) {
       <Grid item xs={12} md={6} className={classes.content}>
         {getPageContent()}
       </Grid>
+      {user && <CreateArtifactFab className={classes.floatingButton} />}
     </Grid>
   );
 }

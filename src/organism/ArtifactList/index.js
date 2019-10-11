@@ -3,11 +3,15 @@ import PropTypes from 'prop-types';
 import { makeStyles, Typography } from '@material-ui/core';
 import ArtifactListItem from '../../molecule/ArtifactListItem';
 
-const useStyles = makeStyles({
+const useStyles = makeStyles(theme => ({
   listRoot: {
     padding: 0,
+    maxWidth: 420,
+    [theme.breakpoints.down('sm')]: {
+      margin: '0 auto',
+    },
   },
-});
+}));
 
 function ArtifactList(props) {
   const classes = useStyles();

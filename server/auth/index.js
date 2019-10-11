@@ -13,6 +13,10 @@ const router = express.Router();
 // TODO add a basic login screen (.get()) with optional message
 //  e.g. "you must be logged in to access"
 //  Default message is "log in to tome"
+router.get('/login', (req, res, next) => {
+  res.redirect('/');
+});
+
 router.post('/login', async (req, res, next) => {
   passport.authenticate('local', async (err, user) =>
     loginWithLocal(req, res, next, err, user)
