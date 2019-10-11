@@ -19,12 +19,12 @@ jobs:
       with:
         args: test
     - name: Database migrations
-      if: github.ref == 'master'
+      if: github.ref == 'refs/heads/master'
       uses: ./db
       env:
         TARGET_URI: ${{ secrets.TARGET_URI }}
     - name: Deploy to PCF
-      if: github.ref == 'master'
+      if: github.ref == 'refs/heads/master'
       uses: d3sandoval/cloud-foundry-action@1.1.1
       env:
         CF_PASSWORD: ${{ secrets.CF_PASSWORD }}
