@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { makeStyles, Typography } from '@material-ui/core';
+import Link from 'next/link';
 import ArtifactListItem from '../../molecule/ArtifactListItem';
 
 const useStyles = makeStyles(theme => ({
@@ -18,22 +19,28 @@ function ArtifactList(props) {
 
   const { list } = props;
 
-  if (list && list.length) {
-    return (
-      <>
-        <Typography variant="h3" component="h1">
-          My Artifacts
-        </Typography>
+  return (
+    <>
+      <Typography variant="h3" component="h1">
+        My Artifacts
+      </Typography>
+      {list && list.length ? (
         <ul className={classes.listRoot}>
           {list.map(artifact => (
             <ArtifactListItem artifact={artifact} key={artifact.id} />
           ))}
         </ul>
-      </>
-    );
-  }
-
-  return null;
+      ) : (
+        <Typography data-testid="artifact-list-empty-state-text">
+          Use the button below to{' '}
+          <Link href="/edit">
+            <a>create a new artifact</a>
+          </Link>
+          .
+        </Typography>
+      )}
+    </>
+  );
 }
 
 ArtifactList.propTypes = {

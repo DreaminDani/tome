@@ -7,6 +7,7 @@ import { getData, postData } from '../src/api';
 import ArtifactList from '../src/organism/ArtifactList';
 import SignUp from '../src/molecule/SignUp';
 import Login from '../src/molecule/Login';
+import LoginError from '../src/atom/LoginError';
 import AboutPageCTA from '../src/atom/AboutPageCTA';
 import CreateArtifactFab from '../src/atom/CreateArtifactFab';
 
@@ -22,6 +23,7 @@ const useStyles = makeStyles(theme => ({
     [theme.breakpoints.down('sm')]: {
       position: 'absolute',
       width: '100%',
+      padding: '0 16px',
     },
   },
   floatingButton: {
@@ -31,11 +33,15 @@ const useStyles = makeStyles(theme => ({
     textAlign: 'center',
     marginBottom: theme.spacing(2),
   },
+  loginError: {
+    width: '100%',
+    maxWidth: 400,
+    margin: '0 auto',
+  },
   contentPaper: {
     maxWidth: 400,
     margin: '0 auto',
     padding: theme.spacing(3, 2),
-    marginTop: theme.spacing(8),
     opacity: 0.94,
   },
   aboutPaper: {
@@ -50,12 +56,21 @@ function Index(props) {
   const { user, list } = props;
 
   const [onLogin, setOnLogin] = useState(false);
+  const [authError, setAuthError] = useState();
   const router = useRouter();
 
   const localLogin = async (email, password) => {
     const res = await postData('/login', { email, password });
-    console.log(res); // todo handle error
-    // todo redirect/update user on success
+
+    if (res.ok) {
+      return window.location.reload();
+    }
+
+    if (res.message) {
+      setAuthError(res.message);
+    } else {
+      setAuthError(`Error: ${res.statusText}`);
+    }
   };
 
   const localSignup = async (firstName, lastName, email, password) => {
@@ -65,8 +80,16 @@ function Index(props) {
       email,
       password,
     });
-    console.log(res); // todo handle error
-    // todo redirect/update user on success
+
+    if (res.ok) {
+      return window.location.reload();
+    }
+
+    if (res.message) {
+      setAuthError(res.message);
+    } else {
+      setAuthError(`Error: ${res.statusText}`);
+    }
   };
 
   const getPageContent = () => {
@@ -77,7 +100,13 @@ function Index(props) {
     if (onLogin) {
       return (
         <>
-          <Paper className={classes.contentPaper}>
+          {authError && (
+            <LoginError className={classes.loginError}>{authError}</LoginError>
+          )}
+          <Paper
+            style={{ marginTop: authError ? 19 : 48 }}
+            className={classes.contentPaper}
+          >
             <Login
               onSubmit={localLogin}
               toggleLogin={() => setOnLogin(false)}
@@ -93,7 +122,13 @@ function Index(props) {
 
     return (
       <>
-        <Paper className={classes.contentPaper}>
+        {authError && (
+          <LoginError className={classes.loginError}>{authError}</LoginError>
+        )}
+        <Paper
+          style={{ marginTop: authError ? 19 : 48 }}
+          className={classes.contentPaper}
+        >
           <SignUp onSubmit={localSignup} toggleLogin={() => setOnLogin(true)} />
         </Paper>
         <AboutPageCTA

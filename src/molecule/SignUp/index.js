@@ -39,7 +39,8 @@ const SignUp = props => {
 
   const { onSubmit, toggleLogin } = props;
 
-  const submit = () => {
+  const submit = e => {
+    e.preventDefault();
     onSubmit(firstName, lastName, email, password);
   };
 
@@ -51,7 +52,7 @@ const SignUp = props => {
       <Typography component="h1" variant="h5">
         Sign up
       </Typography>
-      <form className={classes.form}>
+      <form onSubmit={submit} className={classes.form}>
         <Grid container spacing={2}>
           <Grid item xs={12} sm={6}>
             <TextField
@@ -108,7 +109,7 @@ const SignUp = props => {
           variant="contained"
           color="primary"
           className={classes.submit}
-          onClick={submit}
+          type="submit"
         >
           Sign Up
         </Button>

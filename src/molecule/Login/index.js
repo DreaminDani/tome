@@ -38,8 +38,9 @@ const Login = props => {
   const [password, setPassword] = useState('');
 
   // should be form submit to prevent default
-  const submit = () => {
+  const submit = e => {
     // validate here before sending
+    e.preventDefault();
     onSubmit(email, password);
   };
 
@@ -51,7 +52,7 @@ const Login = props => {
       <Typography component="h1" variant="h5">
         Sign in
       </Typography>
-      <form className={classes.form} noValidate>
+      <form onSubmit={submit} className={classes.form} noValidate>
         <TextField
           variant="outlined"
           margin="normal"
@@ -82,7 +83,7 @@ const Login = props => {
           variant="contained"
           color="primary"
           className={classes.submit}
-          onClick={submit}
+          type="submit"
         >
           Sign In
         </Button>

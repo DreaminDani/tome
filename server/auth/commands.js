@@ -12,7 +12,7 @@ const signUpWithLocal = async (req, res, next) => {
     if (user) {
       return res.status(400).send({
         message:
-          'There is already an account with that email address. Please login instead.',
+          'An account with that email already exists. Please login instead.',
       });
     }
 
@@ -33,9 +33,14 @@ const loginWithLocal = async (req, res, next, err, user) => {
     });
   }
   await req.logIn(user, async error => {
-    console.log(user);
+    if (error) {
+      return next(error);
+    }
+
+    return res.status(200).send({
+      message: '',
+    });
   });
-  res.redirect('/');
 };
 
 const _commitUserToDatabase = async (req, res, next, error, user) => {
