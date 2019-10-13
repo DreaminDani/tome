@@ -1,12 +1,12 @@
-const getArtifactsByUser = async (client, userID) => {
+const getArtifactsByUser = async (client, email) => {
   const getArtifacts = await client.query(
     `
     SELECT a.id, jsonb_extract_path(a.artifact_data,'name') as name,
       a.user_id, a.created_at, a.updated_at, u.auth_metadata
     FROM artifacts a, users u
-    WHERE a.user_id=u.id and auth_id = $1
+    WHERE a.user_id=u.id and email = $1
   `,
-    [userID]
+    [email]
   );
   return getArtifacts.rows; // currently just gets all that user owns
 };

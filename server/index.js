@@ -9,9 +9,15 @@ const http = require('http');
 const next = require('next');
 const session = require('express-session');
 const passport = require('passport');
+const bodyParser = require('body-parser');
 const { Pool } = require('pg');
 
-const { sessionConfig, auth0Strategy, connectionString } = require('./config');
+const {
+  sessionConfig,
+  googleStrategy,
+  localStrategy,
+  connectionString,
+} = require('./config');
 const { restrictAccess } = require('./helpers');
 
 const authRoutes = require('./auth');
@@ -29,9 +35,12 @@ app.prepare().then(() => {
   });
   server.set('db', pool);
 
+  server.use(bodyParser.json());
+
   // auth config
   server.use(session(sessionConfig));
-  passport.use(auth0Strategy);
+  passport.use(googleStrategy);
+  passport.use(localStrategy(pool));
   passport.serializeUser((user, done) => done(null, user));
   passport.deserializeUser((user, done) => done(null, user));
   server.use(passport.initialize());

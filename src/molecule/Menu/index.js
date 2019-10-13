@@ -1,5 +1,6 @@
 import {
   Drawer,
+  Divider,
   IconButton,
   List,
   ListItem,
@@ -10,8 +11,8 @@ import {
   Typography,
 } from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
-import CreateIcon from '@material-ui/icons/Create';
-import HomeIcon from '@material-ui/icons/Home';
+import LogoutIcon from '@material-ui/icons/ExitToApp';
+import HomeIcon from '@material-ui/icons/LibraryBooks';
 import InfoIcon from '@material-ui/icons/Info';
 import React from 'react';
 import MenuNotch from '../../atom/MenuNotch';
@@ -51,6 +52,7 @@ export default function Menu() {
         </IconButton>
       </div>
       <List>
+        <Divider />
         <Link href="/">
           <ListItem button>
             <ListItemIcon>
@@ -59,20 +61,21 @@ export default function Menu() {
             <ListItemText primary="Home" />
           </ListItem>
         </Link>
-        <Link href="/edit">
-          <ListItem button>
-            <ListItemIcon>
-              <CreateIcon />
-            </ListItemIcon>
-            <ListItemText primary="New" />
-          </ListItem>
-        </Link>
         <Link href="/about">
           <ListItem button>
             <ListItemIcon>
               <InfoIcon />
             </ListItemIcon>
             <ListItemText primary="About" />
+          </ListItem>
+        </Link>
+        <Divider />
+        <Link href="/logout">
+          <ListItem button>
+            <ListItemIcon>
+              <LogoutIcon />
+            </ListItemIcon>
+            <ListItemText primary="Logout" />
           </ListItem>
         </Link>
       </List>

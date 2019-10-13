@@ -15,7 +15,7 @@ A postgresql database will be running on port 5421 and an administrative ui will
 Then create a `.env` file with the required creds:
 ```
 PORT=3000
-AUTH0_DOMAIN=your-domain.auth0.com
+AUTH0_DOMAIN=your-domain.auth0.com ## TODO REMOVE THIS + REPLACE WITH GOOGLE
 AUTH0_CLIENT_ID=...
 AUTH0_CLIENT_SECRET=...
 AUTH0_CALLBACK_URL=http://localhost:3000/callback

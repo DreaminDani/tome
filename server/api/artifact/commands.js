@@ -1,11 +1,11 @@
-const { serverError } = require('../../helpers');
+const { serverError, getEmailFromAuthProvider } = require('../../helpers');
 const {
   getArtifactsByUser,
   getArtifactByID,
   updateArtifactByID,
   createArtifact,
 } = require('../../data/artifacts');
-const { getUserByAuthID } = require('../../data/users');
+const { getUserByEmail } = require('../../data/users');
 const {
   addNewCommentToArtifact,
   updateCommentInArtifact,
@@ -16,7 +16,8 @@ const list = async (req, res) => {
   const artifacts = {};
 
   try {
-    artifacts.list = await getArtifactsByUser(client, req.user.id);
+    const email = getEmailFromAuthProvider(req.user);
+    artifacts.list = await getArtifactsByUser(client, email);
 
     res.send(artifacts);
   } catch (e) {
@@ -65,7 +66,8 @@ const add = async (req, res) => {
   const client = await req.app.get('db').connect();
 
   try {
-    const user = await getUserByAuthID(client, req.user.id);
+    const email = getEmailFromAuthProvider(req.user);
+    const user = await getUserByEmail(client, email);
     const saved = await createArtifact(
       client,
       user.id,
@@ -86,7 +88,8 @@ const addComment = async (req, res) => {
   const client = await req.app.get('db').connect();
 
   try {
-    const user = await getUserByAuthID(client, req.user.id);
+    const email = getEmailFromAuthProvider(req.user);
+    const user = await getUserByEmail(client, email);
     const { name: userName } = user.auth_metadata;
 
     const newComment = await addNewCommentToArtifact(
@@ -111,7 +114,8 @@ const updateComment = async (req, res) => {
   const client = await req.app.get('db').connect();
 
   try {
-    const user = await getUserByAuthID(client, req.user.id);
+    const email = getEmailFromAuthProvider(req.user);
+    const user = await getUserByEmail(client, email);
     const { name: userName } = user.auth_metadata;
 
     const newComment = await updateCommentInArtifact(

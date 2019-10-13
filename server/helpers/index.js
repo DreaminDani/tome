@@ -1,3 +1,19 @@
+const getEmailFromAuthProvider = user => {
+  if (user.email) {
+    return user.email;
+  }
+
+  if (user.emails && user.emails[0] && user.emails[0].value) {
+    return user.emails[0].value;
+  }
+
+  if (user._json && user._json.email) {
+    return user._json.email;
+  }
+
+  throw new Error('Cannot determine email address from Auth Provider');
+};
+
 // restrict routes
 const restrictAccess = (req, res, next) => {
   if (!req.isAuthenticated()) return res.redirect('/login');
@@ -49,6 +65,7 @@ const serverError = (
 };
 
 module.exports = {
+  getEmailFromAuthProvider,
   restrictAccess,
   ensureAuthenticated,
   serverError,

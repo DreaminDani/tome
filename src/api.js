@@ -15,7 +15,11 @@ export const postData = async (url = '', data = {}) => {
     body: JSON.stringify(data), // body data type must match "Content-Type" header
   });
 
-  return res.json();
+  const response = await res.json();
+  response.ok = res.ok;
+  response.status = res.status;
+  response.statusText = res.statusText;
+  return response;
 };
 
 export const getData = async (url = '', cookie) => {
@@ -29,5 +33,9 @@ export const getData = async (url = '', cookie) => {
     referrer: 'no-referrer',
   });
 
-  return res.json();
+  const response = await res.json();
+  response.ok = res.ok;
+  response.status = res.status;
+  response.statusText = res.statusText;
+  return response;
 };

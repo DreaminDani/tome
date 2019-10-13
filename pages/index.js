@@ -1,35 +1,152 @@
-import Box from '@material-ui/core/Box';
-import { Container, Typography, Button } from '@material-ui/core';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import React from 'react';
-import { getData } from '../src/api';
+import { Grid, makeStyles, Paper } from '@material-ui/core';
+import { useRouter } from 'next/router';
+
+import { getData, postData } from '../src/api';
 import ArtifactList from '../src/organism/ArtifactList';
+import SignUp from '../src/molecule/SignUp';
+import Login from '../src/molecule/Login';
+import LoginError from '../src/atom/LoginError';
+import AboutPageCTA from '../src/atom/AboutPageCTA';
+import CreateArtifactFab from '../src/atom/CreateArtifactFab';
+
+const useStyles = makeStyles(theme => ({
+  root: {
+    minHeight: '100vh',
+  },
+  hero: {
+    background: "center / contain no-repeat url('/static/img/tome-hero.png')",
+  },
+  content: {
+    marginTop: 40,
+    [theme.breakpoints.down('sm')]: {
+      position: 'absolute',
+      width: '100%',
+      padding: '0 16px',
+    },
+  },
+  floatingButton: {
+    position: 'absolute',
+    bottom: 0,
+    width: '100%',
+    textAlign: 'center',
+    marginBottom: theme.spacing(2),
+  },
+  loginError: {
+    width: '100%',
+    maxWidth: 400,
+    margin: '0 auto',
+  },
+  contentPaper: {
+    maxWidth: 400,
+    margin: '0 auto',
+    padding: theme.spacing(3, 2),
+    opacity: 0.94,
+  },
+  aboutPaper: {
+    width: '100%',
+    maxWidth: 400,
+    marginTop: theme.spacing(2),
+  },
+}));
 
 function Index(props) {
+  const classes = useStyles();
   const { user, list } = props;
-  return (
-    <Container maxWidth="sm">
-      <Box my={4}>
-        <Typography variant="h4" component="h1" gutterBottom>
-          Welcome
-        </Typography>
-        {user ? (
-          <>
-            <Button color="primary" href="/edit">
-              Create New Artifact
-            </Button>
-            <ArtifactList list={list} />
-          </>
-        ) : (
-          <>
-            <Typography>You must be logged in to continue</Typography>
-            <Button variant="contained" color="primary" href="/edit">
-              Login
-            </Button>
-          </>
+
+  const [onLogin, setOnLogin] = useState(false);
+  const [authError, setAuthError] = useState();
+  const router = useRouter();
+
+  const localLogin = async (email, password) => {
+    const res = await postData('/login', { email, password });
+
+    if (res.ok) {
+      return window.location.reload();
+    }
+
+    if (res.message) {
+      setAuthError(res.message);
+    } else {
+      setAuthError(`Error: ${res.statusText}`);
+    }
+  };
+
+  const localSignup = async (firstName, lastName, email, password) => {
+    const res = await postData('/signup', {
+      firstName,
+      lastName,
+      email,
+      password,
+    });
+
+    if (res.ok) {
+      return window.location.reload();
+    }
+
+    if (res.message) {
+      setAuthError(res.message);
+    } else {
+      setAuthError(`Error: ${res.statusText}`);
+    }
+  };
+
+  const getPageContent = () => {
+    if (user) {
+      return <ArtifactList list={list} />;
+    }
+
+    if (onLogin) {
+      return (
+        <>
+          {authError && (
+            <LoginError className={classes.loginError}>{authError}</LoginError>
+          )}
+          <Paper
+            style={{ marginTop: authError ? 19 : 48 }}
+            className={classes.contentPaper}
+          >
+            <Login
+              onSubmit={localLogin}
+              toggleLogin={() => setOnLogin(false)}
+            />
+          </Paper>
+          <AboutPageCTA
+            className={classes.aboutPaper}
+            onClick={() => router.push('/about')}
+          />
+        </>
+      );
+    }
+
+    return (
+      <>
+        {authError && (
+          <LoginError className={classes.loginError}>{authError}</LoginError>
         )}
-      </Box>
-    </Container>
+        <Paper
+          style={{ marginTop: authError ? 19 : 48 }}
+          className={classes.contentPaper}
+        >
+          <SignUp onSubmit={localSignup} toggleLogin={() => setOnLogin(true)} />
+        </Paper>
+        <AboutPageCTA
+          className={classes.aboutPaper}
+          onClick={() => router.push('/about')}
+        />
+      </>
+    );
+  };
+
+  return (
+    <Grid container className={classes.root}>
+      <Grid item xs={12} md={6} className={classes.hero} />
+      <Grid item xs={12} md={6} className={classes.content}>
+        {getPageContent()}
+      </Grid>
+      {user && <CreateArtifactFab className={classes.floatingButton} />}
+    </Grid>
   );
 }
 

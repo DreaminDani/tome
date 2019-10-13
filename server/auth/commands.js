@@ -1,4 +1,47 @@
-const { serverError } = require('../helpers');
+const { serverError, getEmailFromAuthProvider } = require('../helpers');
+const { getUserByEmail, addUser } = require('../data/users');
+
+const signUpWithLocal = async (req, res, next) => {
+  const { email, password, firstName, lastName } = req.body;
+  // todo validate inputs
+
+  const client = await req.app.get('db').connect();
+
+  try {
+    const user = await getUserByEmail(client, email);
+    if (user) {
+      return res.status(400).send({
+        message:
+          'An account with that email already exists. Please login instead.',
+      });
+    }
+
+    await addUser(client, email, password, firstName, lastName);
+    next();
+  } catch (e) {
+    serverError(e);
+  } finally {
+    client.release();
+  }
+};
+
+const loginWithLocal = async (req, res, next, err, user) => {
+  if (err) return next(err);
+  if (!user) {
+    return res.status(400).send({
+      message: 'Invalid username or password',
+    });
+  }
+  await req.logIn(user, async error => {
+    if (error) {
+      return next(error);
+    }
+
+    return res.status(200).send({
+      message: '',
+    });
+  });
+};
 
 const _commitUserToDatabase = async (req, res, next, error, user) => {
   if (error) return next(error);
@@ -6,10 +49,11 @@ const _commitUserToDatabase = async (req, res, next, error, user) => {
   const client = await req.app.get('db').connect();
 
   try {
-    const getUser = await client.query(
-      'SELECT * FROM users WHERE auth_id = $1',
-      [user.id]
-    );
+    const email = getEmailFromAuthProvider(user);
+    // todo extract this to data helpers
+    const getUser = await client.query('SELECT * FROM users WHERE email = $1', [
+      email,
+    ]);
     if (getUser.rows[0]) {
       await client.query(
         `
@@ -23,10 +67,10 @@ const _commitUserToDatabase = async (req, res, next, error, user) => {
     } else {
       await client.query(
         `
-          INSERT INTO users(auth_id, auth_metadata)
+          INSERT INTO users(email, auth_metadata)
           VALUES($1, $2);
         `,
-        [user.id, user._json]
+        [email, user._json]
       );
     }
   } catch (e) {
@@ -47,14 +91,12 @@ async function callback(req, res, next, err, user) {
 
 const logout = (req, res) => {
   req.logout();
-
-  const { AUTH0_DOMAIN, AUTH0_CLIENT_ID, BASE_URL } = process.env;
-  res.redirect(
-    `https://${AUTH0_DOMAIN}/logout?client_id=${AUTH0_CLIENT_ID}&returnTo=${BASE_URL}`
-  );
+  res.redirect('/');
 };
 
 module.exports = {
+  loginWithLocal,
+  signUpWithLocal,
   _commitUserToDatabase,
   callback,
   logout,

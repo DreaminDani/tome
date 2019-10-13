@@ -12,7 +12,9 @@ describe('ArtifactList displays ArtifactListItems', () => {
     const artifactList = shallow(<ArtifactList list={list} />);
 
     // Assert
-    expect(artifactList.get(0)).toBeFalsy();
+    expect(
+      artifactList.find('[data-testid="artifact-list-empty-state-text"]')
+    ).toHaveLength(1);
   });
 
   it('displays a list when it contains artifacts', () => {

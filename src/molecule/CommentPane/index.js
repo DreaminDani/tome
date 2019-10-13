@@ -24,7 +24,9 @@ const useStyles = makeStyles(theme => ({
 
 function CommentPane(props) {
   const classes = useStyles();
-  const user = useContext(UserContext);
+  const user = useContext(UserContext) || {
+    name: 'Your Name',
+  };
   const { selection, commentList, onSave, onClose } = props;
   const [comment, setComment] = useState('');
   const selectionComments = commentList.filter(c => c.id === selection);
@@ -40,6 +42,18 @@ function CommentPane(props) {
     setComment(event.target.value);
   };
 
+  const getDisplayNameFromName = name => {
+    if (typeof name === 'string') {
+      return name;
+    }
+
+    if (typeof name === 'object' && name.given_name && name.family_name) {
+      return `${name.given_name} ${name.family_name}`;
+    }
+
+    return 'A tome user';
+  };
+
   return (
     <Paper className={classes.root}>
       <IconButton
@@ -52,7 +66,7 @@ function CommentPane(props) {
       {selectionComments.length > 0 ? (
         <CommentList items={selectionComments} data-testid="comment-list" />
       ) : (
-        user.displayName
+        getDisplayNameFromName(user.name)
       )}
       <TextField
         data-testid="comment-input"

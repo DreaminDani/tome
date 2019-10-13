@@ -4,16 +4,19 @@ const { mockReq, mockRes } = require('sinon-express-mock');
 
 const { _commitUserToDatabase, callback, logout } = require('./commands');
 
+jest.mock('../helpers');
+const { serverError, getEmailFromAuthProvider } = require('../helpers');
+
 let req;
 let res;
 let next;
 let mockDB;
 let mockClient;
 
-const fakeUser = {
-  id: 'some-auth-string',
-  _json: {},
-};
+const fakeError = new Error();
+const fakeUser = { _json: {} };
+const fakeEmail = 'email@fake.com';
+getEmailFromAuthProvider.mockImplementation(() => fakeEmail);
 
 beforeEach(() => {
   res = mockRes({
@@ -49,7 +52,7 @@ describe('_commitUserToDatabase', () => {
 
   it('returns an error, if query fails', async () => {
     mockClient.query = jest.fn(() => {
-      throw new Error();
+      throw fakeError;
     });
     mockDB = {
       connect: jest.fn(() => mockClient),
@@ -64,8 +67,7 @@ describe('_commitUserToDatabase', () => {
 
     expect(mockDB.connect).toBeCalled();
     expect(mockClient.query).toBeCalled();
-    expect(res.status).toBeCalledWith(500);
-    expect(res.send).toBeCalledWith({ error: 'Server Error' });
+    expect(serverError).toBeCalledWith(req, res, fakeError);
     expect(mockClient.release).toBeCalled();
   });
 
@@ -89,7 +91,7 @@ describe('_commitUserToDatabase', () => {
     expect(mockClient.query).toHaveBeenCalledTimes(2);
     expect(mockClient.query).toHaveBeenCalledWith(
       expect.stringContaining('SELECT'),
-      [fakeUser.id]
+      [fakeEmail]
     );
     expect(mockClient.query).toHaveBeenCalledWith(
       expect.stringContaining('INSERT'),
@@ -118,7 +120,7 @@ describe('_commitUserToDatabase', () => {
     expect(mockClient.query).toHaveBeenCalledTimes(2);
     expect(mockClient.query).toHaveBeenCalledWith(
       expect.stringContaining('SELECT'),
-      [fakeUser.id]
+      [fakeEmail]
     );
     expect(mockClient.query).toHaveBeenCalledWith(
       expect.stringContaining('UPDATE'),
@@ -188,8 +190,8 @@ describe('authRoutes logout', () => {
     expect(req.logout).toHaveBeenCalled();
   });
 
-  it('redirects to a provider url', () => {
+  it('redirects to the homepage', () => {
     logout(req, res);
-    expect(res.redirect).toBeCalledWith(expect.stringContaining('/logout'));
+    expect(res.redirect).toBeCalledWith(expect.stringContaining('/'));
   });
 });

@@ -1,4 +1,3 @@
-const bodyParser = require('body-parser');
 const express = require('express');
 const { ensureAuthenticated } = require('../../helpers');
 const {
@@ -11,8 +10,6 @@ const {
 } = require('./commands');
 
 const router = express.Router();
-
-router.use(bodyParser.json());
 
 // todo ids of artifacts for user:
 //  1. list of artifacts I own
