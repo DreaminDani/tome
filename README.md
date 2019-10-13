@@ -15,14 +15,13 @@ A postgresql database will be running on port 5421 and an administrative ui will
 Then create a `.env` file with the required creds:
 ```
 PORT=3000
-AUTH0_DOMAIN=your-domain.auth0.com ## TODO REMOVE THIS + REPLACE WITH GOOGLE
-AUTH0_CLIENT_ID=...
-AUTH0_CLIENT_SECRET=...
-AUTH0_CALLBACK_URL=http://localhost:3000/callback
+GOOGLE_CLIENT_ID=...
+GOOGLE_CLIENT_SECRET=...
+GOOGLE_CALLBACK_URL=http://localhost:3000/auth/google/callback
 BASE_URL=http://localhost:3000
 TARGET_URI=postgres://postgres:example@db/postgres
 ```
-Make sure you set the callback and login urls in the auth0 dashboard for auth to work.
+Make sure you set the callback and login urls to the actual domain you're running on (it'll be localhost:3000 in dev).
 Also, it's best not use the default username and password for postgres in production...
 
 ### 3. Localhost dev environment
