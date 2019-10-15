@@ -1,4 +1,4 @@
-const ensureSec = (req, res, next) => {
+const ensureSecure = (req, res, next) => {
   if (req.headers['x-forwarded-proto'] === 'https') {
     return next();
   }
@@ -72,7 +72,7 @@ const serverError = (
 };
 
 module.exports = {
-  ensureSec,
+  ensureSecure,
   getEmailFromAuthProvider,
   restrictAccess,
   ensureAuthenticated,
