@@ -18,7 +18,7 @@ const {
   localStrategy,
   connectionString,
 } = require('./config');
-const { restrictAccess } = require('./helpers');
+const { ensureSecure, restrictAccess } = require('./helpers');
 
 const authRoutes = require('./auth');
 const artifactAPI = require('./api/artifact');
@@ -36,6 +36,13 @@ app.prepare().then(() => {
   server.set('db', pool);
 
   server.use(bodyParser.json());
+  if (!dev) {
+    //  http://expressjs.com/en/4x/api.html#app.set
+    // trust proxy provided headers, since we'll be
+    //  running this behind load balancer / proxy
+    server.enable('trust proxy');
+    server.use(ensureSecure);
+  }
 
   // auth config
   server.use(session(sessionConfig));
