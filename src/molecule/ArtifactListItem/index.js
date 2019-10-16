@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { makeStyles, Paper, Typography } from '@material-ui/core';
 import Link from 'next/link';
+import { getDisplayNameFromName } from '../../helpers';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -33,7 +34,7 @@ function ArtifactListItem(props) {
           </Typography>
           <Typography component="p">
             <strong>Created by: </strong>
-            {auth_metadata.name ? auth_metadata.name : 'A tome user'} on{' '}
+            {getDisplayNameFromName(auth_metadata.name)} on{' '}
             {createdDate.toLocaleDateString()} at{' '}
             {createdDate.toLocaleTimeString()}
           </Typography>

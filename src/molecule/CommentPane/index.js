@@ -10,6 +10,7 @@ import {
 import CloseIcon from '@material-ui/icons/Close';
 import CommentList from '../../atom/CommentList';
 import { UserContext } from '../../contexts';
+import { getDisplayNameFromName } from '../../helpers';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -40,18 +41,6 @@ function CommentPane(props) {
 
   const onChangeHandler = event => {
     setComment(event.target.value);
-  };
-
-  const getDisplayNameFromName = name => {
-    if (typeof name === 'string') {
-      return name;
-    }
-
-    if (typeof name === 'object' && name.given_name && name.family_name) {
-      return `${name.given_name} ${name.family_name}`;
-    }
-
-    return 'A tome user';
   };
 
   return (
