@@ -1,8 +1,0 @@
-{
-  "watch": [
-    "server/**/*.js"
-  ],
-  "ignore": [
-    "*.test.js"
-  ]
-}

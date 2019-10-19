@@ -25,6 +25,7 @@ module.exports = {
       "no-debugger": 0,
       "no-alert": 0,
       "no-restricted-globals": 0,
+      "global-require": 0,
       "no-await-in-loop": 0,
       "no-return-assign": [
         "error",

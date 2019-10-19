@@ -27,6 +27,7 @@
     "@babel/core": "^7.6.0",
     "babel-eslint": "^10.0.3",
     "babel-jest": "^24.9.0",
+    "chokidar": "^3.2.2",
     "enzyme": "latest",
     "enzyme-adapter-react-16": "latest",
     "eslint": "^6.4.0",
@@ -48,13 +49,16 @@
     "sinon-express-mock": "latest"
   },
   "scripts": {
-    "dev": "nodemon --inspect server/index.js",
+    "dev": "nodemon --inspect -w ./server.js ./server.js",
     "build": "next build",
-    "start": "NODE_ENV=production PORT=8080 node server/index.js",
+    "start": "NODE_ENV=production PORT=8080 node server.js",
     "test": "jest",
     "test:coverage": "jest --coverage",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "postinstall": "next build"
+  },
+  "engines": {
+    "node": "12.x.x"
   }
 }

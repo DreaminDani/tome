@@ -1,6 +1,5 @@
 const dev = process.env.NODE_ENV !== 'production';
 if (dev) {
-  // eslint-disable-next-line global-require
   require('dotenv').config();
 }
 
@@ -17,17 +16,16 @@ const {
   googleStrategy,
   localStrategy,
   connectionString,
-} = require('./config');
-const { ensureSecure, restrictAccess } = require('./helpers');
-
-const authRoutes = require('./auth');
-const artifactAPI = require('./api/artifact');
+} = require('./server/config');
+const { ensureSecure, restrictAccess } = require('./server/helpers');
 
 const app = next({ dev });
 const handle = app.getRequestHandler();
 
 app.prepare().then(() => {
   const server = express();
+
+  // connect to database and make it available as 'db' in req
   const pool = new Pool({ connectionString });
   pool.on('error', (err, client) => {
     console.error(`Unexpected error on idle client: ${client}`, err);
@@ -36,7 +34,28 @@ app.prepare().then(() => {
   server.set('db', pool);
 
   server.use(bodyParser.json());
-  if (!dev) {
+  if (dev) {
+    // hot reload backend routes (global requires will not reload automatically)
+    //  https://codeburst.io/dont-use-nodemon-there-are-better-ways-fc016b50b45e
+    // eslint-disable-next-line
+    const chokidar = require('chokidar');
+    const watcher = chokidar.watch('./server');
+
+    watcher.on('ready', function() {
+      watcher.on('all', function() {
+        console.log('Detected change, clearing /server/ module cache.');
+        Object.keys(require.cache).forEach(function(id) {
+          if (
+            /[\\]server[\\]/.test(id) &&
+            !/[\\]next[\\]/.test(id) &&
+            !/[\\].next[\\]/.test(id)
+          ) {
+            delete require.cache[id];
+          }
+        });
+      });
+    });
+  } else {
     //  http://expressjs.com/en/4x/api.html#app.set
     // trust proxy provided headers, since we'll be
     //  running this behind load balancer / proxy
@@ -54,10 +73,16 @@ app.prepare().then(() => {
   server.use(passport.session());
 
   // api endpoints
-  server.use('/api', artifactAPI);
+  server.use('/api', (req, res, next) => {
+    require('./server/api/artifact')(req, res, next);
+  });
 
-  // routes
-  server.use(authRoutes);
+  // auth endpoints
+  server.use((req, res, next) => {
+    require('./server/auth')(req, res, next);
+  });
+
+  // frontend routes
   server.use('/edit', restrictAccess);
   server.get('/edit/:slug', restrictAccess, (req, res) =>
     app.render(req, res, '/edit', { slug: req.params.slug })
