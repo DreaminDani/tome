@@ -57,8 +57,5 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "postinstall": "next build"
-  },
-  "engines": {
-    "node": "12.x.x"
   }
 }
