@@ -50,13 +50,10 @@ describe('Artifact responds to mouse events', () => {
   it('does not update the selection, if nothing is clicked', () => {
     // Act
     const artifact = shallow(<Artifact artifact_data={{}} />);
-    artifact
-      .find('#artifact-content')
-      .first()
-      .simulate('mouseup', {
-        target: { localName: 'text' },
-        stopPropagation: () => {},
-      });
+    artifact.find('[data-testid="artifact-grid"]').simulate('mouseup', {
+      target: { localName: 'text' },
+      stopPropagation: () => {},
+    });
 
     // Assert
     expect(window.getSelection).toHaveBeenCalled();
@@ -85,13 +82,10 @@ describe('Artifact responds to mouse events', () => {
     const artifact = shallow(
       <Artifact artifact_data={{ body: 'line with words' }} />
     );
-    artifact
-      .find('#artifact-content')
-      .first()
-      .simulate('mouseup', {
-        target: { localName: 'text' },
-        stopPropagation: () => {},
-      });
+    artifact.find('[data-testid="artifact-grid"]').simulate('mouseup', {
+      target: { localName: 'text' },
+      stopPropagation: () => {},
+    });
 
     // Assert
     expect(window.getSelection).toHaveBeenCalled();
@@ -102,42 +96,66 @@ describe('Artifact responds to mouse events', () => {
     expect(domSelection.addRange).not.toHaveBeenCalled();
   });
 
-  it('selects an entire word, if Caret is clicked', () => {
-    // Arrange
-    const anchorNode = {
-      nodeName: '#text',
-      textContent: 'line with words',
-    };
-    window.getSelection = jest.fn(() => ({
-      type: 'Caret',
-      anchorNode,
-      anchorOffset: 7,
-      removeAllRanges: jest.fn(),
-      addRange: jest.fn(),
-    }));
-
-    const range = {
-      selectNodeContents: jest.fn(),
-      setStart: jest.fn(),
-      setEnd: jest.fn(),
-    };
-    document.createRange = jest.fn(() => range);
-
+  it('does nothing with the DOM selection, if a mark is clicked', () => {
     // Act
     const artifact = shallow(
-      <Artifact artifact_data={{ body: 'line with words' }} />
+      <Artifact
+        artifact_data={{
+          body: 'line <mark id="existing-comment">with</mark> words',
+        }}
+      />
     );
-    artifact
-      .find('#artifact-content')
-      .first()
-      .simulate('mouseup', {
-        target: { localName: 'text' },
-        stopPropagation: () => {},
-      });
+    artifact.find('[data-testid="artifact-grid"]').simulate('mouseup', {
+      target: { localName: 'mark', id: 'existing-comment' },
+      stopPropagation: () => {},
+    });
 
     // Assert
-    expect(document.createRange).toHaveBeenCalled();
-    expect(range.setStart).toHaveBeenCalledWith(anchorNode, 5);
-    expect(range.setEnd).toHaveBeenCalledWith(anchorNode, 9);
+    expect(window.getSelection).not.toHaveBeenCalled();
+  });
+
+  it('does nothing with the DOM selection, if the title is clicked', () => {
+    // Arrange
+    const artifact = shallow(
+      <Artifact
+        artifact_data={{
+          body: 'line with words',
+        }}
+      />
+    );
+
+    // Act
+    artifact.find('#artifact-title').simulate('mouseup', {
+      target: { localName: 'text', id: 'artifact-title' },
+      stopPropagation: () => {},
+    });
+
+    // Assert
+    expect(window.getSelection).not.toHaveBeenCalled();
+  });
+
+  it('does nothing with the DOM selection and does not close the comment pane, if the comment pane is open and clicked', () => {
+    // Arrange (open comment pane)
+    const artifact = shallow(
+      <Artifact
+        artifact_data={{
+          body: 'line <mark id="existing-comment">with</mark> words',
+        }}
+      />
+    );
+    artifact.find('[data-testid="artifact-grid"]').simulate('mouseup', {
+      target: { localName: 'mark', id: 'existing-comment' },
+      stopPropagation: () => {},
+    });
+
+    // Act
+    artifact.find('#artifact-comment').simulate('mouseup', {
+      target: { localName: 'div', id: 'artifact-comment' },
+      stopPropagation: () => {},
+    });
+
+    // Assert
+    expect(window.getSelection).not.toHaveBeenCalled();
+    expect(artifact.find('#artifact-comment')).toBeTruthy();
   });
 });

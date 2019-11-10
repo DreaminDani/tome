@@ -7,7 +7,6 @@ import CommentPane from '../../molecule/CommentPane';
 import { postData } from '../../api';
 import {
   setRangeSelection,
-  setCaretSelection,
   updateFocusedComment,
   getCurrentCommentList,
   saveLocalComment,
@@ -46,26 +45,28 @@ function Artifact({ artifact_data, id, disableSave }) {
 
   const mouseUpHandler = e => {
     // todo respond to touch events
-    e.stopPropagation();
-    if (e.target.localName === 'mark') {
-      setSelection({
-        selection: e.target.id,
-        location: [],
-      });
-    } else {
-      const domSelection = window.getSelection();
-      if (domSelection.type === 'Range') {
-        setRangeSelection(body, domSelection, setSelection);
-      } else if (
-        domSelection.type === 'Caret' &&
-        domSelection.anchorNode.nodeName === '#text'
-      ) {
-        setCaretSelection(body, domSelection, commentList, setSelection);
-      } else {
+    const title = document.getElementById('artifact-title');
+    const commentPane = document.getElementById('artifact-comment');
+    if (
+      !(title && title.contains(e.target)) &&
+      !(commentPane && commentPane.contains(e.target))
+    ) {
+      e.stopPropagation();
+      if (e.target.localName === 'mark') {
         setSelection({
-          selection: '',
+          selection: e.target.id,
           location: [],
         });
+      } else {
+        const domSelection = window.getSelection();
+        if (domSelection.type === 'Range') {
+          setRangeSelection(body, domSelection, setSelection);
+        } else {
+          setSelection({
+            selection: '',
+            location: [],
+          });
+        }
       }
     }
   };
@@ -112,15 +113,21 @@ function Artifact({ artifact_data, id, disableSave }) {
   };
 
   return (
-    <Grid container className={classes.root}>
+    <Grid
+      container
+      className={classes.root}
+      onMouseUp={mouseUpHandler}
+      data-testid="artifact-grid"
+    >
       <Grid item xs={12} sm={6} md={8}>
-        <Typography variant="h4">{name}</Typography>
+        <Typography variant="h4" id="artifact-title">
+          {name}
+        </Typography>
         <TextContent
           id="artifact-content"
           selection={selection.selection}
           commentList={commentList}
           onMouseDown={mouseDownHandler}
-          onMouseUp={mouseUpHandler}
         >
           {body}
         </TextContent>
@@ -128,6 +135,7 @@ function Artifact({ artifact_data, id, disableSave }) {
       <Grid item xs={12} sm={6} md={4} lg={3}>
         {selection.selection && selection.selection.length > 0 && (
           <CommentPane
+            id="artifact-comment"
             selection={selection.selection}
             commentList={commentList}
             onSave={commentSaveHandler}

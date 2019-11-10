@@ -34,7 +34,14 @@ const useStyles = makeStyles(theme => ({
 
 function TextContent(props) {
   const classes = useStyles();
-  const { children, selection, commentList, onMouseDown, onMouseUp } = props;
+  const {
+    children,
+    id,
+    selection,
+    commentList,
+    onMouseDown,
+    onMouseUp,
+  } = props;
 
   const withComments = [];
   const textComments = commentList ? [...commentList] : [];
@@ -90,6 +97,7 @@ function TextContent(props) {
   return (
     // todo make this accessible
     <p
+      id={id}
       dangerouslySetInnerHTML={{
         __html: withComments.length > 0 ? withComments.join('') : children,
       }}
@@ -100,7 +108,12 @@ function TextContent(props) {
   );
 }
 
+TextContent.defaultProps = {
+  id: 'artifact-content',
+};
+
 TextContent.propTypes = {
+  id: PropTypes.string,
   children: PropTypes.string,
   selection: PropTypes.string,
   commentList: CommentList.propTypes.items,

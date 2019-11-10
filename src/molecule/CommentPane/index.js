@@ -28,7 +28,7 @@ function CommentPane(props) {
   const user = useContext(UserContext) || {
     name: 'Your Name',
   };
-  const { selection, commentList, onSave, onClose } = props;
+  const { selection, commentList, onSave, onClose, id } = props;
   const [comment, setComment] = useState('');
   const selectionComments = commentList.filter(c => c.id === selection);
 
@@ -44,7 +44,7 @@ function CommentPane(props) {
   };
 
   return (
-    <Paper className={classes.root}>
+    <Paper className={classes.root} id={id}>
       <IconButton
         className={classes.closeIcon}
         data-testid="comment-close"
@@ -82,11 +82,13 @@ function CommentPane(props) {
 }
 
 CommentPane.defaultProps = {
+  id: 'artifact-comment',
   selection: '',
   commentList: [],
 };
 
 CommentPane.propTypes = {
+  id: PropTypes.string,
   selection: PropTypes.string,
   commentList: CommentList.propTypes.items,
   onSave: PropTypes.func,
