@@ -60,7 +60,10 @@ jobs:
           TARGET_URI: postgres://postgres:postgres@postgres/postgres
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
   deploy:
-    needs: install, journey
+    name: Migrations and CF Push
+    runs-on: ubuntu-latest
+    needs: [install, journey]
+    steps:
     - name: Database migrations
       if: github.ref == 'refs/heads/master'
       uses: ./db
