@@ -27,11 +27,10 @@ jobs:
         GOOGLE_CALLBACK_URL: http://localhost:3000/auth/google/callback
         BASE_URL: http://localhost:3000
         TARGET_URI: postgres://postgres:example@localhost/postgres
+        CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
       with:
         start: yarn dev
         record: true
-      env:
-        CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
     - name: Database migrations
       if: github.ref == 'refs/heads/master'
       uses: ./db
