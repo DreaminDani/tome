@@ -13,7 +13,7 @@ until psql "$TARGET_URI" -c '\q' > /dev/null 2>&1 || [ $RETRIES -eq 0 ]; do
 done
 
 if [ -n "$NOSSL" ]; then
-  sqitch deploy --target "${TARGET_URI}?sslmode=disable" --verify
+  sqitch deploy --target "${TARGET_URI}" --verify
 else
   sqitch deploy --target "${TARGET_URI}?sslmode=require" --verify
 fi
