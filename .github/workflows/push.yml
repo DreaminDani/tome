@@ -42,7 +42,7 @@ jobs:
         uses: ./db
         env:
           NOSSL: true
-          TARGET_URI: postgres://postgres:postgres@localhost:${{ job.services.postgres.ports[5432] }}/postgres
+          TARGET_URI: postgres://postgres:postgres@postgres:${{ job.services.postgres.ports[5432] }}/postgres
       - name: Cypress run
         uses: cypress-io/github-action@v1.13.0
         with:
@@ -54,7 +54,7 @@ jobs:
           GOOGLE_CLIENT_SECRET: test
           GOOGLE_CALLBACK_URL: http://localhost:3000/auth/google/callback
           BASE_URL: http://localhost:3000
-          TARGET_URI: postgres://postgres:postgres@localhost:${{ job.services.postgres.ports[5432] }}/postgres
+          TARGET_URI: postgres://postgres:postgres@postgres:${{ job.services.postgres.ports[5432] }}/postgres
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
   deploy:
     name: Migrations and CF Push
