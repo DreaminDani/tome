@@ -18,10 +18,12 @@ jobs:
       uses: nuxt/actions-yarn@master
       with:
         args: test
-    - name: Journey Test
-      uses: nuxt/actions-yarn@master
-      with:
-        args: test:journey-ci
+    - name: Journey test
+        uses: cypress-io/github-action@v1
+        with:
+          record: true
+        env:
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
     - name: Database migrations
       if: github.ref == 'refs/heads/master'
       uses: ./db
