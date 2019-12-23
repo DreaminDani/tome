@@ -18,6 +18,10 @@ jobs:
       uses: nuxt/actions-yarn@master
       with:
         args: test
+    - name: Journey Test
+      uses: nuxt/actions-yarn@master
+      with:
+        args: test:journey 
     - name: Database migrations
       if: github.ref == 'refs/heads/master'
       uses: ./db
