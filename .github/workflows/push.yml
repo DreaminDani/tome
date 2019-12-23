@@ -10,26 +10,27 @@ jobs:
       uses: nuxt/actions-yarn@master
       with:
         args: install --ignore-scripts
-    - name: Lint
-      uses: nuxt/actions-yarn@master
-      with:
-        args: lint
-    - name: Test
-      uses: nuxt/actions-yarn@master
-      with:
-        args: test
-    - name: Database migrations
-      if: github.ref == 'refs/heads/master'
-      uses: ./db
-      env:
-        TARGET_URI: ${{ secrets.TARGET_URI }}
-    - name: Deploy to PCF
-      if: github.ref == 'refs/heads/master'
-      uses: d3sandoval/cloud-foundry-action@1.1.1
-      env:
-        CF_PASSWORD: ${{ secrets.CF_PASSWORD }}
-        CF_TARGET_ORG: dsandoval-org
-        CF_TARGET_SPACE: development
-        CF_USERNAME: ${{ secrets.CF_USERNAME }}
-      with:
-        args: push tome -b https://github.com/cloudfoundry/nodejs-buildpack
+    # - name: Lint
+    #   uses: nuxt/actions-yarn@master
+    #   with:
+    #     args: lint
+    # - name: Test
+    #   uses: nuxt/actions-yarn@master
+    #   with:
+    #     args: test
+    - uses: ./journey-ci
+    # - name: Database migrations
+    #   if: github.ref == 'refs/heads/master'
+    #   uses: ./db
+    #   env:
+    #     TARGET_URI: ${{ secrets.TARGET_URI }}
+    # - name: Deploy to PCF
+    #   if: github.ref == 'refs/heads/master'
+    #   uses: d3sandoval/cloud-foundry-action@1.1.1
+    #   env:
+    #     CF_PASSWORD: ${{ secrets.CF_PASSWORD }}
+    #     CF_TARGET_ORG: dsandoval-org
+    #     CF_TARGET_SPACE: development
+    #     CF_USERNAME: ${{ secrets.CF_USERNAME }}
+    #   with:
+    #     args: push tome -b https://github.com/cloudfoundry/nodejs-buildpack
