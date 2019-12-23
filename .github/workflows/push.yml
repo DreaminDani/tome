@@ -20,7 +20,15 @@ jobs:
         args: test
     - name: Journey test
         uses: cypress-io/github-action@v1
+        env:
+          PORT: 3000
+          GOOGLE_CLIENT_ID: test
+          GOOGLE_CLIENT_SECRET: test
+          GOOGLE_CALLBACK_URL: http://localhost:3000/auth/google/callback
+          BASE_URL: http://localhost:3000
+          TARGET_URI: postgres://postgres:example@localhost/postgres
         with:
+          start: yarn dev
           record: true
         env:
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
