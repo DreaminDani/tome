@@ -55,7 +55,7 @@ app.prepare().then(() => {
         });
       });
     });
-  } else {
+  } else if (typeof process.env.CI === 'undefined') {
     //  http://expressjs.com/en/4x/api.html#app.set
     // trust proxy provided headers, since we'll be
     //  running this behind load balancer / proxy

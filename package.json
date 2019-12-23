@@ -54,7 +54,7 @@
     "dev": "nodemon --inspect -w ./server.js ./server.js",
     "build": "next build",
     "start": "NODE_ENV=production PORT=8080 node server.js",
-    "start:ci": "NODE_ENV=production node server.js",
+    "start:ci": "NODE_ENV=production CI=true node server.js",
     "test": "jest",
     "test:coverage": "jest --coverage",
     "test:journey": "cypress open",
