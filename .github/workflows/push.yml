@@ -1,8 +1,9 @@
-on: push
+on: [push, pull_request]
+
 name: Pipeline
 jobs:
   install:
-    name: Install
+    name: Install, Lint and Test
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@master
@@ -18,6 +19,48 @@ jobs:
       uses: nuxt/actions-yarn@master
       with:
         args: test
+  journey:
+    name: Journey test
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:10.8
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: postgres
+        ports:
+          - 5432:5432
+        # needed because the postgres container does not provide a healthcheck
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+      - name: Local Database migrations
+        uses: ./db
+        env:
+          NOSSL: true
+          TARGET_URI: postgres://postgres:postgres@postgres:${{ job.services.postgres.ports[5432] }}/postgres
+      - name: Cypress run
+        uses: cypress-io/github-action@v1.13.0
+        with:
+          start: yarn start:ci
+          record: true
+        env:
+          PORT: 3000
+          GOOGLE_CLIENT_ID: test
+          GOOGLE_CLIENT_SECRET: test
+          GOOGLE_CALLBACK_URL: http://localhost:3000/auth/google/callback
+          BASE_URL: http://localhost:3000
+          TARGET_URI: postgres://postgres:postgres@localhost:${{ job.services.postgres.ports[5432] }}/postgres
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+  deploy:
+    name: Migrations and CF Push
+    runs-on: ubuntu-latest
+    needs: [install, journey]
+    steps:
     - name: Database migrations
       if: github.ref == 'refs/heads/master'
       uses: ./db

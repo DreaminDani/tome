@@ -54,7 +54,7 @@ export default function Menu() {
       <List>
         <Divider />
         <Link href="/">
-          <ListItem button>
+          <ListItem id="menu-home-link" button>
             <ListItemIcon>
               <HomeIcon />
             </ListItemIcon>
@@ -62,7 +62,7 @@ export default function Menu() {
           </ListItem>
         </Link>
         <Link href="/about">
-          <ListItem button>
+          <ListItem id="menu-about-link" button>
             <ListItemIcon>
               <InfoIcon />
             </ListItemIcon>
@@ -71,7 +71,7 @@ export default function Menu() {
         </Link>
         <Divider />
         <Link href="/logout">
-          <ListItem button>
+          <ListItem id="menu-logout-link" button>
             <ListItemIcon>
               <LogoutIcon />
             </ListItemIcon>

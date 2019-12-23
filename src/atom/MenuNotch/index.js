@@ -61,6 +61,7 @@ const MenuNotch = props => {
       onKeyPress={onClick}
       role="button"
       tabIndex="0"
+      id="menu-notch"
     >
       <div className={classes.paperNotch}>
         <Typography variant="h4" component="span">

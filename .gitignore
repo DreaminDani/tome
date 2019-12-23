@@ -19,5 +19,6 @@ yarn-error.log*
 # Next.js
 /.next
 
-# Jest
+# Tests
 /coverage
+/cypress/videos

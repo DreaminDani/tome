@@ -110,6 +110,7 @@ const SignUp = props => {
           color="primary"
           className={classes.submit}
           type="submit"
+          id="signup-button"
         >
           Sign Up
         </Button>
@@ -120,7 +121,12 @@ const SignUp = props => {
             </Link>
           </Grid>
           <Grid item>
-            <Link href="#" onClick={toggleLogin} variant="body2">
+            <Link
+              id="toggle-login"
+              href="#"
+              onClick={toggleLogin}
+              variant="body2"
+            >
               Already have an account? Sign in
             </Link>
           </Grid>
