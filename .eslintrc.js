@@ -2,7 +2,8 @@ module.exports = {
     "extends": [
       "airbnb",
       "prettier",
-      "prettier/react"
+      "prettier/react",
+      "plugin:cypress/recommended"
     ],
     "parser": "babel-eslint",
     "parserOptions": {
@@ -140,6 +141,7 @@ module.exports = {
     "plugins": [
       "html",
       "prettier",
-      "react-hooks"
+      "react-hooks",
+      "cypress"
     ]
   }

@@ -32,6 +32,11 @@ yarn
 yarn dev
 ```
 
+## Testing Locally
+`yarn test` and `yarn test:journey` will run the jest and cypress tests, respectively
+
+On Windows Subsystems for Linux (WSL), you must first follow these [X Window setup instructions](https://nickymeuleman.netlify.com/blog/gui-on-wsl2-cypress). **Note that, the `$DISPLAY` IP Address is not always correct** Use `ipconfig` in Windows to verify the IP of for the vEthernet and replace `DISPLAY=<your_ip>:0.0` in your bash profile.
+
 ## Deployment
 
 Tome deploys to PCF via GitHub Actions. See the `.github` directory for more info.
