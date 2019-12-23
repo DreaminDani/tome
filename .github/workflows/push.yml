@@ -41,7 +41,7 @@ jobs:
       - name: Cypress run
         uses: cypress-io/github-action@v1.13.0
         with:
-          start: yarn start
+          start: yarn start:ci
           record: true
         env:
           PORT: 3000
