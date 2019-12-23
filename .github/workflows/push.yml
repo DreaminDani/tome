@@ -42,6 +42,7 @@ jobs:
       - name: Local Database migrations
         uses: ./db
         env:
+          NOSSL: true
           TARGET_URI: postgres://postgres:postgres@localhost:${{ job.services.postgres.ports[5432] }}/postgres
       - name: Cypress run
         uses: cypress-io/github-action@v1.13.0
