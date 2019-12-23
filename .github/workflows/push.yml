@@ -1,8 +1,15 @@
-on: push
+on:
+  push:
+    branches:
+    - master
+  pull_request:
+    branches:
+    - master
+
 name: Pipeline
 jobs:
   install:
-    name: Install
+    name: Install, Lint and Test
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@master
@@ -10,27 +17,62 @@ jobs:
       uses: nuxt/actions-yarn@master
       with:
         args: install --ignore-scripts
-    # - name: Lint
-    #   uses: nuxt/actions-yarn@master
-    #   with:
-    #     args: lint
-    # - name: Test
-    #   uses: nuxt/actions-yarn@master
-    #   with:
-    #     args: test
-    - uses: ./journey-ci
-    # - name: Database migrations
-    #   if: github.ref == 'refs/heads/master'
-    #   uses: ./db
-    #   env:
-    #     TARGET_URI: ${{ secrets.TARGET_URI }}
-    # - name: Deploy to PCF
-    #   if: github.ref == 'refs/heads/master'
-    #   uses: d3sandoval/cloud-foundry-action@1.1.1
-    #   env:
-    #     CF_PASSWORD: ${{ secrets.CF_PASSWORD }}
-    #     CF_TARGET_ORG: dsandoval-org
-    #     CF_TARGET_SPACE: development
-    #     CF_USERNAME: ${{ secrets.CF_USERNAME }}
-    #   with:
-    #     args: push tome -b https://github.com/cloudfoundry/nodejs-buildpack
+    - name: Lint
+      uses: nuxt/actions-yarn@master
+      with:
+        args: lint
+    - name: Test
+      uses: nuxt/actions-yarn@master
+      with:
+        args: test
+  journey:
+    name: Journey test
+    runs-on: ubuntu-latest
+    container:
+      image:  node:10.16-jessie
+
+    services:
+      postgres:
+        image: postgres:10.8
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: postgres
+        ports:
+        - 5432:5432
+        # needed because the postgres container does not provide a healthcheck
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+      - name: Cypress run
+        uses: cypress-io/github-action@v1
+        with:
+          start: npm run dev
+          record: true
+        env:
+          PORT: 3000
+          GOOGLE_CLIENT_ID: test
+          GOOGLE_CLIENT_SECRET: test
+          GOOGLE_CALLBACK_URL: http://localhost:3000/auth/google/callback
+          BASE_URL: http://localhost:3000
+          TARGET_URI: postgres://postgres:postgres@postgres/postgres
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+  deploy:
+    needs: install, journey
+    - name: Database migrations
+      if: github.ref == 'refs/heads/master'
+      uses: ./db
+      env:
+        TARGET_URI: ${{ secrets.TARGET_URI }}
+    - name: Deploy to PCF
+      if: github.ref == 'refs/heads/master'
+      uses: d3sandoval/cloud-foundry-action@1.1.1
+      env:
+        CF_PASSWORD: ${{ secrets.CF_PASSWORD }}
+        CF_TARGET_ORG: dsandoval-org
+        CF_TARGET_SPACE: development
+        CF_USERNAME: ${{ secrets.CF_USERNAME }}
+      with:
+        args: push tome -b https://github.com/cloudfoundry/nodejs-buildpack
