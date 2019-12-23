@@ -57,6 +57,7 @@
     "test": "jest",
     "test:coverage": "jest --coverage",
     "test:journey": "cypress open",
+    "test:journey-ci": "cypress install && cypress open",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "postinstall": "next build"
