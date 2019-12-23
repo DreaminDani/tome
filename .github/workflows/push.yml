@@ -19,11 +19,11 @@ jobs:
       with:
         args: test
     - name: Journey test
-        uses: cypress-io/github-action@v1
-        with:
-          record: true
-        env:
-          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+      uses: cypress-io/github-action@v1
+      with:
+        record: true
+      env:
+        CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
     - name: Database migrations
       if: github.ref == 'refs/heads/master'
       uses: ./db
