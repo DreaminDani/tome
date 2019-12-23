@@ -22,8 +22,6 @@ jobs:
   journey:
     name: Journey test
     runs-on: ubuntu-latest
-    container:
-      image:  node:10.16-jessie
 
     services:
       postgres:
@@ -43,7 +41,7 @@ jobs:
       - name: Cypress run
         uses: cypress-io/github-action@v1
         with:
-          start: npm run dev
+          start: yarn dev
           record: true
         env:
           PORT: 3000
