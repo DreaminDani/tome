@@ -84,6 +84,7 @@ const Login = props => {
           color="primary"
           className={classes.submit}
           type="submit"
+          id="signin-button"
         >
           Sign In
         </Button>
