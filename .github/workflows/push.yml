@@ -31,7 +31,8 @@ jobs:
           POSTGRES_PASSWORD: postgres
           POSTGRES_DB: postgres
         ports:
-        - 5432:5432
+        # will assign a random free host port
+        - 5432/tcp
         # needed because the postgres container does not provide a healthcheck
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
 
@@ -49,7 +50,7 @@ jobs:
           GOOGLE_CLIENT_SECRET: test
           GOOGLE_CALLBACK_URL: http://localhost:3000/auth/google/callback
           BASE_URL: http://localhost:3000
-          TARGET_URI: postgres://postgres:postgres@postgres/postgres
+          TARGET_URI: postgres://postgres:postgres@localhost:${{ job.services.postgres.ports[5432] }}/postgres
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
   deploy:
     name: Migrations and CF Push
