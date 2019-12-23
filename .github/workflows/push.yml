@@ -39,6 +39,10 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v1
+      - name: Local Database migrations
+        uses: ./db
+        env:
+          TARGET_URI: postgres://postgres:postgres@localhost:${{ job.services.postgres.ports[5432] }}/postgres
       - name: Cypress run
         uses: cypress-io/github-action@v1.13.0
         with:
