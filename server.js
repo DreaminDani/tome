@@ -63,6 +63,13 @@ app.prepare().then(() => {
     server.use(ensureSecure);
   }
 
+  // enable test routes
+  if (dev || process.env.CI) {
+    server.use('/test', (req, res, next) => {
+      require('./server/test-helpers.js')(req, res, next);
+    });
+  }
+
   // auth config
   server.use(session(sessionConfig));
   passport.use(googleStrategy);

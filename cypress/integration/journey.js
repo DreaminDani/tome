@@ -1,7 +1,7 @@
 describe('Journey', function() {
   before(function() {
     // reset database
-    cy.exec('node ./exec/db.js');
+    cy.request('/test/db/reset');
   });
 
   it('create an account', function() {
