@@ -1,4 +1,4 @@
-describe('Journey', function() {
+describe('Authentication', function() {
   before(function() {
     // reset database
     cy.request('/test/db/reset');
