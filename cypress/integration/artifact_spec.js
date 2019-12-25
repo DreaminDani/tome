@@ -37,11 +37,8 @@ describe('Artifact', function() {
       body has multiple lines
 easy to read...`,
     }).then(exisingArtifact => {
-      // find existing artifact
-      cy.visit('/');
-      cy.get(`#${exisingArtifact.body.id}`).click();
+      cy.visit(`/artifact/${exisingArtifact.body.id}`);
 
-      // edit artifact
       cy.get('#edit-artifact-button').click();
       cy.get('#outlined-name').type(' editing');
       cy.get('#outlined-body').type(' edit artifact ');
@@ -50,6 +47,23 @@ easy to read...`,
       cy.url().should('include', '/artifact');
       cy.get('h4').should('contain', 'editing');
       cy.get('p').should('contain', 'edit artifact');
+    });
+  });
+
+  it('can navigate between the artifact and home page', function() {
+    cy.login(this.currentUser);
+    cy.request('POST', '/api/artifact/add', {
+      name: 'some artifact',
+      body: 'artifact body',
+    }).then(exisingArtifact => {
+      // find existing artifact
+      cy.visit('/');
+      cy.get(`#${exisingArtifact.body.id}`).click();
+
+      cy.get('#menu-notch').click();
+      cy.get('#menu-home-link').click();
+
+      cy.get('h1').should('contain', 'My Artifacts');
     });
   });
 });

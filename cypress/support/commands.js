@@ -46,3 +46,7 @@ Cypress.Commands.add('login', user => {
   const { email, password } = user;
   cy.request('POST', '/login', { email, password });
 });
+
+Cypress.Commands.add('getByTestID', testID =>
+  cy.get(`[data-testid="${testID}"]`)
+);

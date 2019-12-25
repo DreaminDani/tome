@@ -33,7 +33,7 @@ describe('About Page', function() {
     cy.url().should('include', '/about');
   });
 
-  it('shows Your Name in comment on about page as logged out user', function() {
+  it("shows user's name in comment on about page as logged out user", function() {
     cy.login(this.currentUser);
 
     cy.visit('/about');
