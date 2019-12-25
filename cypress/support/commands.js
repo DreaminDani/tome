@@ -41,3 +41,8 @@ function triggerComment(element) {
 Cypress.Commands.add('selectArtifactText', () =>
   triggerComment('#artifact-content')
 );
+
+Cypress.Commands.add('login', user => {
+  const { email, password } = user;
+  cy.request('POST', '/login', { email, password });
+});

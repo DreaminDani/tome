@@ -1,4 +1,4 @@
-describe('About Page', () => {
+describe('About Page', function() {
   beforeEach(function() {
     // create user, if doesn't already exist
     cy.request('/test/db/seed-user')
@@ -20,8 +20,7 @@ describe('About Page', () => {
   });
 
   it('can navigate to about page from home (logged in)', function() {
-    const { email, password } = this.currentUser;
-    cy.request('POST', '/login', { email, password });
+    cy.login(this.currentUser);
     cy.visit('/');
     cy.get('#menu-notch').click();
     cy.get('#menu-about-link').click();
@@ -29,8 +28,7 @@ describe('About Page', () => {
   });
 
   it('shows Your Name in comment on about page as logged out user', function() {
-    const { email, password } = this.currentUser;
-    cy.request('POST', '/login', { email, password });
+    cy.login(this.currentUser);
     cy.visit('/about');
     cy.selectArtifactText();
     cy.get('#artifact-comment').contains('Joe Example');
