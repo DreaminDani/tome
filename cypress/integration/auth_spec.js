@@ -1,11 +1,11 @@
 describe('Authentication', function() {
   before(function() {
-    // reset database
     cy.request('/test/db/reset');
   });
 
   it('create an account', function() {
     cy.visit('/');
+
     cy.get('#firstName').type('Joe');
     cy.get('#lastName').type('Example');
     cy.get('#email').type('joe@example.com');
@@ -22,6 +22,7 @@ describe('Authentication', function() {
     cy.get('h1').should('contain', 'Sign up');
     cy.get('#toggle-login').click();
     cy.get('h1').should('contain', 'Sign in');
+
     cy.get('#email').type('joe@example.com');
     cy.get('#password').type('Test123!');
     cy.get('#signin-button').click();

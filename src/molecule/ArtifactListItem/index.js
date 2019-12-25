@@ -26,7 +26,7 @@ function ArtifactListItem(props) {
   const createdDate = new Date(created_at);
 
   return (
-    <li className={classes.root}>
+    <li id={id} className={classes.root}>
       <Link href="/artifact/[slug]" as={`/artifact/${id}`}>
         <Paper className={classes.paper}>
           <Typography variant="h5" component="h3">

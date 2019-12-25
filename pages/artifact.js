@@ -28,7 +28,9 @@ function ArtifactPage(props) {
       <Grid container direction="row" spacing={2} className={classes.topMatter}>
         <Grid item>
           <Link href="/edit/[slug]" as={`/edit/${id}`}>
-            <Button color="secondary">Edit</Button>
+            <Button id="edit-artifact-button" color="secondary">
+              Edit
+            </Button>
           </Link>
         </Grid>
         <Grid item>
