@@ -21,18 +21,20 @@ const CommentList = props => {
   ));
 };
 
+export const commentProps = PropTypes.arrayOf(
+  PropTypes.shape({
+    id: PropTypes.string,
+    user: PropTypes.shape({
+      id: PropTypes.number,
+      name: PropTypes.string,
+    }),
+    comment: PropTypes.string,
+    location: PropTypes.array,
+  })
+);
+
 CommentList.propTypes = {
-  items: PropTypes.arrayOf(
-    PropTypes.shape({
-      id: PropTypes.string,
-      user: PropTypes.shape({
-        id: PropTypes.number,
-        name: PropTypes.string,
-      }),
-      comment: PropTypes.string,
-      location: PropTypes.array,
-    })
-  ),
+  items: commentProps,
 };
 
 export default CommentList;

@@ -46,12 +46,31 @@ const update = async (req, res) => {
   const client = await req.app.get('db').connect();
 
   try {
-    const saved = await updateArtifactByID(
-      client,
-      req.body.id,
-      req.body.name,
-      req.body.body
-    );
+    const currentArtifact = await getArtifactByID(client, req.body.id);
+    const { artifact_data } = currentArtifact;
+    const newVersion = {
+      body: req.body.body,
+      name: req.body.name,
+      date: new Date().toISOString(),
+    };
+
+    let artifactData;
+    if (Array.isArray(artifact_data)) {
+      newVersion.version = artifact_data.length + 1;
+      artifactData = artifact_data.push(newVersion);
+    } else {
+      newVersion.version = 2;
+      artifactData = [
+        {
+          version: 1,
+          ...artifact_data,
+          date: new Date(currentArtifact.updated_at),
+        },
+        newVersion,
+      ];
+    }
+
+    const saved = await updateArtifactByID(client, req.body.id, artifactData);
 
     res.send(saved);
   } catch (e) {

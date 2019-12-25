@@ -20,7 +20,7 @@ const getArtifactByID = async (client, id) => {
   return artifact;
 };
 
-const updateArtifactByID = async (client, id, name, body) => {
+const updateArtifactByID = async (client, id, artifact_data) => {
   const updateArtifact = await client.query(
     `
           UPDATE artifacts
@@ -29,7 +29,7 @@ const updateArtifactByID = async (client, id, name, body) => {
             id = $2
           RETURNING id;
         `,
-    [{ name, body }, id]
+    [JSON.stringify(artifact_data), id]
   );
   const [saved] = updateArtifact.rows;
   return saved;

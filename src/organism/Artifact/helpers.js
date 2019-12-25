@@ -90,7 +90,7 @@ export const saveLocalComment = (
   updateComments,
   setSelection
 ) => {
-  const currentTime = new Date().getTime();
+  const currentTime = new Date().toISOString();
   const newComments =
     updatedComments.length > 0 ? [...updatedComments] : [...comments];
   if (selection.location.length > 0) {

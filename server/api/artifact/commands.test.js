@@ -35,7 +35,15 @@ let req;
 let res;
 let mockClient;
 
-const fakeArtifacts = [{ test: 'artifact' }];
+const fakeArtifacts = [
+  {
+    id: 'some-id',
+    user_id: 1,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+    artifact_data: { body: 'artifact body', name: 'artifact' },
+  },
+];
 const fakeComments = [{ test: 'comment' }];
 const fakeError = new Error();
 const fakeEmail = 'email@fake.com';
@@ -120,15 +128,39 @@ describe('artifactAPI byID', () => {
 describe('artifactAPI update', () => {
   it('returns a single artifact, after updating successfully', async () => {
     req.body = { id: 'some-uuid', name: 'some name', body: 'some body' };
+    getArtifactByID.mockImplementation(() => fakeArtifacts[0]);
     updateArtifactByID.mockImplementation(() => fakeArtifacts[0]);
 
     await update(req, res);
 
+    // get the artifact
+    // if artifact_data not a list, build up new name and body (requires updateArtifact sig change)
+    /*
+    [{version: 1,
+      body: "existing body", name "existing",
+      date: "PREV_UPDATED_AT"}]
+    */
+    // else, append to the list
+    /*
+      [{version: 1,
+      body: "existing body", name "existing",
+      date: "DATETIME"},
+      {version: 2,
+      body: "existing edit", name "existing",
+      date: "DATETIME"},
+    ]
+    */
+
+    expect(getArtifactByID).toBeCalledWith(mockClient, req.body.id);
     expect(updateArtifactByID).toBeCalledWith(
       mockClient,
       req.body.id,
-      req.body.name,
-      req.body.body
+      expect.arrayContaining([
+        expect.objectContaining({
+          body: req.body.body,
+          name: req.body.name,
+        }),
+      ])
     );
     expect(res.send).toBeCalledWith(fakeArtifacts[0]);
     expect(mockClient.release).toBeCalled();
@@ -147,8 +179,12 @@ describe('artifactAPI update', () => {
     expect(updateArtifactByID).toBeCalledWith(
       mockClient,
       req.body.id,
-      req.body.name,
-      req.body.body
+      expect.arrayContaining([
+        expect.objectContaining({
+          body: req.body.body,
+          name: req.body.name,
+        }),
+      ])
     );
     expect(serverError).toBeCalledWith(req, res, fakeError);
     expect(res.send).not.toBeCalledWith(fakeArtifacts[0]);

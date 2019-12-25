@@ -29,7 +29,7 @@ describe('Artifact', function() {
     cy.get('p').should('contain', 'test body');
   });
 
-  it('can edit artifact', function() {
+  it.only('can edit artifact', function() {
     cy.login(this.currentUser);
     cy.request('POST', '/api/artifact/add', {
       name: 'existing artifact',
@@ -44,9 +44,17 @@ easy to read...`,
       cy.get('#outlined-body').type(' edit artifact ');
       cy.get('#save-artifact').click();
 
+      // add comment
+      // TODO
+
       cy.url().should('include', '/artifact');
       cy.get('h4').should('contain', 'editing');
       cy.get('p').should('contain', 'edit artifact');
+
+      cy.url().should('include', 'v2');
+      cy.getByTestID('artifact-version')
+        .first()
+        .should('contain', 2);
     });
   });
 

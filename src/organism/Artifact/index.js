@@ -4,6 +4,7 @@ import React, { useState, useContext } from 'react';
 import { UserContext } from '../../contexts';
 import TextContent from '../../atom/TextContent';
 import CommentPane from '../../molecule/CommentPane';
+import { commentProps } from '../../atom/CommentList';
 import { postData } from '../../api';
 import {
   setRangeSelection,
@@ -151,13 +152,15 @@ Artifact.defaultProps = {
   disableSave: false,
 };
 
+export const artifactDataProps = {
+  body: PropTypes.string,
+  name: PropTypes.string,
+  comments: commentProps,
+};
+
 Artifact.propTypes = {
   id: PropTypes.string,
-  artifact_data: PropTypes.shape({
-    body: PropTypes.string,
-    name: PropTypes.string,
-    comments: CommentPane.propTypes.commentList,
-  }),
+  artifact_data: PropTypes.shape(artifactDataProps),
   disableSave: PropTypes.bool,
 };
 
