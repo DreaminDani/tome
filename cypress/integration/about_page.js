@@ -12,6 +12,13 @@ describe('About Page', () => {
     cy.url().should('include', '/about');
   });
 
+  it('shows Your Name in comment on about page as logged out user', function() {
+    cy.visit('/logout');
+    cy.visit('/about');
+    cy.selectArtifactText();
+    cy.get('#artifact-comment').contains('Your Name');
+  });
+
   it('can navigate to about page from home (logged in)', function() {
     const { email, password } = this.currentUser;
     cy.request('POST', '/login', { email, password });
@@ -19,5 +26,13 @@ describe('About Page', () => {
     cy.get('#menu-notch').click();
     cy.get('#menu-about-link').click();
     cy.url().should('include', '/about');
+  });
+
+  it('shows Your Name in comment on about page as logged out user', function() {
+    const { email, password } = this.currentUser;
+    cy.request('POST', '/login', { email, password });
+    cy.visit('/about');
+    cy.selectArtifactText();
+    cy.get('#artifact-comment').contains('Joe Example');
   });
 });

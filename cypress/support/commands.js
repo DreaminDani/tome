@@ -23,3 +23,21 @@
 //
 // -- This is will overwrite an existing command --
 // Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
+function triggerComment(element) {
+  cy.get(element)
+    .trigger('mousedown')
+    .then($el => {
+      const el = $el[0];
+      const document = el.ownerDocument;
+      const range = document.createRange();
+      range.selectNodeContents(el);
+      document.getSelection().removeAllRanges(range);
+      document.getSelection().addRange(range);
+    })
+    .trigger('mouseup');
+  cy.document().trigger('selectionchange');
+}
+
+Cypress.Commands.add('selectArtifactText', () =>
+  triggerComment('#artifact-content')
+);

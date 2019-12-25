@@ -38,6 +38,8 @@ router.get('/db/seed-user', async (req, res) => {
     res.json(testUser);
   } catch {
     res.send(500);
+  } finally {
+    client.release();
   }
 });
 
