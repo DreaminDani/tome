@@ -34,28 +34,7 @@ app.prepare().then(() => {
   server.set('db', pool);
 
   server.use(bodyParser.json());
-  if (dev) {
-    // hot reload backend routes (global requires will not reload automatically)
-    //  https://codeburst.io/dont-use-nodemon-there-are-better-ways-fc016b50b45e
-    // eslint-disable-next-line
-    const chokidar = require('chokidar');
-    const watcher = chokidar.watch('./server');
-
-    watcher.on('ready', function() {
-      watcher.on('all', function() {
-        console.log('Detected change, clearing /server/ module cache.');
-        Object.keys(require.cache).forEach(function(id) {
-          if (
-            /[\\]server[\\]/.test(id) &&
-            !/[\\]next[\\]/.test(id) &&
-            !/[\\].next[\\]/.test(id)
-          ) {
-            delete require.cache[id];
-          }
-        });
-      });
-    });
-  } else if (typeof process.env.CI === 'undefined') {
+  if (!dev && typeof process.env.CI === 'undefined') {
     //  http://expressjs.com/en/4x/api.html#app.set
     // trust proxy provided headers, since we'll be
     //  running this behind load balancer / proxy

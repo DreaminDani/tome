@@ -55,6 +55,7 @@ function ArtifactSettingsPane(props) {
           color="primary"
           className={classes.button}
           onClick={handleSave}
+          id="save-artifact"
         >
           Save
         </Button>

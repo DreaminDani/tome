@@ -13,7 +13,7 @@ const CreateArtifactFab = ({ className: inheritedClass }) => {
   const classes = useStyles();
   return (
     <div className={inheritedClass}>
-      <Fab variant="extended" color="primary" href="/edit">
+      <Fab id="create-artifact" variant="extended" color="primary" href="/edit">
         <AddIcon className={classes.extendedIcon} />
         Create New Artifact
       </Fab>

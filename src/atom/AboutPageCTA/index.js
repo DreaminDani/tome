@@ -43,7 +43,7 @@ const AboutPageCTA = props => {
   const { className: injectedClass, onClick: injectedOnClick } = props;
 
   return (
-    <div className={classes.root}>
+    <div className={classes.root} id="about-page-cta">
       <ButtonBase
         className={injectedClass}
         onClick={injectedOnClick}
