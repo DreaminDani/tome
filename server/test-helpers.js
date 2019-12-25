@@ -17,6 +17,8 @@ router.get('/db/reset', async (req, res) => {
     res.send(200);
   } catch {
     res.send(500);
+  } finally {
+    client.release();
   }
 });
 

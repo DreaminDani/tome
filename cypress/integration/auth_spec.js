@@ -21,6 +21,7 @@ describe('Authentication', function() {
 
     cy.get('h1').should('contain', 'Sign up');
     cy.get('#toggle-login').click();
+    cy.get('h1').should('contain', 'Sign in');
     cy.get('#email').type('joe@example.com');
     cy.get('#password').type('Test123!');
     cy.get('#signin-button').click();
