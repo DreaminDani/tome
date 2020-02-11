@@ -155,6 +155,7 @@ Artifact.defaultProps = {
 export const artifactDataProps = {
   body: PropTypes.string,
   name: PropTypes.string,
+  date: PropTypes.string,
   comments: commentProps,
 };
 

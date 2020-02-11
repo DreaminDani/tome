@@ -155,6 +155,7 @@ describe('artifactAPI update', () => {
     expect(updateArtifactByID).toBeCalledWith(
       mockClient,
       req.body.id,
+      req.body.name,
       expect.arrayContaining([
         expect.objectContaining({
           body: req.body.body,
@@ -179,6 +180,7 @@ describe('artifactAPI update', () => {
     expect(updateArtifactByID).toBeCalledWith(
       mockClient,
       req.body.id,
+      req.body.name,
       expect.arrayContaining([
         expect.objectContaining({
           body: req.body.body,

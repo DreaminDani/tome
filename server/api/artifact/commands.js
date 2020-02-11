@@ -70,7 +70,12 @@ const update = async (req, res) => {
       ];
     }
 
-    const saved = await updateArtifactByID(client, req.body.id, artifactData);
+    const saved = await updateArtifactByID(
+      client,
+      req.body.id,
+      req.body.name,
+      artifactData
+    );
 
     res.send(saved);
   } catch (e) {

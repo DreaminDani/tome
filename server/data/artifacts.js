@@ -1,7 +1,7 @@
 const getArtifactsByUser = async (client, email) => {
   const getArtifacts = await client.query(
     `
-    SELECT a.id, jsonb_extract_path(a.artifact_data,'name') as name,
+    SELECT a.id, a.name,
       a.user_id, a.created_at, a.updated_at, u.auth_metadata
     FROM artifacts a, users u
     WHERE a.user_id=u.id and email = $1
@@ -20,16 +20,18 @@ const getArtifactByID = async (client, id) => {
   return artifact;
 };
 
-const updateArtifactByID = async (client, id, artifact_data) => {
+const updateArtifactByID = async (client, id, name, artifact_data) => {
   const updateArtifact = await client.query(
     `
           UPDATE artifacts
-          SET artifact_data = $1
+          SET
+            name = $1,
+            artifact_data = $2
           WHERE
-            id = $2
+            id = $3
           RETURNING id;
         `,
-    [JSON.stringify(artifact_data), id]
+    [name, JSON.stringify(artifact_data), id]
   );
   const [saved] = updateArtifact.rows;
   return saved;
@@ -38,10 +40,10 @@ const updateArtifactByID = async (client, id, artifact_data) => {
 const createArtifact = async (client, userID, name, body) => {
   const insertArtifact = await client.query(
     `
-          INSERT INTO artifacts(user_id, artifact_data)
-          VALUES($1, $2) RETURNING id;
+          INSERT INTO artifacts(user_id, name, artifact_data)
+          VALUES($1, $2, $3) RETURNING id;
         `,
-    [userID, { name, body }]
+    [userID, name, { name, body }]
   );
   const [saved] = insertArtifact.rows;
   return saved;

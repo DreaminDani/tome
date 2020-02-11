@@ -1,10 +1,6 @@
 describe('Artifact', function() {
-  before(function() {
-    cy.request('/test/db/reset');
-  });
-
   beforeEach(function() {
-    // create user, if doesn't already exist
+    cy.request('/test/db/reset');
     cy.request('/test/db/seed-user')
       .its('body')
       .as('currentUser');
@@ -47,14 +43,41 @@ easy to read...`,
       // add comment
       // TODO
 
+      // edit artifact
       cy.url().should('include', '/artifact');
       cy.get('h4').should('contain', 'editing');
       cy.get('p').should('contain', 'edit artifact');
 
+      // verify new version has been created
       cy.url().should('include', 'v2');
       cy.getByTestID('artifact-version')
+        .find('input')
+        .should('have.value', '1');
+
+      // look at previous version
+      cy.getByTestID('artifact-version')
+        .find('.MuiSlider-markLabel')
         .first()
-        .should('contain', 2);
+        .click();
+      cy.getByTestID('artifact-version')
+        .find('input')
+        .should('have.value', '0');
+      cy.url().should('include', 'v1');
+      cy.get('h4').should('not.contain', 'editing');
+      cy.get('p').should('not.contain', 'edit artifact');
+
+      // use URL to navigate
+      cy.visit('/');
+      cy.visit(`/artifact/${exisingArtifact.body.id}#v1`);
+      cy.url().should('include', 'v1');
+      cy.get('h4').should('not.contain', 'editing');
+      cy.get('p').should('not.contain', 'edit artifact');
+
+      // note that Edit is disabled
+      // return to current version
+      // edit current version
+      // save new edit
+      // show v3
     });
   });
 
@@ -67,6 +90,10 @@ easy to read...`,
       // find existing artifact
       cy.visit('/');
       cy.get(`#${exisingArtifact.body.id}`).click();
+      cy.location('pathname', { timeout: 2000 }).should(
+        'include',
+        exisingArtifact.body.id
+      );
 
       cy.get('#menu-notch').click();
       cy.get('#menu-home-link').click();
