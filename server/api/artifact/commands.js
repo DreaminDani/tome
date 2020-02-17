@@ -57,7 +57,8 @@ const update = async (req, res) => {
     let artifactData;
     if (Array.isArray(artifact_data)) {
       newVersion.version = artifact_data.length + 1;
-      artifactData = artifact_data.push(newVersion);
+      artifact_data.push(newVersion);
+      artifactData = artifact_data;
     } else {
       newVersion.version = 2;
       artifactData = [

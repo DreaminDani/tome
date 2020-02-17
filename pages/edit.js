@@ -5,6 +5,7 @@ import Head from 'next/head';
 import Router from 'next/router';
 import { getData, postData } from '../src/api';
 
+import { artifactDataProps } from '../src/organism/Artifact';
 import ArtifactEditPane from '../src/molecule/ArtifactEditPane';
 import ArtifactSettingsPane from '../src/molecule/ArtifactSettingsPane';
 
@@ -20,12 +21,15 @@ const useStyles = makeStyles({
 function Edit(props) {
   const classes = useStyles();
   const { artifact_data, id } = props;
+  const artifactEdit = Array.isArray(artifact_data)
+    ? artifact_data[artifact_data.length - 1]
+    : artifact_data;
   const artifact_title =
-    artifact_data && artifact_data.name ? artifact_data.name : 'Artifact';
+    artifactEdit && artifactEdit.name ? artifactEdit.name : 'Artifact';
 
   const [values, setValues] = useState({
-    name: artifact_data && artifact_data.name ? artifact_data.name : '',
-    body: artifact_data && artifact_data.body ? artifact_data.body : '',
+    name: artifactEdit && artifactEdit.name ? artifactEdit.name : '',
+    body: artifactEdit && artifactEdit.body ? artifactEdit.body : '',
   });
 
   const [focused, setFocus] = useState(false);
@@ -116,10 +120,10 @@ Edit.getInitialProps = async ({ req }) => {
 Edit.propTypes = {
   id: PropTypes.string,
   // user_id: PropTypes.number,
-  artifact_data: PropTypes.shape({
-    body: PropTypes.string,
-    name: PropTypes.string,
-  }),
+  artifact_data: PropTypes.oneOfType([
+    PropTypes.shape(artifactDataProps),
+    PropTypes.arrayOf(PropTypes.shape(artifactDataProps)),
+  ]),
   // created_at: PropTypes.string,
   // updated_at: PropTypes.string,
 };

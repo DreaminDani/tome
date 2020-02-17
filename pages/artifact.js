@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import Head from 'next/head';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import { Button, Grid, Typography, makeStyles } from '@material-ui/core';
 import { getData } from '../src/api';
 import ArtifactContext from '../src/ArtifactContext';
@@ -18,25 +19,50 @@ const useStyles = makeStyles({
 });
 
 function ArtifactPage(props) {
+  const router = useRouter();
   const classes = useStyles();
   const { artifact_data, artifact_url, id } = props;
-  const [artifactIndex, updateArtifactIndex] = useState(
-    artifact_data.length ? artifact_data.length - 1 : 0
-  );
 
   const versions = Array.isArray(artifact_data)
     ? artifact_data
     : [artifact_data];
 
-  const currentURL = versions[artifactIndex].version
-    ? `${artifact_url}#v${versions[artifactIndex].version}`
-    : artifact_url;
+  let query = {};
+  if (Array.isArray(artifact_data)) {
+    const versionInQuery = router.asPath.split('?')[1];
+    if (versionInQuery) {
+      query = JSON.parse(
+        `{"${decodeURI(versionInQuery)
+          .replace(/"/g, '\\"')
+          .replace(/&/g, '","')
+          .replace(/=/g, '":"')}"}`
+      );
+    } else {
+      query.version = artifact_data.length;
+    }
+  }
+
+  const requestedVersion = query.version ? Number(query.version) : 1;
+  const [queryVersion, setQueryVersion] = useState(
+    versions.length < requestedVersion ? versions.length : requestedVersion
+  );
+
+  const [artifactIndex, updateArtifactIndex] = useState(queryVersion - 1);
 
   useEffect(() => {
-    if (versions[artifactIndex].version) {
-      window.location.hash = `v${versions[artifactIndex].version}`;
+    if (
+      requestedVersion !== queryVersion ||
+      (versions[artifactIndex].version &&
+        versions[artifactIndex].version !== queryVersion)
+    ) {
+      window.history.pushState(
+        '',
+        '',
+        `?version=${versions[artifactIndex].version}`
+      );
+      setQueryVersion(versions[artifactIndex].version);
     }
-  });
+  }, [versions, artifactIndex, queryVersion, requestedVersion]);
 
   const artifact_title =
     artifact_data && versions[artifactIndex].name
@@ -64,7 +90,11 @@ function ArtifactPage(props) {
       >
         <Grid className={classes.editButton} item xs={1}>
           <Link href="/edit/[slug]" as={`/edit/${id}`}>
-            <Button id="edit-artifact-button" color="secondary">
+            <Button
+              id="edit-artifact-button"
+              color="secondary"
+              disabled={artifactIndex !== versions.length - 1}
+            >
               Edit
             </Button>
           </Link>
@@ -75,7 +105,7 @@ function ArtifactPage(props) {
           ) : (
             <>
               <Typography>
-                <strong>Artifact link:</strong> {currentURL}
+                <strong>Artifact link:</strong> {artifact_url}
               </Typography>
               <Typography>
                 <em>Copy / paste this link to share with others</em>
@@ -94,7 +124,6 @@ ArtifactPage.getInitialProps = async ({ req }) => {
     `/api/artifact/${req.params.slug}`,
     req.headers.cookie
   );
-
   res.artifact_url = `${req.headers.host}${req.path}`;
   return res;
 };

@@ -43,13 +43,12 @@ easy to read...`,
       // add comment
       // TODO
 
-      // edit artifact
+      // verify artifact saved
       cy.url().should('include', '/artifact');
       cy.get('h4').should('contain', 'editing');
       cy.get('p').should('contain', 'edit artifact');
 
       // verify new version has been created
-      cy.url().should('include', 'v2');
       cy.getByTestID('artifact-version')
         .find('input')
         .should('have.value', '1');
@@ -62,22 +61,41 @@ easy to read...`,
       cy.getByTestID('artifact-version')
         .find('input')
         .should('have.value', '0');
-      cy.url().should('include', 'v1');
+      cy.url().should('include', 'version=1');
       cy.get('h4').should('not.contain', 'editing');
       cy.get('p').should('not.contain', 'edit artifact');
 
       // use URL to navigate
-      cy.visit('/');
-      cy.visit(`/artifact/${exisingArtifact.body.id}#v1`);
-      cy.url().should('include', 'v1');
+      cy.visit(`/artifact/${exisingArtifact.body.id}?version=1`);
+      cy.getByTestID('artifact-version')
+        .find('input')
+        .should('have.value', '0');
       cy.get('h4').should('not.contain', 'editing');
       cy.get('p').should('not.contain', 'edit artifact');
 
       // note that Edit is disabled
+      cy.get('#edit-artifact-button').should('be.disabled');
+
       // return to current version
+      cy.getByTestID('artifact-version')
+        .find('.MuiSlider-markLabel')
+        .last()
+        .click();
       // edit current version
-      // save new edit
-      // show v3
+      cy.get('#edit-artifact-button').click();
+      cy.get('#outlined-name').type(' more edits');
+      cy.get('#outlined-body').type(' for the third time... ');
+
+      // save new edit and verify version saved
+      cy.get('#save-artifact').click();
+      cy.getByTestID('artifact-version')
+        .find('input')
+        .should('have.value', '3');
+      cy.get('h4').should('contain', 'editing');
+      cy.get('p').should('contain', 'edit artifact');
+
+      // add comment
+      // TODO
     });
   });
 
