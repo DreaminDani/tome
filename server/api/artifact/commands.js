@@ -2,7 +2,7 @@ const { serverError, getEmailFromAuthProvider } = require('../../helpers');
 const {
   getArtifactsByUser,
   getArtifactByID,
-  updateArtifactByID,
+  newArtifactVersion,
   createArtifact,
 } = require('../../data/artifacts');
 const { getUserByEmail } = require('../../data/users');
@@ -44,38 +44,36 @@ const byID = async (req, res) => {
 const update = async (req, res) => {
   // todo security validation
   const client = await req.app.get('db').connect();
+  const email = getEmailFromAuthProvider(req.user);
+  const user = await getUserByEmail(client, email);
 
   try {
-    const currentArtifact = await getArtifactByID(client, req.body.id);
-    const { artifact_data } = currentArtifact;
-    const newVersion = {
-      body: req.body.body,
-      name: req.body.name,
-      date: new Date().toISOString(),
-    };
+    // const currentArtifact = await getArtifactByID(client, req.body.id);
+    // const { artifact_data } = currentArtifact;
 
-    let artifactData;
-    if (Array.isArray(artifact_data)) {
-      newVersion.version = artifact_data.length + 1;
-      artifact_data.push(newVersion);
-      artifactData = artifact_data;
-    } else {
-      newVersion.version = 2;
-      artifactData = [
-        {
-          version: 1,
-          ...artifact_data,
-          date: new Date(currentArtifact.updated_at),
-        },
-        newVersion,
-      ];
-    }
+    // let artifactData;
+    // if (Array.isArray(artifact_data)) {
+    //   newVersion.version = artifact_data.length + 1;
+    //   artifact_data.push(newVersion);
+    //   artifactData = artifact_data;
+    // } else {
+    //   newVersion.version = 2;
+    //   artifactData = [
+    //     {
+    //       version: 1,
+    //       ...artifact_data,
+    //       date: new Date(currentArtifact.updated_at),
+    //     },
+    //     newVersion,
+    //   ];
+    // }
 
-    const saved = await updateArtifactByID(
+    const saved = await newArtifactVersion(
       client,
       req.body.id,
+      user.id,
       req.body.name,
-      artifactData
+      req.body.body
     );
 
     res.send(saved);

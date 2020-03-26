@@ -16,6 +16,10 @@ ADD "id" serial NOT NULL;
 COMMENT ON TABLE "artifacts" IS '';
 
 ALTER TABLE "artifacts"
+ADD CONSTRAINT "id" PRIMARY KEY ("id"),
+DROP CONSTRAINT "artifacts_pkey";
+
+ALTER TABLE "artifacts"
 ADD "name" text NULL,
 ADD "body" text NULL,
 ADD "comments" jsonb NULL;
