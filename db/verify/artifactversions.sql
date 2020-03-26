@@ -2,7 +2,7 @@
 
 BEGIN;
 
-SELECT "name"
+SELECT "name", "body", "comments", "artifact_id"
   FROM artifacts
   WHERE FALSE;
 
