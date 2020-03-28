@@ -97,12 +97,34 @@ describe('artifactAPI list', () => {
 
 describe('artifactAPI byID', () => {
   it('returns a single artifact, after retrieving from database', async () => {
-    getArtifactByID.mockImplementation(() => fakeArtifacts[0]);
+    getArtifactByID.mockImplementation(() => fakeArtifacts);
 
     await byID(req, res);
 
     expect(getArtifactByID).toBeCalledWith(mockClient, req.params.id);
     expect(res.send).toBeCalledWith(fakeArtifacts[0]);
+    expect(mockClient.release).toBeCalled();
+
+    getArtifactByID.mockReset();
+  });
+
+  it('returns a versioned artifact, after retrieving from database', async () => {
+    const versionedArtifacts = [fakeArtifacts[0], fakeArtifacts[0]];
+    getArtifactByID.mockImplementation(() => versionedArtifacts);
+
+    await byID(req, res);
+
+    expect(getArtifactByID).toBeCalledWith(mockClient, req.params.id);
+    expect(res.send).toBeCalledWith({
+      id: req.params.id,
+      artifact_data: expect.arrayContaining([
+        expect.objectContaining({
+          version: expect.any(Number),
+          name: expect.any(String),
+          body: expect.any(String),
+        }),
+      ]),
+    });
     expect(mockClient.release).toBeCalled();
 
     getArtifactByID.mockReset();
