@@ -19,9 +19,12 @@ export const getWordOffsetsFromCaret = (anchorNode, anchorOffset) => {
   return word;
 };
 
-export const getSelectionLocation = (body, content, start, end) => {
+export const getSelectionLocation = (body, content, range) => {
   const remains = body.split(content);
-  return [remains[0].length + start, remains[0].length + end];
+  return [
+    remains[0].length + range.startOffset,
+    remains[0].length + range.endOffset,
+  ];
 };
 
 export const setRangeSelection = (body, domSelection, setSelection) => {
@@ -34,8 +37,7 @@ export const setRangeSelection = (body, domSelection, setSelection) => {
     location: getSelectionLocation(
       body,
       domSelection.focusNode.textContent,
-      domSelection.anchorOffset,
-      domSelection.focusOffset
+      domSelection.getRangeAt(0)
     ),
   });
 };

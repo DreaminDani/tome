@@ -115,7 +115,8 @@ const addComment = async (req, res) => {
       userName,
       req.body.comment,
       req.body.location,
-      req.body.id
+      req.body.id,
+      req.body.artifactVersion
     );
 
     res.send(newComment);
@@ -141,7 +142,8 @@ const updateComment = async (req, res) => {
       userName,
       req.body.comment,
       req.body.commentID,
-      req.body.id
+      req.body.id,
+      req.body.artifactVersion
     );
 
     res.send(newComment);

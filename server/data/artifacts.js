@@ -20,7 +20,9 @@ const getArtifactByID = async (client, id) => {
         created_at as date,
         json_build_object('name', name, 'body', body, 'comments', comments) as artifact_data
       FROM artifacts
-      WHERE artifact_id = $1`,
+      WHERE artifact_id = $1
+      ORDER BY created_at ASC
+      `,
     [id]
   );
   const artifact = getArtifact.rows;

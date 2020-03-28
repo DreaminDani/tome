@@ -282,6 +282,7 @@ describe('artifactAPI addComment', () => {
     comment: 'some comment',
     location: [1, 0],
     id: 'the-artifact-id',
+    artifactVersion: 1,
   };
   const fakeUser = { id: 1, auth_metadata: { name: 'Fake User' } };
 
@@ -300,7 +301,8 @@ describe('artifactAPI addComment', () => {
       fakeUser.auth_metadata.name,
       req.body.comment,
       req.body.location,
-      req.body.id
+      req.body.id,
+      req.body.artifactVersion
     );
     expect(res.send).toHaveBeenCalledWith(fakeComments);
     expect(mockClient.release).toBeCalled();
@@ -344,7 +346,8 @@ describe('artifactAPI addComment', () => {
       fakeUser.auth_metadata.name,
       req.body.comment,
       req.body.location,
-      req.body.id
+      req.body.id,
+      req.body.artifactVersion
     );
     expect(serverError).toBeCalledWith(req, res, fakeError);
     expect(res.send).not.toBeCalledWith(fakeComments);
@@ -361,6 +364,7 @@ describe('artifactAPI updateComment', () => {
     commentID: 'the-comment-id',
     comment: 'some comment',
     id: 'the-artifact-id',
+    artifactVersion: 1,
   };
   const fakeUser = { id: 1, auth_metadata: { name: 'Fake User' } };
 
@@ -379,7 +383,8 @@ describe('artifactAPI updateComment', () => {
       fakeUser.auth_metadata.name,
       req.body.comment,
       req.body.commentID,
-      req.body.id
+      req.body.id,
+      req.body.artifactVersion
     );
     expect(res.send).toHaveBeenCalledWith(fakeComments);
     expect(mockClient.release).toBeCalled();
@@ -423,7 +428,8 @@ describe('artifactAPI updateComment', () => {
       fakeUser.auth_metadata.name,
       req.body.comment,
       req.body.commentID,
-      req.body.id
+      req.body.id,
+      req.body.artifactVersion
     );
     expect(serverError).toBeCalledWith(req, res, fakeError);
     expect(res.send).not.toBeCalledWith(fakeComments);

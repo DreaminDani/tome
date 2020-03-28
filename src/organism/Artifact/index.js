@@ -30,7 +30,7 @@ function Artifact({ artifact_data, id, disableSave }) {
     location: [],
   });
   const [updatedComments, updateComments] = useState([]);
-  const { name, body, comments } = artifact_data;
+  const { name, body, comments, version } = artifact_data;
 
   const commentList = getCurrentCommentList(
     comments,
@@ -89,12 +89,14 @@ function Artifact({ artifact_data, id, disableSave }) {
         res = await postData(`/api/artifact/comment/add`, {
           id,
           comment,
+          artifactVersion: version || 1,
           location: selection.location,
         });
       } else {
         res = await postData(`/api/artifact/comment/update`, {
           id,
           comment,
+          artifactVersion: version || 1,
           commentID: selection.selection,
         });
       }
