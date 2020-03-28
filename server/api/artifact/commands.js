@@ -33,7 +33,20 @@ const byID = async (req, res) => {
   try {
     const artifact = await getArtifactByID(client, req.params.id);
 
-    res.send(artifact);
+    if (artifact.length === 1) {
+      res.send(artifact[0]);
+    } else if (artifact.length > 1) {
+      res.send({
+        id: req.params.id,
+        artifact_data: artifact.map((version, index) => ({
+          version: index + 1,
+          date: version.date,
+          ...version.artifact_data,
+        })),
+      });
+    } else {
+      throw new Error(`No artifacts returned for id ${req.params.id}`);
+    }
   } catch (e) {
     serverError(req, res, e);
   } finally {
@@ -44,29 +57,10 @@ const byID = async (req, res) => {
 const update = async (req, res) => {
   // todo security validation
   const client = await req.app.get('db').connect();
-  const email = getEmailFromAuthProvider(req.user);
-  const user = await getUserByEmail(client, email);
 
   try {
-    // const currentArtifact = await getArtifactByID(client, req.body.id);
-    // const { artifact_data } = currentArtifact;
-
-    // let artifactData;
-    // if (Array.isArray(artifact_data)) {
-    //   newVersion.version = artifact_data.length + 1;
-    //   artifact_data.push(newVersion);
-    //   artifactData = artifact_data;
-    // } else {
-    //   newVersion.version = 2;
-    //   artifactData = [
-    //     {
-    //       version: 1,
-    //       ...artifact_data,
-    //       date: new Date(currentArtifact.updated_at),
-    //     },
-    //     newVersion,
-    //   ];
-    // }
+    const email = getEmailFromAuthProvider(req.user);
+    const user = await getUserByEmail(client, email);
 
     const saved = await newArtifactVersion(
       client,

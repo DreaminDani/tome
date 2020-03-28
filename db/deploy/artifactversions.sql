@@ -1,4 +1,4 @@
--- Deploy tome:users to pg
+-- Deploy tome:artifactversions to pg
 -- requires: appschema
 
 BEGIN;

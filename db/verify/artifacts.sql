@@ -1,4 +1,4 @@
--- Verify anymessage:users on pg
+-- Verify tome:users on pg
 
 BEGIN;
 

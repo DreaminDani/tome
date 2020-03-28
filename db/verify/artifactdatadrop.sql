@@ -1,4 +1,4 @@
--- Verify tome:artifactversions on pg
+-- Verify tome:artifactdatadump on pg
 
 BEGIN;
 

@@ -157,6 +157,7 @@ export const artifactDataProps = {
   name: PropTypes.string,
   date: PropTypes.string,
   comments: commentProps,
+  version: PropTypes.number, // optional
 };
 
 Artifact.propTypes = {

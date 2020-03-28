@@ -15,7 +15,7 @@ jest.mock('../../data/artifacts');
 const {
   getArtifactsByUser,
   getArtifactByID,
-  updateArtifactByID,
+  newArtifactVersion,
   createArtifact,
 } = require('../../data/artifacts');
 
@@ -126,73 +126,60 @@ describe('artifactAPI byID', () => {
 });
 
 describe('artifactAPI update', () => {
-  it('returns a single artifact, after updating successfully', async () => {
-    req.body = { id: 'some-uuid', name: 'some name', body: 'some body' };
-    getArtifactByID.mockImplementation(() => fakeArtifacts[0]);
-    updateArtifactByID.mockImplementation(() => fakeArtifacts[0]);
+  const fakeArtifactRequest = {
+    id: 'some-uuid',
+    name: 'some name',
+    body: 'some body',
+  };
+  const fakeUserRequest = { id: 'some-user-id' };
+  const fakeUser = { id: 1 };
+
+  it('returns all artifact versions, after updating successfully', async () => {
+    req.user = fakeUserRequest;
+    req.body = fakeArtifactRequest;
+    getUserByEmail.mockImplementation(() => fakeUser);
+    newArtifactVersion.mockImplementation(() => fakeArtifacts[0]);
 
     await update(req, res);
 
-    // get the artifact
-    // if artifact_data not a list, build up new name and body (requires updateArtifact sig change)
-    /*
-    [{version: 1,
-      body: "existing body", name "existing",
-      date: "PREV_UPDATED_AT"}]
-    */
-    // else, append to the list
-    /*
-      [{version: 1,
-      body: "existing body", name "existing",
-      date: "DATETIME"},
-      {version: 2,
-      body: "existing edit", name "existing",
-      date: "DATETIME"},
-    ]
-    */
-
-    expect(getArtifactByID).toBeCalledWith(mockClient, req.body.id);
-    expect(updateArtifactByID).toBeCalledWith(
+    expect(getUserByEmail).toHaveBeenCalledWith(mockClient, fakeEmail);
+    expect(newArtifactVersion).toHaveBeenCalledWith(
       mockClient,
       req.body.id,
+      fakeUser.id,
       req.body.name,
-      expect.arrayContaining([
-        expect.objectContaining({
-          body: req.body.body,
-          name: req.body.name,
-        }),
-      ])
+      req.body.body
     );
-    expect(res.send).toBeCalledWith(fakeArtifacts[0]);
+    expect(res.send).toHaveBeenCalledWith(fakeArtifacts[0]);
     expect(mockClient.release).toBeCalled();
 
-    updateArtifactByID.mockReset();
+    getUserByEmail.mockReset();
+    newArtifactVersion.mockReset();
   });
 
   it('returns an error, if update fails', async () => {
-    req.body = { id: 'some-uuid', name: 'some name', body: 'some body' };
-    updateArtifactByID.mockImplementation(() => {
+    req.user = fakeUserRequest;
+    req.body = fakeArtifactRequest;
+    getUserByEmail.mockImplementation(() => fakeUser);
+    newArtifactVersion.mockImplementation(() => {
       throw fakeError;
     });
 
     await update(req, res);
 
-    expect(updateArtifactByID).toBeCalledWith(
+    expect(newArtifactVersion).toHaveBeenCalledWith(
       mockClient,
       req.body.id,
+      fakeUser.id,
       req.body.name,
-      expect.arrayContaining([
-        expect.objectContaining({
-          body: req.body.body,
-          name: req.body.name,
-        }),
-      ])
+      req.body.body
     );
     expect(serverError).toBeCalledWith(req, res, fakeError);
     expect(res.send).not.toBeCalledWith(fakeArtifacts[0]);
     expect(mockClient.release).toBeCalled();
 
-    updateArtifactByID.mockReset();
+    getUserByEmail.mockReset();
+    newArtifactVersion.mockReset();
   });
 });
 

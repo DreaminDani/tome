@@ -1,4 +1,4 @@
--- Revert tome:users from pg
+-- Revert tome:artifactversions from pg
 
 BEGIN;
 
