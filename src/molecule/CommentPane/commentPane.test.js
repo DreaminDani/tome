@@ -62,10 +62,7 @@ describe('commentPane', () => {
   });
   it('does not save empty comments', () => {
     const comments = shallow(<CommentPane onSave={onSave} onClose={onClose} />);
-    comments
-      .find('[data-testid="comment-save"]')
-      .first()
-      .simulate('click');
+    comments.find('[data-testid="comment-save"]').first().simulate('click');
     expect(onSave).not.toHaveBeenCalled();
   });
   it('saves and shows a new comment', () => {
@@ -75,10 +72,7 @@ describe('commentPane', () => {
       .find('[data-testid="comment-input"]')
       .first()
       .simulate('change', { target: { value: testComment } });
-    comments
-      .find('[data-testid="comment-save"]')
-      .first()
-      .simulate('click');
+    comments.find('[data-testid="comment-save"]').first().simulate('click');
     // todo use real location to show where the comment was
     expect(onSave).toHaveBeenCalledWith(testComment);
   });

@@ -8,7 +8,7 @@ import {
 import PropTypes from 'prop-types';
 import React from 'react';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   settings: {
     [theme.breakpoints.down('xs')]: {
       background: '#ffffff',

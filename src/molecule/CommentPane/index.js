@@ -12,7 +12,7 @@ import CommentList, { commentProps } from '../../atom/CommentList';
 import { UserContext } from '../../contexts';
 import { getDisplayNameFromName } from '../../helpers';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   root: {
     padding: theme.spacing(3, 2),
     maxWidth: 464,
@@ -30,7 +30,7 @@ function CommentPane(props) {
   };
   const { selection, commentList, onSave, onClose, id } = props;
   const [comment, setComment] = useState('');
-  const selectionComments = commentList.filter(c => c.id === selection);
+  const selectionComments = commentList.filter((c) => c.id === selection);
 
   const onSaveHandler = async () => {
     if (comment) {
@@ -39,7 +39,7 @@ function CommentPane(props) {
     }
   };
 
-  const onChangeHandler = event => {
+  const onChangeHandler = (event) => {
     setComment(event.target.value);
   };
 

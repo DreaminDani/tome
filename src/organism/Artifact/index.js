@@ -38,13 +38,13 @@ function Artifact({ artifact_data, id, disableSave, copyCommentsToVersion }) {
     selection
   );
 
-  const mouseDownHandler = e => {
+  const mouseDownHandler = (e) => {
     e.stopPropagation();
     const domSelection = window.getSelection();
     domSelection.removeAllRanges();
   };
 
-  const mouseUpHandler = e => {
+  const mouseUpHandler = (e) => {
     // todo respond to touch events
     const title = document.getElementById('artifact-title');
     const commentPane = document.getElementById('artifact-comment');
@@ -72,7 +72,7 @@ function Artifact({ artifact_data, id, disableSave, copyCommentsToVersion }) {
     }
   };
 
-  const commentSaveHandler = async comment => {
+  const commentSaveHandler = async (comment) => {
     if (disableSave) {
       saveLocalComment(
         updatedComments,

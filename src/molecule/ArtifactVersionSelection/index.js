@@ -23,15 +23,15 @@ function ArtifactVersionSelection() {
     updateCurrentVersionIndex,
   } = useContext(ArtifactContext);
 
-  const marks = versions.map(v => ({
+  const marks = versions.map((v) => ({
     value: v.version - 1,
     label: new Date(v.date).toString(),
   }));
 
-  const valuetext = value => marks.find(mark => mark.value === value).label;
+  const valuetext = (value) => marks.find((mark) => mark.value === value).label;
 
-  const valueLabelFormat = value =>
-    `v${marks.findIndex(mark => mark.value === value) + 1}`;
+  const valueLabelFormat = (value) =>
+    `v${marks.findIndex((mark) => mark.value === value) + 1}`;
 
   return (
     <div>

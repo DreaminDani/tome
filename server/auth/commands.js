@@ -32,7 +32,7 @@ const loginWithLocal = async (req, res, next, err, user) => {
       message: 'Invalid username or password',
     });
   }
-  await req.logIn(user, async error => {
+  await req.logIn(user, async (error) => {
     if (error) {
       return next(error);
     }
@@ -83,7 +83,7 @@ const _commitUserToDatabase = async (req, res, next, error, user) => {
 async function callback(req, res, next, err, user) {
   if (err) return next(err);
   if (!user) return res.redirect('/login');
-  await req.logIn(user, async error =>
+  await req.logIn(user, async (error) =>
     _commitUserToDatabase(req, res, next, error, user)
   );
   res.redirect('/');

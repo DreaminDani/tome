@@ -26,7 +26,7 @@
 function triggerComment(element) {
   cy.get(element)
     .trigger('mousedown')
-    .then($el => {
+    .then(($el) => {
       const el = $el[0];
       const document = el.ownerDocument;
       const range = document.createRange();
@@ -42,11 +42,11 @@ Cypress.Commands.add('selectArtifactText', () =>
   triggerComment('#artifact-content')
 );
 
-Cypress.Commands.add('login', user => {
+Cypress.Commands.add('login', (user) => {
   const { email, password } = user;
   cy.request('POST', '/login', { email, password });
 });
 
-Cypress.Commands.add('getByTestID', testID =>
+Cypress.Commands.add('getByTestID', (testID) =>
   cy.get(`[data-testid="${testID}"]`)
 );

@@ -11,7 +11,7 @@ import {
 } from '@material-ui/core';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   paper: {
     display: 'flex',
     flexDirection: 'column',
@@ -30,7 +30,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const Login = props => {
+const Login = (props) => {
   const classes = useStyles();
   const { toggleLogin, onSubmit } = props;
 
@@ -38,7 +38,7 @@ const Login = props => {
   const [password, setPassword] = useState('');
 
   // should be form submit to prevent default
-  const submit = e => {
+  const submit = (e) => {
     // validate here before sending
     e.preventDefault();
     onSubmit(email, password);
@@ -62,7 +62,7 @@ const Login = props => {
           label="Email Address"
           name="email"
           autoComplete="email"
-          onChange={e => setEmail(e.target.value)}
+          onChange={(e) => setEmail(e.target.value)}
           autoFocus
         />
         <TextField
@@ -75,7 +75,7 @@ const Login = props => {
           type="password"
           id="password"
           autoComplete="current-password"
-          onChange={e => setPassword(e.target.value)}
+          onChange={(e) => setPassword(e.target.value)}
           // TODO add "forgot password" flow
         />
         <Button

@@ -26,18 +26,18 @@ const googleStrategy = new GoogleStrategy(
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     callbackURL: process.env.GOOGLE_CALLBACK_URL, // TODO build this based on BASE_URL
   },
-  function(token, tokenSecret, profile, done) {
+  function (token, tokenSecret, profile, done) {
     return done(null, profile);
   }
 );
 
-const localStrategy = db =>
+const localStrategy = (db) =>
   new LocalStrategy(
     {
       usernameField: 'email',
       passwordField: 'password',
     },
-    async function(email, password, cb) {
+    async function (email, password, cb) {
       const client = await db.connect();
       await verifyUser(client, email, password, cb);
     }

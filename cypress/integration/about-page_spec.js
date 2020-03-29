@@ -1,12 +1,10 @@
-describe('About Page', function() {
-  beforeEach(function() {
+describe('About Page', function () {
+  beforeEach(function () {
     // create user, if doesn't already exist
-    cy.request('/test/db/seed-user')
-      .its('body')
-      .as('currentUser');
+    cy.request('/test/db/seed-user').its('body').as('currentUser');
   });
 
-  it('can navigate to about page from home (logged out)', function() {
+  it('can navigate to about page from home (logged out)', function () {
     cy.visit('/logout');
 
     cy.get('#about-page-cta').click();
@@ -14,7 +12,7 @@ describe('About Page', function() {
     cy.url().should('include', '/about');
   });
 
-  it('shows Your Name in comment on about page as logged out user', function() {
+  it('shows Your Name in comment on about page as logged out user', function () {
     cy.visit('/logout');
     cy.visit('/about');
 
@@ -23,7 +21,7 @@ describe('About Page', function() {
     cy.get('#artifact-comment').contains('Your Name');
   });
 
-  it('can navigate to about page from home (logged in)', function() {
+  it('can navigate to about page from home (logged in)', function () {
     cy.login(this.currentUser);
     cy.visit('/');
 
@@ -33,7 +31,7 @@ describe('About Page', function() {
     cy.url().should('include', '/about');
   });
 
-  it("shows user's name in comment on about page as logged out user", function() {
+  it("shows user's name in comment on about page as logged out user", function () {
     cy.login(this.currentUser);
 
     cy.visit('/about');

@@ -7,7 +7,7 @@ module.exports = {
   env: {
     BASE_URL: process.env.BASE_URL,
   },
-  webpack: config => {
+  webpack: (config) => {
     config.plugins = config.plugins || [];
 
     config.plugins = [

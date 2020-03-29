@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { Grid, makeStyles, Typography } from '@material-ui/core';
 import ErrorIcon from '@material-ui/icons/Error';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   background: {
     backgroundColor: theme.palette.error.dark,
     color: theme.palette.error.contrastText,

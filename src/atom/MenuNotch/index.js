@@ -50,7 +50,7 @@ const useStyles = makeStyles({
   },
 });
 
-const MenuNotch = props => {
+const MenuNotch = (props) => {
   const classes = useStyles();
   const { onClick } = props;
 

@@ -58,7 +58,7 @@ function ArtifactPage(props) {
     versions[artifactIndex]
   );
 
-  const updateCurrentVersion = versionIndex => {
+  const updateCurrentVersion = (versionIndex) => {
     updateArtifactIndex(versionIndex);
     setCurrentArtifact(versions[versionIndex]);
   };

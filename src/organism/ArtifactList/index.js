@@ -4,7 +4,7 @@ import { makeStyles, Typography } from '@material-ui/core';
 import Link from 'next/link';
 import ArtifactListItem from '../../molecule/ArtifactListItem';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   listRoot: {
     padding: 0,
     maxWidth: 420,
@@ -26,7 +26,7 @@ function ArtifactList(props) {
       </Typography>
       {list && list.length ? (
         <ul className={classes.listRoot}>
-          {list.map(artifact => (
+          {list.map((artifact) => (
             <ArtifactListItem artifact={artifact} key={artifact.id} />
           ))}
         </ul>

@@ -5,7 +5,7 @@ const ensureSecure = (req, res, next) => {
   res.redirect(`https://${req.headers.host}${req.url}`);
 };
 
-const getEmailFromAuthProvider = user => {
+const getEmailFromAuthProvider = (user) => {
   if (user.email) {
     return user.email;
   }

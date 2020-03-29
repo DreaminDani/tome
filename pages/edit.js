@@ -34,7 +34,7 @@ function Edit(props) {
 
   const [focused, setFocus] = useState(false);
 
-  const handleChange = name => event => {
+  const handleChange = (name) => (event) => {
     setValues({ ...values, [name]: event.target.value });
   };
 

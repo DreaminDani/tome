@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { Fab, makeStyles } from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   extendedIcon: {
     marginRight: theme.spacing(1),
   },

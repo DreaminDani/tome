@@ -11,7 +11,7 @@ import LoginError from '../src/atom/LoginError';
 import AboutPageCTA from '../src/atom/AboutPageCTA';
 import CreateArtifactFab from '../src/atom/CreateArtifactFab';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   root: {
     minHeight: '100vh',
   },

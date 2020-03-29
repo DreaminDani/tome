@@ -1,9 +1,9 @@
-describe('Authentication', function() {
-  before(function() {
+describe('Authentication', function () {
+  before(function () {
     cy.request('/test/db/reset');
   });
 
-  it('create an account', function() {
+  it('create an account', function () {
     cy.visit('/');
 
     cy.get('#firstName').type('Joe');
@@ -15,7 +15,7 @@ describe('Authentication', function() {
     cy.get('h1').should('contain', 'My Artifacts');
   });
 
-  it('log out and login', function() {
+  it('log out and login', function () {
     cy.get('#menu-notch').click();
     cy.get('#menu-logout-link').click();
 

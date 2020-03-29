@@ -11,7 +11,7 @@ import {
 } from '@material-ui/core';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   paper: {
     display: 'flex',
     flexDirection: 'column',
@@ -30,7 +30,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const SignUp = props => {
+const SignUp = (props) => {
   const classes = useStyles();
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
@@ -39,7 +39,7 @@ const SignUp = props => {
 
   const { onSubmit, toggleLogin } = props;
 
-  const submit = e => {
+  const submit = (e) => {
     e.preventDefault();
     onSubmit(firstName, lastName, email, password);
   };
@@ -63,7 +63,7 @@ const SignUp = props => {
               fullWidth
               id="firstName"
               label="First Name"
-              onChange={e => setFirstName(e.target.value)}
+              onChange={(e) => setFirstName(e.target.value)}
             />
           </Grid>
           <Grid item xs={12} sm={6}>
@@ -75,7 +75,7 @@ const SignUp = props => {
               label="Last Name"
               name="lastName"
               autoComplete="lname"
-              onChange={e => setLastName(e.target.value)}
+              onChange={(e) => setLastName(e.target.value)}
             />
           </Grid>
           <Grid item xs={12}>
@@ -87,7 +87,7 @@ const SignUp = props => {
               label="Email Address"
               name="email"
               autoComplete="email"
-              onChange={e => setEmail(e.target.value)}
+              onChange={(e) => setEmail(e.target.value)}
             />
           </Grid>
           <Grid item xs={12}>
@@ -100,7 +100,7 @@ const SignUp = props => {
               type="password"
               id="password"
               autoComplete="current-password"
-              onChange={e => setPassword(e.target.value)}
+              onChange={(e) => setPassword(e.target.value)}
             />
           </Grid>
         </Grid>

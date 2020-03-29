@@ -8,7 +8,7 @@ const useStyles = makeStyles({
   },
 });
 
-const CommentList = props => {
+const CommentList = (props) => {
   const classes = useStyles();
   const { items } = props;
   return items.map((comment, index) => (

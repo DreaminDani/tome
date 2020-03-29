@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import CommentList from '../CommentList';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   text: {
     fontFamily: `'Cormorant Garamond', serif`,
     fontSize: '1.12rem',
@@ -47,7 +47,7 @@ function TextContent(props) {
   const textComments = commentList ? [...commentList] : [];
   if (textComments.length > 0) {
     // reorder comments based on location start position
-    textComments.sort(function(a, b) {
+    textComments.sort(function (a, b) {
       if (a.location && b.location) {
         return a.location[0] - b.location[0];
       }
@@ -63,7 +63,7 @@ function TextContent(props) {
     const characters = children.split('');
     let i = 0;
     let offset = 0;
-    textComments.map(comment => {
+    textComments.map((comment) => {
       if (comment.location) {
         while (i < comment.location[0]) {
           withComments[i + offset] = characters[i];

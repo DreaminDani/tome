@@ -10,7 +10,7 @@ import {
 } from '@material-ui/core';
 import HelpIcon from '@material-ui/icons/Help';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   root: {
     width: '100%',
     textAlign: 'center',
@@ -37,7 +37,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const AboutPageCTA = props => {
+const AboutPageCTA = (props) => {
   const classes = useStyles();
 
   const { className: injectedClass, onClick: injectedOnClick } = props;

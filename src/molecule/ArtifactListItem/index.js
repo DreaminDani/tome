@@ -4,7 +4,7 @@ import { makeStyles, Paper, Typography } from '@material-ui/core';
 import Link from 'next/link';
 import { getDisplayNameFromName } from '../../helpers';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   root: {
     listStyle: 'none',
     '&:hover': {

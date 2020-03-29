@@ -12,7 +12,7 @@ const verifyUser = async (client, email, password, cb) => {
     WHERE email = $1
     AND password= crypt($2, password)`,
     [email, password],
-    function(err, getUser) {
+    function (err, getUser) {
       if (err) {
         client.release();
         return cb(err);

@@ -1,4 +1,4 @@
-export const getDisplayNameFromName = name => {
+export const getDisplayNameFromName = (name) => {
   if (name && typeof name === 'string') {
     return name;
   }

@@ -1,12 +1,10 @@
-describe('Artifact', function() {
-  beforeEach(function() {
+describe('Artifact', function () {
+  beforeEach(function () {
     cy.request('/test/db/reset');
-    cy.request('/test/db/seed-user')
-      .its('body')
-      .as('currentUser');
+    cy.request('/test/db/seed-user').its('body').as('currentUser');
   });
 
-  it('can create an artifact', function() {
+  it('can create an artifact', function () {
     cy.login(this.currentUser);
     cy.visit('/');
     cy.get('#create-artifact').click();
@@ -25,14 +23,14 @@ describe('Artifact', function() {
     cy.get('p').should('contain', 'test body');
   });
 
-  it('can edit artifact', function() {
+  it('can edit artifact', function () {
     cy.login(this.currentUser);
     cy.request('POST', '/api/artifact/add', {
       name: 'existing artifact',
       body: `existing artifact
       body has multiple lines
 easy to read...`,
-    }).then(exisingArtifact => {
+    }).then((exisingArtifact) => {
       cy.visit(`/artifact/${exisingArtifact.body.id}`);
 
       cy.get('#edit-artifact-button').click();
@@ -110,7 +108,7 @@ easy to read...`,
       cy.get('mark')
         .first()
         .invoke('attr', 'id')
-        .then(newCommentID => {
+        .then((newCommentID) => {
           // look at previous version
           cy.getByTestID('artifact-version')
             .find('.MuiSlider-markLabel')
@@ -119,19 +117,19 @@ easy to read...`,
           cy.get('#artifact-comment').should('not.exist'); // comment pane should close
           cy.get('mark')
             .first()
-            .should(oldComment => {
+            .should((oldComment) => {
               expect(oldComment).to.not.have.id(newCommentID);
             }); // old comment should remain intact
         });
     });
   });
 
-  it('can navigate between the artifact and home page', function() {
+  it('can navigate between the artifact and home page', function () {
     cy.login(this.currentUser);
     cy.request('POST', '/api/artifact/add', {
       name: 'some artifact',
       body: 'artifact body',
-    }).then(exisingArtifact => {
+    }).then((exisingArtifact) => {
       // find existing artifact
       cy.visit('/');
       cy.get(`#${exisingArtifact.body.id}`).click();
