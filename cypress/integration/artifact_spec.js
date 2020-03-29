@@ -25,7 +25,7 @@ describe('Artifact', function() {
     cy.get('p').should('contain', 'test body');
   });
 
-  it.only('can edit artifact', function() {
+  it('can edit artifact', function() {
     cy.login(this.currentUser);
     cy.request('POST', '/api/artifact/add', {
       name: 'existing artifact',

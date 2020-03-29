@@ -16,7 +16,7 @@ const useStyles = makeStyles(theme => ({
     minHeight: '100vh',
   },
   hero: {
-    background: "center / contain no-repeat url('/static/img/tome-hero.png')",
+    background: "center / contain no-repeat url('/img/tome-hero.png')",
   },
   content: {
     marginTop: 40,

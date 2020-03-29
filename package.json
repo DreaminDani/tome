@@ -18,7 +18,7 @@
     "passport-google-oauth": "^2.0.0",
     "passport-local": "^1.0.0",
     "pg": "^7.12.1",
-    "prop-types": "latest",
+    "prop-types": "^15.7.2",
     "react": "^16.9.0",
     "react-dom": "^16.9.0",
     "uid-safe": "^2.1.5"
@@ -26,7 +26,7 @@
   "devDependencies": {
     "@babel/core": "^7.6.0",
     "babel-eslint": "^10.0.3",
-    "babel-jest": "^24.9.0",
+    "babel-jest": "^25.2.4",
     "chokidar": "^3.2.2",
     "cypress": "3.4.1",
     "enzyme": "^3.11.0",
@@ -40,14 +40,14 @@
     "eslint-plugin-jsx-a11y": "latest",
     "eslint-plugin-prettier": "^3.1.1",
     "eslint-plugin-react": "^7.14.3",
-    "eslint-plugin-react-hooks": "^2.0.1",
-    "jest": "^24.9.0",
-    "jsdom": "^15.2.1",
+    "eslint-plugin-react-hooks": "^3.0.0",
+    "jest": "^25.2.4",
+    "jsdom": "^16.2.1",
     "nodemon": "2.0.2",
-    "prettier": "^1.19.1",
+    "prettier": "^2.0.2",
     "react-addons-test-utils": "latest",
     "react-test-renderer": "^16.9.0",
-    "sinon": "^8.0.1",
+    "sinon": "^9.0.1",
     "sinon-express-mock": "latest"
   },
   "scripts": {
