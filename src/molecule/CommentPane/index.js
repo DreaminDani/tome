@@ -8,7 +8,7 @@ import {
   IconButton,
 } from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
-import CommentList from '../../atom/CommentList';
+import CommentList, { commentProps } from '../../atom/CommentList';
 import { UserContext } from '../../contexts';
 import { getDisplayNameFromName } from '../../helpers';
 
@@ -90,7 +90,7 @@ CommentPane.defaultProps = {
 CommentPane.propTypes = {
   id: PropTypes.string,
   selection: PropTypes.string,
-  commentList: CommentList.propTypes.items,
+  commentList: commentProps,
   onSave: PropTypes.func,
   onClose: PropTypes.func,
 };

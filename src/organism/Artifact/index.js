@@ -1,9 +1,10 @@
 import { Grid, Typography, makeStyles } from '@material-ui/core';
 import PropTypes from 'prop-types';
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { UserContext } from '../../contexts';
 import TextContent from '../../atom/TextContent';
 import CommentPane from '../../molecule/CommentPane';
+import { commentProps } from '../../atom/CommentList';
 import { postData } from '../../api';
 import {
   setRangeSelection,
@@ -18,7 +19,7 @@ const useStyles = makeStyles({
   },
 });
 
-function Artifact({ artifact_data, id, disableSave }) {
+function Artifact({ artifact_data, id, disableSave, copyCommentsToVersion }) {
   const classes = useStyles();
 
   const user = useContext(UserContext) || {
@@ -29,7 +30,7 @@ function Artifact({ artifact_data, id, disableSave }) {
     location: [],
   });
   const [updatedComments, updateComments] = useState([]);
-  const { name, body, comments } = artifact_data;
+  const { name, body, comments, version } = artifact_data;
 
   const commentList = getCurrentCommentList(
     comments,
@@ -88,12 +89,14 @@ function Artifact({ artifact_data, id, disableSave }) {
         res = await postData(`/api/artifact/comment/add`, {
           id,
           comment,
+          artifactVersion: version || 1,
           location: selection.location,
         });
       } else {
         res = await postData(`/api/artifact/comment/update`, {
           id,
           comment,
+          artifactVersion: version || 1,
           commentID: selection.selection,
         });
       }
@@ -111,6 +114,16 @@ function Artifact({ artifact_data, id, disableSave }) {
     const domSelection = window.getSelection();
     domSelection.removeAllRanges();
   };
+
+  // react to version change
+  useEffect(() => {
+    commentCloseHandler();
+    if (updatedComments.length > 0) {
+      copyCommentsToVersion(updatedComments, version);
+    }
+    updateComments([]);
+    /* eslint-disable-next-line */
+  }, [artifact_data]);
 
   return (
     <Grid
@@ -151,14 +164,19 @@ Artifact.defaultProps = {
   disableSave: false,
 };
 
+export const artifactDataProps = {
+  body: PropTypes.string,
+  name: PropTypes.string,
+  date: PropTypes.string,
+  comments: commentProps,
+  version: PropTypes.number, // optional
+};
+
 Artifact.propTypes = {
   id: PropTypes.string,
-  artifact_data: PropTypes.shape({
-    body: PropTypes.string,
-    name: PropTypes.string,
-    comments: CommentPane.propTypes.commentList,
-  }),
+  artifact_data: PropTypes.shape(artifactDataProps),
   disableSave: PropTypes.bool,
+  copyCommentsToVersion: PropTypes.func,
 };
 
 export default Artifact;

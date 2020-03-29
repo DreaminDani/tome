@@ -15,7 +15,7 @@ jest.mock('../../data/artifacts');
 const {
   getArtifactsByUser,
   getArtifactByID,
-  updateArtifactByID,
+  newArtifactVersion,
   createArtifact,
 } = require('../../data/artifacts');
 
@@ -35,7 +35,15 @@ let req;
 let res;
 let mockClient;
 
-const fakeArtifacts = [{ test: 'artifact' }];
+const fakeArtifacts = [
+  {
+    id: 'some-id',
+    user_id: 1,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+    artifact_data: { body: 'artifact body', name: 'artifact' },
+  },
+];
 const fakeComments = [{ test: 'comment' }];
 const fakeError = new Error();
 const fakeEmail = 'email@fake.com';
@@ -89,12 +97,34 @@ describe('artifactAPI list', () => {
 
 describe('artifactAPI byID', () => {
   it('returns a single artifact, after retrieving from database', async () => {
-    getArtifactByID.mockImplementation(() => fakeArtifacts[0]);
+    getArtifactByID.mockImplementation(() => fakeArtifacts);
 
     await byID(req, res);
 
     expect(getArtifactByID).toBeCalledWith(mockClient, req.params.id);
     expect(res.send).toBeCalledWith(fakeArtifacts[0]);
+    expect(mockClient.release).toBeCalled();
+
+    getArtifactByID.mockReset();
+  });
+
+  it('returns a versioned artifact, after retrieving from database', async () => {
+    const versionedArtifacts = [fakeArtifacts[0], fakeArtifacts[0]];
+    getArtifactByID.mockImplementation(() => versionedArtifacts);
+
+    await byID(req, res);
+
+    expect(getArtifactByID).toBeCalledWith(mockClient, req.params.id);
+    expect(res.send).toBeCalledWith({
+      id: req.params.id,
+      artifact_data: expect.arrayContaining([
+        expect.objectContaining({
+          version: expect.any(Number),
+          name: expect.any(String),
+          body: expect.any(String),
+        }),
+      ]),
+    });
     expect(mockClient.release).toBeCalled();
 
     getArtifactByID.mockReset();
@@ -118,35 +148,51 @@ describe('artifactAPI byID', () => {
 });
 
 describe('artifactAPI update', () => {
-  it('returns a single artifact, after updating successfully', async () => {
-    req.body = { id: 'some-uuid', name: 'some name', body: 'some body' };
-    updateArtifactByID.mockImplementation(() => fakeArtifacts[0]);
+  const fakeArtifactRequest = {
+    id: 'some-uuid',
+    name: 'some name',
+    body: 'some body',
+  };
+  const fakeUserRequest = { id: 'some-user-id' };
+  const fakeUser = { id: 1 };
+
+  it('returns all artifact versions, after updating successfully', async () => {
+    req.user = fakeUserRequest;
+    req.body = fakeArtifactRequest;
+    getUserByEmail.mockImplementation(() => fakeUser);
+    newArtifactVersion.mockImplementation(() => fakeArtifacts[0]);
 
     await update(req, res);
 
-    expect(updateArtifactByID).toBeCalledWith(
+    expect(getUserByEmail).toHaveBeenCalledWith(mockClient, fakeEmail);
+    expect(newArtifactVersion).toHaveBeenCalledWith(
       mockClient,
       req.body.id,
+      fakeUser.id,
       req.body.name,
       req.body.body
     );
-    expect(res.send).toBeCalledWith(fakeArtifacts[0]);
+    expect(res.send).toHaveBeenCalledWith(fakeArtifacts[0]);
     expect(mockClient.release).toBeCalled();
 
-    updateArtifactByID.mockReset();
+    getUserByEmail.mockReset();
+    newArtifactVersion.mockReset();
   });
 
   it('returns an error, if update fails', async () => {
-    req.body = { id: 'some-uuid', name: 'some name', body: 'some body' };
-    updateArtifactByID.mockImplementation(() => {
+    req.user = fakeUserRequest;
+    req.body = fakeArtifactRequest;
+    getUserByEmail.mockImplementation(() => fakeUser);
+    newArtifactVersion.mockImplementation(() => {
       throw fakeError;
     });
 
     await update(req, res);
 
-    expect(updateArtifactByID).toBeCalledWith(
+    expect(newArtifactVersion).toHaveBeenCalledWith(
       mockClient,
       req.body.id,
+      fakeUser.id,
       req.body.name,
       req.body.body
     );
@@ -154,7 +200,8 @@ describe('artifactAPI update', () => {
     expect(res.send).not.toBeCalledWith(fakeArtifacts[0]);
     expect(mockClient.release).toBeCalled();
 
-    updateArtifactByID.mockReset();
+    getUserByEmail.mockReset();
+    newArtifactVersion.mockReset();
   });
 });
 
@@ -235,6 +282,7 @@ describe('artifactAPI addComment', () => {
     comment: 'some comment',
     location: [1, 0],
     id: 'the-artifact-id',
+    artifactVersion: 1,
   };
   const fakeUser = { id: 1, auth_metadata: { name: 'Fake User' } };
 
@@ -253,7 +301,8 @@ describe('artifactAPI addComment', () => {
       fakeUser.auth_metadata.name,
       req.body.comment,
       req.body.location,
-      req.body.id
+      req.body.id,
+      req.body.artifactVersion
     );
     expect(res.send).toHaveBeenCalledWith(fakeComments);
     expect(mockClient.release).toBeCalled();
@@ -297,7 +346,8 @@ describe('artifactAPI addComment', () => {
       fakeUser.auth_metadata.name,
       req.body.comment,
       req.body.location,
-      req.body.id
+      req.body.id,
+      req.body.artifactVersion
     );
     expect(serverError).toBeCalledWith(req, res, fakeError);
     expect(res.send).not.toBeCalledWith(fakeComments);
@@ -314,6 +364,7 @@ describe('artifactAPI updateComment', () => {
     commentID: 'the-comment-id',
     comment: 'some comment',
     id: 'the-artifact-id',
+    artifactVersion: 1,
   };
   const fakeUser = { id: 1, auth_metadata: { name: 'Fake User' } };
 
@@ -332,7 +383,8 @@ describe('artifactAPI updateComment', () => {
       fakeUser.auth_metadata.name,
       req.body.comment,
       req.body.commentID,
-      req.body.id
+      req.body.id,
+      req.body.artifactVersion
     );
     expect(res.send).toHaveBeenCalledWith(fakeComments);
     expect(mockClient.release).toBeCalled();
@@ -376,7 +428,8 @@ describe('artifactAPI updateComment', () => {
       fakeUser.auth_metadata.name,
       req.body.comment,
       req.body.commentID,
-      req.body.id
+      req.body.id,
+      req.body.artifactVersion
     );
     expect(serverError).toBeCalledWith(req, res, fakeError);
     expect(res.send).not.toBeCalledWith(fakeComments);

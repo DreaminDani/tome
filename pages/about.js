@@ -6,7 +6,7 @@ import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 
 import Artifact from '../src/organism/Artifact';
 
-const currentTime = new Date().getTime();
+const currentTime = new Date().toISOString();
 
 const artifact_data = {
   name: 'About Tome',

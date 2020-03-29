@@ -19,9 +19,12 @@ export const getWordOffsetsFromCaret = (anchorNode, anchorOffset) => {
   return word;
 };
 
-export const getSelectionLocation = (body, content, start, end) => {
+export const getSelectionLocation = (body, content, range) => {
   const remains = body.split(content);
-  return [remains[0].length + start, remains[0].length + end];
+  return [
+    remains[0].length + range.startOffset,
+    remains[0].length + range.endOffset,
+  ];
 };
 
 export const setRangeSelection = (body, domSelection, setSelection) => {
@@ -34,8 +37,7 @@ export const setRangeSelection = (body, domSelection, setSelection) => {
     location: getSelectionLocation(
       body,
       domSelection.focusNode.textContent,
-      domSelection.anchorOffset,
-      domSelection.focusOffset
+      domSelection.getRangeAt(0)
     ),
   });
 };
@@ -60,9 +62,14 @@ export const updateFocusedComment = (
 export const getCurrentCommentList = (comments, updatedComments, selection) => {
   // update comment list as comments get posted and returned
   let commentList = [];
+
+  const order = (a, b) => parseFloat(a.created) - parseFloat(b.created);
+
   if (comments || updatedComments.length > 0) {
     commentList =
-      updatedComments.length > 0 ? [...updatedComments] : [...comments];
+      updatedComments.length > 0
+        ? updatedComments.sort(order)
+        : comments.sort(order);
   }
 
   // update comment list with temp comment to denote current selection
@@ -90,7 +97,7 @@ export const saveLocalComment = (
   updateComments,
   setSelection
 ) => {
-  const currentTime = new Date().getTime();
+  const currentTime = new Date().toISOString();
   const newComments =
     updatedComments.length > 0 ? [...updatedComments] : [...comments];
   if (selection.location.length > 0) {

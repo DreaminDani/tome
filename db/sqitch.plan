@@ -6,3 +6,5 @@ users [appschema] 2019-07-20T07:24:34Z Daniel Sandoval <daniel@desandoval.net> #
 session [appschema] 2019-07-20T10:24:34Z Daniel Sandoval <daniel@desandoval.net> # Adds users
 artifacts [appschema users] 2019-07-21T01:24:34Z Daniel Sandoval <daniel@desandoval.net> # Adds artifact storage
 locallogin [appschema users] 2019-09-25T12:27:47Z Daniel Sandoval <daniel@desandoval.net> # Allow local logins and migrate existing users to use email as auth_id
+artifactversions [appschema artifacts] 2019-09-25T12:27:47Z Daniel Sandoval <daniel@desandoval.net> # Refactors artifacts to support versioning
+artifactdatadrop [appschema artifactversions] 2019-09-25T12:27:47Z Daniel Sandoval <daniel@desandoval.net> # Removes unnecessary artifact_data column

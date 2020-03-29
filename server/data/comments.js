@@ -1,8 +1,31 @@
-const getCommentsLengthByArtifactID = async (client, id) => {
+const getCommentsLengthByArtifactID = async (client, id, version) => {
   const getCommentsLength = await client.query(
-    `SELECT jsonb_array_length((artifact_data->'comments'))
-    FROM artifacts WHERE id = $1;`,
-    [id]
+    `SELECT jsonb_array_length((comments))
+      FROM artifacts
+      WHERE
+          created_at = (
+              SELECT
+                created_at
+              FROM
+                (
+                    SELECT
+                      created_at,
+                      ROW_NUMBER () OVER (
+                          ORDER BY created_at ASC
+                      ) nth
+                    FROM
+                      (
+                          SELECT
+                            (created_at)
+                          FROM
+                            artifacts
+                          WHERE artifact_id = $1
+                      ) bydate
+                ) sorted_bydate
+              WHERE
+                nth = $2
+          );`,
+    [id, version]
   );
 
   return getCommentsLength.rows[0]
@@ -16,11 +39,13 @@ const addNewCommentToArtifact = async (
   userName,
   commentBody,
   commentLocation,
-  artifactID
+  artifactID,
+  artifactVersion
 ) => {
   const commentsLength = await getCommentsLengthByArtifactID(
     client,
-    artifactID
+    artifactID,
+    artifactVersion
   );
 
   let insertComment;
@@ -28,9 +53,31 @@ const addNewCommentToArtifact = async (
     insertComment = await client.query(
       /* eslint-disable prettier/prettier */
         `UPDATE artifacts
-        SET artifact_data = jsonb_insert(artifact_data, '{comments,${commentsLength + 1}}', ('{"id": "' || gen_random_uuid() || '", "created": ' || extract(epoch from now()) || ', "updated": ' || extract(epoch from now()) || ', "user": {"id": '|| $1 ||', "name": "'|| $2 ||'"}, "comment": '|| $3 ||', "location": '|| $4 ||'}')::jsonb, true)
-        WHERE id = $5
-        RETURNING artifact_data->'comments' as commentlist
+        SET comments = jsonb_insert(comments, '{${commentsLength + 1}}', ('{"id": "' || gen_random_uuid() || '", "created": ' || extract(epoch from now()) || ', "updated": ' || extract(epoch from now()) || ', "user": {"id": '|| $1 ||', "name": "'|| $2 ||'"}, "comment": '|| $3 ||', "location": '|| $4 ||'}')::jsonb, true)
+        WHERE
+          created_at = (
+              SELECT
+                created_at
+              FROM
+                (
+                    SELECT
+                      created_at,
+                      ROW_NUMBER () OVER (
+                          ORDER BY created_at ASC
+                      ) nth
+                    FROM
+                      (
+                          SELECT
+                            (created_at)
+                          FROM
+                            artifacts
+                          WHERE artifact_id = $5
+                      ) bydate
+                ) sorted_bydate
+              WHERE
+                nth = $6
+          )
+        RETURNING comments as commentlist
 `,
         /* eslint-enable prettier/prettier */
       [
@@ -39,14 +86,37 @@ const addNewCommentToArtifact = async (
         JSON.stringify(commentBody),
         JSON.stringify(commentLocation),
         artifactID,
+        artifactVersion,
       ]
     );
   } else {
     insertComment = await client.query(
       `UPDATE artifacts
-        SET artifact_data = jsonb_set(artifact_data, '{comments}', ('[{"id": "' || gen_random_uuid() || '", "created": ' || extract(epoch from now()) || ', "updated": ' || extract(epoch from now()) || ', "user": {"id": '|| $1 ||', "name": "'|| $2 ||'"}, "comment": '|| $3 ||', "location": '|| $4 ||'}]')::jsonb, true)
-        WHERE id = $5
-        RETURNING artifact_data->'comments' as commentlist
+        SET comments = ('[{"id": "' || gen_random_uuid() || '", "created": ' || extract(epoch from now()) || ', "updated": ' || extract(epoch from now()) || ', "user": {"id": '|| $1 ||', "name": "'|| $2 ||'"}, "comment": '|| $3 ||', "location": '|| $4 ||'}]')::jsonb
+        WHERE
+          created_at = (
+              SELECT
+                created_at
+              FROM
+                (
+                    SELECT
+                      created_at,
+                      ROW_NUMBER () OVER (
+                          ORDER BY created_at ASC
+                      ) nth
+                    FROM
+                      (
+                          SELECT
+                            (created_at)
+                          FROM
+                            artifacts
+                          WHERE artifact_id = $5
+                      ) bydate
+                ) sorted_bydate
+              WHERE
+                nth = $6
+          )
+        RETURNING comments as commentlist
 `,
       [
         userID,
@@ -54,6 +124,7 @@ const addNewCommentToArtifact = async (
         JSON.stringify(commentBody),
         JSON.stringify(commentLocation),
         artifactID,
+        artifactVersion,
       ]
     );
   }
@@ -68,7 +139,8 @@ const updateCommentInArtifact = async (
   userName,
   commentBody,
   commentID,
-  artifactID
+  artifactID,
+  artifactVersion
 ) => {
   const commentsLength = await getCommentsLengthByArtifactID(
     client,
@@ -79,12 +151,41 @@ const updateCommentInArtifact = async (
     /* eslint-disable prettier/prettier */
     `
     UPDATE artifacts
-      SET artifact_data = jsonb_insert(artifact_data, '{comments,${commentsLength + 1}}', ('{"id": "' || $1 || '", "created": ' || extract(epoch from now()) || ', "updated": ' || extract(epoch from now()) || ', "user": {"id": '|| $2 ||', "name": "'|| $3 ||'"}, "comment": '|| $4 ||'}')::jsonb, true)
-      WHERE id = $5
-      RETURNING artifact_data->'comments' as commentlist
+      SET comments = jsonb_insert(comments, '{${commentsLength + 1}}', ('{"id": "' || $1 || '", "created": ' || extract(epoch from now()) || ', "updated": ' || extract(epoch from now()) || ', "user": {"id": '|| $2 ||', "name": "'|| $3 ||'"}, "comment": '|| $4 ||'}')::jsonb, true)
+      WHERE
+        created_at = (
+            SELECT
+              created_at
+            FROM
+              (
+                  SELECT
+                    created_at,
+                    ROW_NUMBER () OVER (
+                        ORDER BY created_at ASC
+                    ) nth
+                  FROM
+                    (
+                        SELECT
+                          (created_at)
+                        FROM
+                          artifacts
+                        WHERE artifact_id = $5
+                    ) bydate
+              ) sorted_bydate
+            WHERE
+              nth = $6
+        )
+      RETURNING comments as commentlist
 `,
     /* eslint-enable prettier/prettier */
-    [commentID, userID, userName, JSON.stringify(commentBody), artifactID]
+    [
+      commentID,
+      userID,
+      userName,
+      JSON.stringify(commentBody),
+      artifactID,
+      artifactVersion,
+    ]
   );
 
   const [newComment] = insertComment.rows;

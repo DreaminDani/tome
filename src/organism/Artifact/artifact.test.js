@@ -76,6 +76,7 @@ describe('Artifact responds to mouse events', () => {
       },
       removeAllRanges: jest.fn(),
       addRange: jest.fn(),
+      getRangeAt: jest.fn(() => ({ startOffset: 0, endOffset: 1 })),
     }));
 
     // Act

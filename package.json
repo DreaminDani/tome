@@ -52,6 +52,7 @@
   },
   "scripts": {
     "dev": "nodemon --inspect ./server.js",
+    "kill": "ps aux | grep -ie server.js | awk '{print $2}' | xargs kill -9",
     "build": "next build",
     "start": "NODE_ENV=production PORT=8080 node server.js",
     "start:ci": "NODE_ENV=production CI=true node server.js",
