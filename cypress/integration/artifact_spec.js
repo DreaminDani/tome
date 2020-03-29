@@ -40,8 +40,13 @@ easy to read...`,
       cy.get('#outlined-body').type(' edit artifact ');
       cy.get('#save-artifact').click();
 
-      // add comment
-      // TODO
+      cy.selectArtifactText();
+      cy.getByTestID('comment-input')
+        .find('textarea')
+        .first()
+        .type('Example Comment');
+      cy.getByTestID('comment-save').click();
+      cy.getByTestID('comment-list-item').should('contain', 'Example Comment');
 
       // verify artifact saved
       cy.url().should('include', '/artifact');
@@ -90,12 +95,34 @@ easy to read...`,
       cy.get('#save-artifact').click();
       cy.getByTestID('artifact-version')
         .find('input')
-        .should('have.value', '3');
+        .should('have.value', '2');
       cy.get('h4').should('contain', 'editing');
       cy.get('p').should('contain', 'edit artifact');
 
-      // add comment
-      // TODO
+      cy.selectArtifactText();
+      cy.getByTestID('comment-input')
+        .find('textarea')
+        .first()
+        .type('Newer Comment');
+      cy.getByTestID('comment-save').click();
+      cy.getByTestID('comment-list-item').should('contain', 'Newer Comment');
+
+      cy.get('mark')
+        .first()
+        .invoke('attr', 'id')
+        .then(newCommentID => {
+          // look at previous version
+          cy.getByTestID('artifact-version')
+            .find('.MuiSlider-markLabel')
+            .eq(1)
+            .click();
+          cy.get('#artifact-comment').should('not.exist'); // comment pane should close
+          cy.get('mark')
+            .first()
+            .should(oldComment => {
+              expect(oldComment).to.not.have.id(newCommentID);
+            }); // old comment should remain intact
+        });
     });
   });
 

@@ -23,9 +23,15 @@ function ArtifactPage(props) {
   const classes = useStyles();
   const { artifact_data, artifact_url, id } = props;
 
-  const versions = Array.isArray(artifact_data)
-    ? artifact_data
-    : [artifact_data];
+  const [versions, updateVersions] = useState(
+    Array.isArray(artifact_data) ? artifact_data : [artifact_data]
+  );
+
+  const copyCommentsToVersion = (comments, version) => {
+    const newVersions = versions;
+    newVersions[version].comments = comments;
+    updateVersions(newVersions);
+  };
 
   let query = {};
   if (Array.isArray(artifact_data)) {
@@ -48,6 +54,14 @@ function ArtifactPage(props) {
   );
 
   const [artifactIndex, updateArtifactIndex] = useState(queryVersion - 1);
+  const [currentArtifact, setCurrentArtifact] = useState(
+    versions[artifactIndex]
+  );
+
+  const updateCurrentVersion = versionIndex => {
+    updateArtifactIndex(versionIndex);
+    setCurrentArtifact(versions[versionIndex]);
+  };
 
   useEffect(() => {
     if (
@@ -74,7 +88,7 @@ function ArtifactPage(props) {
       value={{
         versions,
         currentVersionIndex: artifactIndex,
-        updateCurrentVersionIndex: updateArtifactIndex,
+        updateCurrentVersionIndex: updateCurrentVersion,
       }}
     >
       <Head>
@@ -114,7 +128,11 @@ function ArtifactPage(props) {
           )}
         </Grid>
       </Grid>
-      <Artifact id={id} artifact_data={versions[artifactIndex]} />
+      <Artifact
+        id={id}
+        artifact_data={currentArtifact}
+        copyCommentsToVersion={copyCommentsToVersion}
+      />
     </ArtifactContext.Provider>
   );
 }

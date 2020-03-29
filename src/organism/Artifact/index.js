@@ -1,6 +1,6 @@
 import { Grid, Typography, makeStyles } from '@material-ui/core';
 import PropTypes from 'prop-types';
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { UserContext } from '../../contexts';
 import TextContent from '../../atom/TextContent';
 import CommentPane from '../../molecule/CommentPane';
@@ -19,7 +19,7 @@ const useStyles = makeStyles({
   },
 });
 
-function Artifact({ artifact_data, id, disableSave }) {
+function Artifact({ artifact_data, id, disableSave, copyCommentsToVersion }) {
   const classes = useStyles();
 
   const user = useContext(UserContext) || {
@@ -115,6 +115,16 @@ function Artifact({ artifact_data, id, disableSave }) {
     domSelection.removeAllRanges();
   };
 
+  // react to version change
+  useEffect(() => {
+    commentCloseHandler();
+    if (updatedComments.length > 0) {
+      copyCommentsToVersion(updatedComments, version);
+    }
+    updateComments([]);
+    /* eslint-disable-next-line */
+  }, [artifact_data]);
+
   return (
     <Grid
       container
@@ -166,6 +176,7 @@ Artifact.propTypes = {
   id: PropTypes.string,
   artifact_data: PropTypes.shape(artifactDataProps),
   disableSave: PropTypes.bool,
+  copyCommentsToVersion: PropTypes.func,
 };
 
 export default Artifact;

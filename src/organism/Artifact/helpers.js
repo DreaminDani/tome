@@ -62,9 +62,14 @@ export const updateFocusedComment = (
 export const getCurrentCommentList = (comments, updatedComments, selection) => {
   // update comment list as comments get posted and returned
   let commentList = [];
+
+  const order = (a, b) => parseFloat(a.created) - parseFloat(b.created);
+
   if (comments || updatedComments.length > 0) {
     commentList =
-      updatedComments.length > 0 ? [...updatedComments] : [...comments];
+      updatedComments.length > 0
+        ? updatedComments.sort(order)
+        : comments.sort(order);
   }
 
   // update comment list with temp comment to denote current selection
