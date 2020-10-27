@@ -4,6 +4,7 @@
 
 <style>
   .paper {
+    height: max-content;
     background: #fff;
     padding: 30px;
     position: relative;
@@ -41,6 +42,7 @@
   }
   trix-editor {
     height: 100%;
+    min-height: 50vh;
   }
 </style>
 
