@@ -2,11 +2,11 @@
   import { post } from "../util/api";
   let email;
   let password;
-  function signup() {
-    console.log(post("/signup", { email, password }));
+  async function signup() {
+    console.log(await post("/signup", { email, password }));
   }
-  function login() {
-    console.log(post("/login", { email, password }));
+  async function login() {
+    console.log(await post("/login", { email, password }));
   }
 </script>
 
