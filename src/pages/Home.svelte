@@ -39,7 +39,7 @@
     --dark-text: #2a2935;
     /* spacing */
     /* this is what defines the global scale */
-    --baseline: 12px;
+    --baseline: 16px;
     /* fonts */
     font-family: "Cormorant Garamond", serif;
     --base-size: var(--baseline) * 1.2;
