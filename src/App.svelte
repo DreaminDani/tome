@@ -1,28 +1,17 @@
 <script>
-  import Editor from "./Editor.svelte";
-  import Sidebar from "./Sidebar.svelte";
+  import router from "page";
+
+  import Home from "./pages/Home.svelte";
+  import Edit from "./pages/Edit.svelte";
+  import ErrorPage from "./pages/ErrorPage.svelte";
+
+  let page;
+  let params;
+
+  router("/", () => (page = Home));
+  router("/edit", () => (page = Edit));
+  router("/*", () => (page = ErrorPage));
+  router.start();
 </script>
 
-<style>
-  .App {
-    width: 100%;
-    max-width: 1280px;
-    margin: 0 auto;
-  }
-  main {
-    height: 100%;
-    display: flex;
-    align-items: stretch;
-    justify-content: space-evenly;
-  }
-</style>
-
-<div class="App">
-  <header class="App-header">
-    <h1>Type anything</h1>
-  </header>
-  <main>
-    <Editor />
-    <Sidebar />
-  </main>
-</div>
+<svelte:component this={page} {params} />
