@@ -2,11 +2,12 @@
   import { post } from "../util/api";
   import Cookies from "js-cookie";
 
+  export let loggedIn = false;
+
   let email;
   let password;
 
   let error;
-  export let loggedIn = false;
   let showLogin = true;
 
   async function signup() {
