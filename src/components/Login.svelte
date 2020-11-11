@@ -1,5 +1,7 @@
 <script>
   import { post } from "../util/api";
+  import Cookies from "js-cookie";
+
   let email;
   let password;
 
@@ -12,6 +14,7 @@
     const res = await post("/signup", { email, password });
     if (res.token) {
       loggedIn = true;
+      Cookies.set("token", res.token);
     } else {
       error = res;
     }
@@ -22,6 +25,7 @@
     const res = await post("/login", { email, password });
     if (res.token) {
       loggedIn = true;
+      Cookies.set("token", res.token);
     } else {
       error = res;
     }

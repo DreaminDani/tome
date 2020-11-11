@@ -1,4 +1,5 @@
 <script>
+  import Cookies from "js-cookie";
   import router from "page";
 
   import Home from "./pages/Home.svelte";
@@ -6,7 +7,12 @@
   import ErrorPage from "./pages/ErrorPage.svelte";
 
   let page;
-  let params;
+  let params = {};
+
+  const token = Cookies.get("token");
+  if (token) {
+    params.token = token;
+  }
 
   router("/", () => (page = Home));
   router("/edit", () => (page = Edit));

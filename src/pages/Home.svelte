@@ -4,7 +4,8 @@
   import HomeIllustration from "../components/Home_Illustration.svelte";
   import Login from "../components/Login.svelte";
 
-  let open = false;
+  export let params;
+  let open = params.token ? true : false;
 </script>
 
 <div class="cover">
