@@ -1,4 +1,4 @@
-const emailValidator = require("email-validator");
+const utils = require('./utils');
 const faunadb = require('faunadb');
 const q = faunadb.query;
 
@@ -7,94 +7,62 @@ exports.handler = async (event, context) => {
     secret: process.env.FAUNADB_SERVER_SECRET
   })
 
-  // todo change these into a FP-style chain
-  const { email, password } = JSON.parse(event.body);
-  if (email && password) {
-    if (password.length > 100) {
-      return {
-        statusCode: 400,
-        body: "Password may be no longer than 100 characters"
+  return utils.validateAuth(event.body, async (email, password) => {
+    try {
+      const user = await client.query(q.Get(q.Match(q.Index("users_by_email"), email)));
+      if (user) {
+        return {
+          statusCode: 400,
+          body: "Email already in use"
+        }
       }
-    }
 
-    if (emailValidator.validate(email)) {
-      // check if user exists
-      try {
-        const user = await client.query(q.Get(q.Match(q.Index("users_by_email"), email)));
-        if (user) {
+      console.error({ message: "unexpected code reached", code: "0002"});
+      return {
+        statusCode: 500,
+        body: "Internal Server Error 0002"
+      }
+    } catch (e) {
+      if (e.requestResult && e.requestResult.statusCode === 404) {
+        // if not, create user
+        try {
+          const user = await client.query(
+            q.Create(
+              q.Collection("users"),
+              {
+                credentials: { password },
+                data: { email },
+              }
+            )
+          )
+          // then login as user
+          const authedUser = await client.query(
+            q.Login(
+              q.Match(q.Index("users_by_email"), email),
+              { password },
+            )
+          )
+
           return {
-            statusCode: 400,
-            body: "Email already in use"
+            statusCode: 200,
+            body: JSON.stringify({
+              token: authedUser.secret
+            })
           }
-        }
-
-        console.error({ message: "unexpected code reached", code: "0002"});
-        return {
-          statusCode: 500,
-          body: "Internal Server Error 0002"
-        }
-      } catch (e) {
-        if (e.requestResult && e.requestResult.statusCode === 404) {
-          // if not, create user
-          try {
-            const user = await client.query(
-              q.Create(
-                q.Collection("users"),
-                {
-                  credentials: { password },
-                  data: { email },
-                }
-              )
-            )
-            // then login as user
-            const authedUser = await client.query(
-              q.Login(
-                q.Match(q.Index("users_by_email"), email),
-                { password },
-              )
-            )
-
-            return {
-              statusCode: 200,
-              body: JSON.stringify({
-                token: authedUser.secret
-              })
-            }
-          } catch (error) {
-            console.error({...error, code: "0004"});
-            return {
-              statusCode: 500,
-              body: "Internal Server Error 0004"
-            }
+        } catch (error) {
+          console.error({...error, code: "0004"});
+          return {
+            statusCode: 500,
+            body: "Internal Server Error 0004"
           }
-        }
-
-        console.error({ message: "unexpected code reached", code: "0003"});
-        return {
-          statusCode: 500,
-          body: "Internal Server Error 0003"
         }
       }
-    } else {
+
+      console.error({ message: "unexpected code reached", code: "0003"});
       return {
-        statusCode: 400,
-        body: "Email is invalid"
+        statusCode: 500,
+        body: "Internal Server Error 0003"
       }
     }
-  } else if (email) {
-    return {
-      statusCode: 400,
-      body: "Password is required"
-    }
-  } else if (password) {
-    return {
-      statusCode: 400,
-      body: "Email is required"
-    }
-  } else {
-    return {
-      statusCode: 400,
-      body: "Email and password are required"
-    }
-  }
+  })
 }

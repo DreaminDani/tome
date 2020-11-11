@@ -1,4 +1,10 @@
 /* Inspired by https://codepen.io/diemoritat/pen/LKROYZ */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
 :root {
   /* colors */
   --body-bg: #fafafa;
@@ -10,6 +16,11 @@
   /* fonts */
   font-family: "Cormorant Garamond", serif;
   --base-size: var(--baseline) * 1.2;
+}
+
+button {
+  font-family: "Cormorant Garamond", serif;
+  text-transform: uppercase;
 }
 
 * {
@@ -153,10 +164,9 @@ body {
   border-bottom: 1px solid var(--dark-text);
   display: inline-block;
   padding: calc(var(--baseline) / 2) calc(var(--baseline) / 5);
-  margin-bottom: calc(var(--baseline) * 6);
+  margin-bottom: calc(var(--baseline) * 3);
 }
 .book__page .page__content-credits {
-  text-transform: uppercase;
   font-size: calc(var(--base-size) * 0.8);
   margin-bottom: calc(var(--baseline) * 2);
   letter-spacing: 1px;
@@ -166,7 +176,6 @@ body {
   width: calc(100% - (var(--baseline) * 2));
   bottom: calc(var(--baseline) * 2);
   font-size: calc(var(--base-size) * 0.8);
-  text-transform: uppercase;
 }
 .book__page .page__content-title {
   font-size: calc(var(--base-size) * 1);
