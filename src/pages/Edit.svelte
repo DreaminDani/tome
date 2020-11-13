@@ -1,4 +1,5 @@
 <script>
+  import { fly } from "svelte/transition";
   import Editor from "../components/Editor.svelte";
   import Sidebar from "../Sidebar.svelte";
 </script>
@@ -17,7 +18,7 @@
   }
 </style>
 
-<div class="App">
+<div class="App" in:fly={{ delay: 500, duration: 600 }}>
   <header class="App-header">
     <h1>Type anything</h1>
   </header>
