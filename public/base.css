@@ -237,3 +237,106 @@ body {
     transform: rotateY(-180deg);
   }
 }
+
+
+.input-label {
+  align-self: center;
+  display: block;
+  text-align: left;
+  margin-bottom: 2px;
+}
+
+.input {
+  font-size: inherit;
+  font-size: inherit;
+  font-family: inherit;
+  line-height: 1;
+  height: 2.25rem;
+  padding: 0.25em 0.5em;
+  margin-bottom: 0.5em;
+  background-color: #fff;
+  border: 2px solid var(--input-border);
+  border-radius: 4px;
+  transition: 180ms box-shadow ease-in-out;
+}
+
+.input:focus {
+  border-color: hsl(
+    var(--input-focus-h),
+    var(--input-focus-s),
+    var(--input-focus-l)
+  );
+  box-shadow: 0 0 0 3px
+    hsla(
+      var(--input-focus-h),
+      var(--input-focus-s),
+      calc(var(--input-focus-l) + 40%),
+      0.8
+    );
+  /* For Windows High Contrast mode */
+  outline: 3px solid transparent;
+}
+
+button {
+  width: 100%;
+  font-size: inherit;
+  font-size: inherit;
+  font-family: inherit;
+  font-weight: bold;
+  line-height: 1;
+  height: 2.25rem;
+  padding: 0.25em 0.5em;
+  background-color: #fff;
+  border-radius: 4px;
+  background-color: hsl(245, 54%, 44%);
+  color: #fff;
+  transition: 180ms box-shadow ease-in-out;
+}
+
+button:focus {
+  border-color: hsl(
+    var(--input-focus-h),
+    var(--input-focus-s),
+    var(--input-focus-l)
+  );
+  box-shadow: 0 0 0 3px
+    hsla(
+      var(--input-focus-h),
+      var(--input-focus-s),
+      calc(var(--input-focus-l) + 40%),
+      0.8
+    );
+  /* For Windows High Contrast mode */
+  outline: 3px solid transparent;
+}
+
+.inline-button {
+  background: none !important;
+  border: none;
+  padding: 0 !important;
+  color: hsl(
+    var(--input-focus-h),
+    var(--input-focus-s),
+    var(--input-focus-l)
+  );
+  text-decoration: underline;
+  cursor: pointer;
+  transition: 180ms box-shadow ease-in-out;
+}
+
+.inline-button:focus {
+  border-color: hsl(
+    var(--input-focus-h),
+    var(--input-focus-s),
+    var(--input-focus-l)
+  );
+  box-shadow: 0 0 0 3px
+    hsla(
+      var(--input-focus-h),
+      var(--input-focus-s),
+      calc(var(--input-focus-l) + 40%),
+      0.8
+    );
+  /* For Windows High Contrast mode */
+  outline: 3px solid transparent;
+}

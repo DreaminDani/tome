@@ -44,8 +44,12 @@
     height: 100%;
     min-height: 50vh;
   }
+
+  :global(.trix-button--icon-attach) {
+    display: none;
+  }
 </style>
 
 <div class="paper">
-  <trix-editor />
+  <trix-editor class="trix-content" />
 </div>

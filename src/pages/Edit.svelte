@@ -1,7 +1,15 @@
 <script>
+  import { onMount } from "svelte";
   import { fly } from "svelte/transition";
   import Editor from "../components/Editor.svelte";
-  import Sidebar from "../Sidebar.svelte";
+  import Sidebar from "../components/Sidebar.svelte";
+
+  onMount(() => {
+    const button = document.createElement("button");
+    button.innerHTML = "Save";
+    document.getElementsByClassName("trix-button-row")[0].appendChild(button);
+    // todo: append popover with version history
+  });
 </script>
 
 <style>
@@ -19,9 +27,6 @@
 </style>
 
 <div class="App" in:fly={{ delay: 500, duration: 600 }}>
-  <header class="App-header">
-    <h1>Type anything</h1>
-  </header>
   <main>
     <Editor />
     <Sidebar />

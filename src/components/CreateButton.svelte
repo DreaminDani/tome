@@ -16,6 +16,14 @@
     border-radius: 3px;
   }
 
+  .label-arrow {
+    display: block;
+    color: #333;
+    opacity: 0.7;
+    margin-top: 12px;
+    margin-left: -4px;
+  }
+
   .float {
     position: fixed;
     width: 60px;
@@ -48,5 +56,6 @@
 
 <a href="/edit" class="float"> <i class="ph-plus" /> </a>
 <div class="label-container">
-  <div class="label-text">New Artifact</div>
+  <div class="label-text">New Artifact</div><i
+    class="ph-play-fill label-arrow" />
 </div>

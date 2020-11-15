@@ -16,7 +16,9 @@
     <div class="book">
       <HomeIllustration visible={!loggedIn} />
       <ArtifactsOwned visible={open} />
-      <CreateButton />
+      {#if loggedIn}
+        <CreateButton />
+      {/if}
       <!-- Resets the page -->
       <!-- <input type="radio" name="page" id="page-1" /> -->
 
