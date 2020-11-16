@@ -17,11 +17,10 @@
   }
 
   .label-arrow {
+    font-size: 24px;
+    margin: -8px;
+    color: rgba(51, 51, 51, 0.7);
     display: block;
-    color: #333;
-    opacity: 0.7;
-    margin-top: 12px;
-    margin-left: -4px;
   }
 
   .float {
@@ -49,13 +48,15 @@
 
   a.float:hover + div.label-container,
   a.float:focus + div.label-container {
+    display: flex;
+    align-items: center;
     visibility: visible;
     opacity: 1;
   }
 </style>
 
-<a href="/edit" class="float"> <i class="ph-plus" /> </a>
+<a href="/edit" class="float"> <i class="ri-add-line" /> </a>
 <div class="label-container">
-  <div class="label-text">New Artifact</div><i
-    class="ph-play-fill label-arrow" />
+  <div class="label-text">New Artifact</div>
+  <i class="ri-play-fill label-arrow" />
 </div>

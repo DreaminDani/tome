@@ -72,34 +72,7 @@ Or remove the script via:
 rm scripts/setupTypeScript.js
 ```
 
-## Deploying to the web
+## Icons
+To keep file sizes low and streamline design, Tome uses a custom Remixicon font pack. To update it, simply import the `.remixicon` file in the project root into https://remixicon.com/ (click the folder icon in the upper right, then the import button).
 
-### With [Vercel](https://vercel.com)
-
-Install `vercel` if you haven't already:
-
-```bash
-npm install -g vercel
-```
-
-Then, from within your project folder:
-
-```bash
-cd public
-vercel deploy --name my-project
-```
-
-### With [surge](https://surge.sh/)
-
-Install `surge` if you haven't already:
-
-```bash
-npm install -g surge
-```
-
-Then, from within your project folder:
-
-```bash
-npm run build
-surge public my-project.surge.sh
-```
+If you add or remove any icons from the collection, update the files in `public` using the downloaded `Fonts` package (we don't use the `.less` file) and replace the `.remixicon` file in the project root to match.
