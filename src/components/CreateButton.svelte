@@ -55,7 +55,7 @@
   }
 </style>
 
-<a href="/edit" class="float"> <i class="ri-add-line" /> </a>
+<a href="/edit" class="float"> <i class="ri-add-line ri-lg" /> </a>
 <div class="label-container">
   <div class="label-text">New Artifact</div>
   <i class="ri-play-fill label-arrow" />
