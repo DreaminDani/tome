@@ -1,4 +1,4 @@
-<script>
+<script lang="typescript">
   import { fade } from "svelte/transition";
   import ArtifactsFeatured from "../components/Artifacts_Featured.svelte";
   import ArtifactsOwned from "../components/Artifacts_Owned.svelte";

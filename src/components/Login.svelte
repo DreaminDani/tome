@@ -1,4 +1,4 @@
-<script>
+<script lang="typescript">
   import { post } from "../util/api";
   import Cookies from "js-cookie";
 

@@ -1,5 +1,18 @@
-<script>
+<script lang="typescript">
+  import { onMount } from "svelte";
   import "trix/dist/trix.js";
+  import { trackChange } from "../util/events";
+  import type { ChangeEvent } from "../util/events";
+
+  export let content = "asdf";
+
+  function updateValue(e: ChangeEvent) {
+    content = e.target.value;
+  }
+
+  onMount(() => {
+    trackChange(document.getElementById("x"));
+  });
 </script>
 
 <style>
@@ -51,5 +64,11 @@
 </style>
 
 <div class="paper">
-  <trix-editor class="trix-content" />
+  <input
+    id="x"
+    bind:value={content}
+    on:change={updateValue}
+    type="hidden"
+    name="content" />
+  <trix-editor class="trix-content" input="x" />
 </div>

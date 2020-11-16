@@ -75,7 +75,7 @@ trix-toolbar .trix-button:not(:disabled) {
   cursor: pointer;
 }
 trix-toolbar .trix-button:disabled {
-  opacity: 0.125
+  opacity: 0.6;
 }
 @media (max-device-width: 768px) {
   trix-toolbar .trix-button {

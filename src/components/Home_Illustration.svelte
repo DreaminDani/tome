@@ -1,4 +1,4 @@
-<script>
+<script lang="typescript">
   import { fade } from "svelte/transition";
   import { get } from "../util/api";
   import { onMount } from "svelte";
