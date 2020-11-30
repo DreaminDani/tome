@@ -1,6 +1,6 @@
 export const get = async (url: string) => {
   // request options
-  const options = {
+  const options: RequestInit = {
     method: 'GET'
   }
 
@@ -20,7 +20,7 @@ export const get = async (url: string) => {
 
 export const post = async (url: string, body: object) => {
   // request options
-  const options = {
+  const options: RequestInit = {
     method: 'POST',
     body: JSON.stringify(body),
     headers: {

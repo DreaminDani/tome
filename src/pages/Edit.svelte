@@ -3,11 +3,13 @@
   import { fly } from "svelte/transition";
   import Editor from "../components/Editor.svelte";
   import Sidebar from "../components/Sidebar.svelte";
+  import { post } from "../util/api";
 
-  let content = ""; // todo, get existing content
-  function save() {
-    console.log("im saving!");
+  let content = ""; // todo, get existing content (via id in params)
+  async function save() {
     console.log(content);
+    const saved = await post("/edit", { content }); // todo, if there's an ID, pass that here too
+    console.log(saved);
   }
 
   onMount(() => {

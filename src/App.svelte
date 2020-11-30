@@ -7,12 +7,7 @@
   import ErrorPage from "./pages/ErrorPage.svelte";
 
   let page;
-  let params = {};
-
-  const token = Cookies.get("token");
-  if (token) {
-    params.token = token;
-  }
+  let params = {}; // todo get id from URL for edit/view artifact
 
   router("/", () => (page = Home));
   router("/edit", () => (page = Edit));
